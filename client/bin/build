@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ ${PWD##*/} == "bin" ]
+then
+	echo "-> Building files from ../src"
+	javac ../src/*.java
+	echo "-> Moving files to bin"
+	mv ../src/*.class .
+	echo "-> Creating jar"
+	jar cfm client.jar Manifest.txt *.class
+	echo "-> Build complete!"
+else
+	echo "Run this command from the bin folder!"
+fi
+
+
