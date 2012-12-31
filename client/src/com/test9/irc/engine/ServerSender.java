@@ -31,8 +31,8 @@ public class ServerSender extends Thread implements Runnable {
 	@Override
 	public void run() {
 		while (true) {
-			System.out.println("in serversender run()");
-			System.out.println(server.isConnected);
+			//System.out.println("in serversender run()");
+			//System.out.println(server.isConnected);
 			if (server.isConnected == true) {
 				joinChannel();
 				return;

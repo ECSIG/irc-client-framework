@@ -3,7 +3,6 @@ package com.test9.irc.engine;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,10 +16,10 @@ public class Server {
 
     // The server to connect to and our details.
     String server = "irc.ecsig.com";
-    String botRef = "tar";
+    String botRef = "jared-test";
 
     String nick = this.botRef + "";
-    String login = this.botRef + "-bot";
+    String login = this.botRef + "jared-test";
     
     /**
      * This should not be located in server, but it will for now.
@@ -28,7 +27,7 @@ public class Server {
     public static final String RNtail = "\r\n";
 
     // The channel which the bot will join.
-    private List<Channel> channels = Arrays.asList(new Channel("#jircc"), new Channel("#jared"));
+    private List<Channel> channels = Arrays.asList(new Channel("#pjircc"), new Channel("#jared"));
 
     public Server(Boolean DEBUGGING, String name) {
         this.name = name;

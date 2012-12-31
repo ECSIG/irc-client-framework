@@ -26,7 +26,7 @@ public class ServerListener extends Thread implements Runnable {
         // Keep reading lines from the server.
 
         while (true) {
-            System.out.println("in serverlistener run()	");
+           // System.out.println("in serverlistener run()	");
             try {
                 this.input = this.in.readLine();
                 System.out.println("Server Listener incoming: " + this.input);
@@ -42,6 +42,7 @@ public class ServerListener extends Thread implements Runnable {
     }
 
     private void processInput(String input) {
+    	System.out.println("INPUT IS:\"" + input + "\"");
         if (input.startsWith("PING")) {
             // We must respond to PINGs to avoid being disconnected.
             System.out.println("ping request made");
