@@ -29,7 +29,7 @@ public class ServerListener extends Thread implements Runnable {
            // System.out.println("in serverlistener run()	");
             try {
                 this.input = this.in.readLine();
-                System.out.println("Server Listener incoming: " + this.input);
+               // System.out.println("Server Listener incoming: " + this.input);
                 if (this.input != null) {
                     this.processInput(this.input);
                 }
@@ -42,7 +42,7 @@ public class ServerListener extends Thread implements Runnable {
     }
 
     private void processInput(String input) {
-    	System.out.println("INPUT IS:\"" + input + "\"");
+    	System.out.println(input);
         if (input.startsWith("PING")) {
             // We must respond to PINGs to avoid being disconnected.
             System.out.println("ping request made");
