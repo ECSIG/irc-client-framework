@@ -1,5 +1,7 @@
 package com.test9.irc.parser;
 
+import java.util.Arrays;
+
 public class Parser {
 
 	final private String PREFIXES[] = {"ERR", "RPL"};
@@ -35,7 +37,7 @@ public class Parser {
 	{
 		Parser p = new Parser();
 		
-		System.out.println(parse(":irc.ecsig.com 444 jared-test :Welcome to the " +
+		System.out.println(p.parse(":irc.ecsig.com 256 jared-test :Welcome to the " +
 				"ECSIG IRC Network jared-test!jared-test@ip68-110-207-195.ri.ri.cox.net"));
 	}
 	
@@ -47,22 +49,23 @@ public class Parser {
 	public String parse(String message)
 	{
 		String prefix_msg_seperation[] = message.split(":");
-		String prefix_split[] = prefix_msg_seperation[0].split(" ");
+		System.out.println(Arrays.toString(prefix_msg_seperation));
+		String prefix_split[] = prefix_msg_seperation[1].split(" ");
 		String server = prefix_split[0];
 		String irc_code = prefix_split[1];
 		String nick = prefix_split[2];
 		String irc_prot_message = "";
-		if(Integer.parseInt(irc_code) >= 401 || Integer.parseInt(irc_code) <= 502)
-			irc_prot_message = find_error(irc_code);
-		else if(Integer.parseInt(irc_code) >= 200 || Integer.parseInt(irc_code) <= 395)
-			irc_prot_message = find_rpl(irc_code);
+		if(Integer.parseInt(irc_code) >= 401 && Integer.parseInt(irc_code) <= 502)
+			irc_prot_message = find_full_error(irc_code);
+		else if(Integer.parseInt(irc_code) >= 200 && Integer.parseInt(irc_code) <= 395)
+			irc_prot_message = find_full_rpl(irc_code);
 
 
 		return irc_prot_message;
 	}
 
 
-	private String find_error(String irc_code)
+	private String find_full_error(String irc_code)
 	{
 		String which_error = "";
 
@@ -86,7 +89,7 @@ public class Parser {
 			return new String("[ERROR]: com.test9.irc.parser/Parser.java Could not find error code.");
 	}
 
-	private String find_rpl(String irc_code)
+	private String find_full_rpl(String irc_code)
 	{
 		String which_rpl = "";
 
@@ -98,7 +101,7 @@ public class Parser {
 			if(RPL[try_index].startsWith(irc_code, 0))
 			{
 				found = true;
-				which_rpl = ERR[try_index];
+				which_rpl = RPL[try_index];
 			}
 			else
 				try_index++;
