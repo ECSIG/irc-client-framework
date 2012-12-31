@@ -31,9 +31,10 @@ public class Parser {
 		"243_RPL_STATSOLINE", "244_RPL_STATSHLINE", "221_RPL_UMODEIS", "251_RPL_LUSERCLIENT", "252_RPL_LUSEROP", "253_RPL_LUSERUNKNOWN", 
 		"254_RPL_LUSERCHANNELS", "255_RPL_LUSERME", "256_RPL_ADMINME", "257_RPL_ADMINLOC1", "258_RPL_ADMINLOC2", "259_RPL_ADMINEMAIL"};
 
-	public static void main(String args[])
+	public static void main(String[] args)
 	{
 		Parser p = new Parser();
+		
 		parse(":irc.ecsig.com 444 jared-test :Welcome to the ECSIG IRC Network jared-test!jared-test@ip68-110-207-195.ri.ri.cox.net");
 	}
 	
