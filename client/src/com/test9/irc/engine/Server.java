@@ -17,7 +17,7 @@ public class Server {
 
     // The server to connect to and our details.
     String server = "irc.ecsig.com";
-    String botRef = "jar";
+    String botRef = "tar";
 
     String nick = this.botRef + "";
     String login = this.botRef + "-bot";
