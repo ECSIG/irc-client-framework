@@ -35,7 +35,8 @@ public class Parser {
 	{
 		Parser p = new Parser();
 		
-		parse(":irc.ecsig.com 444 jared-test :Welcome to the ECSIG IRC Network jared-test!jared-test@ip68-110-207-195.ri.ri.cox.net");
+		System.out.println(parse(":irc.ecsig.com 444 jared-test :Welcome to the " +
+				"ECSIG IRC Network jared-test!jared-test@ip68-110-207-195.ri.ri.cox.net"));
 	}
 	
 	public Parser() 
@@ -43,23 +44,21 @@ public class Parser {
 		init = true;
 	}
 
-	public int parse(String message)
+	public String parse(String message)
 	{
-		int msg = -1;
-
 		String prefix_msg_seperation[] = message.split(":");
 		String prefix_split[] = prefix_msg_seperation[0].split(" ");
 		String server = prefix_split[0];
 		String irc_code = prefix_split[1];
 		String nick = prefix_split[2];
-
+		String irc_prot_message = "";
 		if(Integer.parseInt(irc_code) >= 401 || Integer.parseInt(irc_code) <= 502)
-			find_error(irc_code);
+			irc_prot_message = find_error(irc_code);
 		else if(Integer.parseInt(irc_code) >= 200 || Integer.parseInt(irc_code) <= 395)
-			find_rpl(irc_code);
+			irc_prot_message = find_rpl(irc_code);
 
 
-		return msg;
+		return irc_prot_message;
 	}
 
 
