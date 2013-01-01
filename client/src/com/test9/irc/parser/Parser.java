@@ -56,14 +56,16 @@ public class Parser {
 
 		if(prefix_present)
 		{
-			prefix = message.substring(1, message.indexOf(" ")+1);
+			prefix = message.substring(0, message.indexOf(" ")+1);
 			message.delete(0, message.indexOf(" ") + 1);
+			parse_prefix(prefix);
 		}
 		System.out.println("after prefix deleted: '" + message+"'");
-
-		if(prefix_present)
-			parse_prefix(prefix);
-
+		
+		command = message.substring(0, message.indexOf(" "));
+		message.delete(0, message.indexOf(" ") + 1);
+		System.out.println("after command deleted: '" + message + "'");
+		
 		System.out.println("nickname:'"+nickname+"'");
 		System.out.println("user:'"+user+"'");
 		System.out.println("host:'"+host+"'");
@@ -89,11 +91,6 @@ public class Parser {
 		}
 		else
 			server_name = split_prefix[0];	
-	}
-
-	private void parse_command(String message)
-	{
-		command = message;
 	}
 
 	private void reset_parser()
