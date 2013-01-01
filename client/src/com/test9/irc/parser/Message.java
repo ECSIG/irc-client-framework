@@ -9,9 +9,10 @@ public class Message {
 	private String nickname = "";
 	private String user = "";
 	private String host = "";
+	private String content = "";
 	
 	public Message(String prefix, String command, String params, 
-			String server_name, String nickname, String user, String  host)
+			String server_name, String nickname, String user, String  host, String content)
 	{
 		this.prefix = prefix;
 		this.command = command;
@@ -20,6 +21,7 @@ public class Message {
 		this.nickname = nickname;
 		this.user = user;
 		this.host = host;
+		this.content = content;
 	}
 
 	/**
