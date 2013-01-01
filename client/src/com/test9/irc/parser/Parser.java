@@ -86,4 +86,60 @@ public class Parser {
 		Parser.init = init;
 	}
 
+	public static String getPrefix() {
+		return prefix;
+	}
+
+	public static void setPrefix(String prefix) {
+		Parser.prefix = prefix;
+	}
+
+	public static String getCommand() {
+		return command;
+	}
+
+	public static void setCommand(String command) {
+		Parser.command = command;
+	}
+
+	public static String getParams() {
+		return params;
+	}
+
+	public static void setParams(String params) {
+		Parser.params = params;
+	}
+
+	public static String getServer_name() {
+		return server_name;
+	}
+
+	public static void setServer_name(String server_name) {
+		Parser.server_name = server_name;
+	}
+
+	public static String getNickname() {
+		return nickname;
+	}
+
+	public static void setNickname(String nickname) {
+		Parser.nickname = nickname;
+	}
+
+	public static String getUser() {
+		return user;
+	}
+
+	public static void setUser(String user) {
+		Parser.user = user;
+	}
+
+	public static String getHost() {
+		return host;
+	}
+
+	public static void setHost(String host) {
+		Parser.host = host;
+	}
+
 }
