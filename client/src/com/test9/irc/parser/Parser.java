@@ -18,6 +18,7 @@ public class Parser {
 
 	private static boolean init = false;
 	private static boolean prefix_present = false;
+	private static boolean params_present = false;
 	private static String prefix = "";
 	private static String command = "";
 	private static String params = "";
@@ -31,8 +32,7 @@ public class Parser {
 	public static void main(String[] args)
 	{
 		Parser p = new Parser();
-
-		p.parse(new StringBuffer(":irc.ecsig.com 005 jared-test CMDS=KNOCK,MAP,DCCALLOW,USERIP " +
+		/*p.parse(new StringBuffer(":irc.ecsig.com 005 jared-test CMDS=KNOCK,MAP,DCCALLOW,USERIP " +
 				"UHNAMES NAMESX SAFELIST HCN MAXCHANNELS=50 CHANLIMIT=#:50 MAXLIST=b:60,e:60,I:60 " +
 				"NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported " +
 				"by this server"));
@@ -53,7 +53,10 @@ public class Parser {
 		System.out.println(divider);
 
 		p.parse(new StringBuffer("255 jared-test :I have 12 clients and 1 servers"));
-
+		System.out.println(divider);*/
+		
+		p.parse(new StringBuffer(":irc.ecsig.com 333 jared-test #jared Jared 1355349884"));
+		
 	}
 
 	/**
@@ -89,11 +92,20 @@ public class Parser {
 
 		command = message.substring(0, message.indexOf(" "));
 		message.delete(0, message.indexOf(" "));
-
-		params = message.substring(0, message.indexOf(" :"));
-		message.delete(0, message.indexOf(" :")+2);
-
-		content = message.substring(0, message.length());
+		
+		if(message.indexOf(" :") > 0)
+		{
+			params = message.substring(0, message.indexOf(" :"));
+			message.delete(0, message.indexOf(" :") + 2);
+			
+			content = message.substring(0, message.length());
+		}
+		else
+		{
+			params = message.substring(0, message.length());
+			message.delete(0, message.length());
+			content = null;
+		}
 
 		print_stuff();
 
