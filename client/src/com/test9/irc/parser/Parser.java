@@ -27,14 +27,14 @@ public class Parser {
 	{
 		Parser p = new Parser();
 
-		p.parse(new StringBuffer(":irc.ecsig.com 005 jared-test CMDS=KNOCK,MAP,DCCALLOW,USERIP " +
-				"UHNAMES NAMESX SAFELIST HCN MAXCHANNELS=50 CHANLIMIT=#:50 MAXLIST=b:60,e:60,I:60 " +
-				"NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported " +
-				"by this server"));
+		//p.parse(new StringBuffer(":irc.ecsig.com 005 jared-test CMDS=KNOCK,MAP,DCCALLOW,USERIP " +
+				//"UHNAMES NAMESX SAFELIST HCN MAXCHANNELS=50 CHANLIMIT=#:50 MAXLIST=b:60,e:60,I:60 " +
+				//"NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported " +
+				//"by this server"));
 
-		p.parse(new StringBuffer(":jared-test!jared-test@somehost 255 jared-test :I have 12 clients and 1 servers"));
+		p.parse(new StringBuffer(":irc.ecsig.com 255 jared-test :I have 12 clients and 1 servers"));
 
-		p.parse(new StringBuffer("255 jared-test :I have 12 clients and 1 servers"));
+		//p.parse(new StringBuffer("255 jared-test :I have 12 clients and 1 servers"));
 
 	}
 
@@ -52,7 +52,6 @@ public class Parser {
 			prefix_present = true;
 			message.delete(0, 1);
 		}
-		System.out.println("after ':' found : '" + message+"'");
 
 		if(prefix_present)
 		{
@@ -60,25 +59,19 @@ public class Parser {
 			message.delete(0, message.indexOf(" ") + 1);
 			parse_prefix(prefix);
 		}
-		System.out.println("after prefix deleted: '" + message+"'");
 		
 		command = message.substring(0, message.indexOf(" "));
-		message.delete(0, message.indexOf(" ") + 1);
-		System.out.println("after command deleted: '" + message + "'");
+		message.delete(0, message.indexOf(" "));
 		
-		System.out.println("nickname:'"+nickname+"'");
-		System.out.println("user:'"+user+"'");
-		System.out.println("host:'"+host+"'");
-		System.out.println("server_name:'"+server_name+"'");
-		System.out.println("command:'"+command+"'");
+		params = message.toString().trim();
+		
+		print_stuff();
+
 	}
 
 	private void parse_prefix(String prefix)
 	{
-		System.out.println("prefix: '"+prefix+"'");
 		String split_prefix[] = prefix.split("[!@ ]");
-		System.out.println(Arrays.toString(split_prefix));
-
 		if(split_prefix.length == 3) {
 			nickname = split_prefix[0];
 			user = split_prefix[1];
@@ -103,7 +96,17 @@ public class Parser {
 		nickname = "";
 		user = "";
 		host = "";
-
+	}
+	
+	private void print_stuff()
+	{
+		System.out.println("Prefix: '" + prefix + "'");
+		System.out.println("Command: '" + command + "'");
+		System.out.println("Params: '"+ params + "'");
+		System.out.println("Server_name: '" + server_name + "'");
+		System.out.println("Nickname: '" + nickname + "'");
+		System.out.println("User: '"+ user + "'");
+		System.out.println("Host: '"+host + "'");
 	}
 
 	/**
