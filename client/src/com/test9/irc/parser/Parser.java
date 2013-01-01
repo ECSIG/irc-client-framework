@@ -13,6 +13,21 @@ package com.test9.irc.parser;
  * <crlf>     ::= CR LF
  * @author Jared Patton
  * test
+ * 
+ * asdf
+ * a
+ * sdf
+ * as
+ * df
+ * asdf
+ * as
+ * dfa
+ * sdf
+ * asd
+ * f
+ * asdf
+ * asdf
+ * 
  *
  */
 public class Parser {
