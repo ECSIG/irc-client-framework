@@ -12,22 +12,6 @@ package com.test9.irc.parser;
  * <trailing> ::= <Any, possibly *empty*, sequence of octets not including NUL or CR or LF> 
  * <crlf>     ::= CR LF
  * @author Jared Patton
- * test
- * 
- * asdf
- * a
- * sdf
- * as
- * df
- * asdf
- * as
- * dfa
- * sdf
- * asd
- * f
- * asdf
- * asdf
- * 
  *
  */
 public class Parser {
