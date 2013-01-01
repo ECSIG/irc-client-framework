@@ -27,7 +27,7 @@ public class Server {
     public static final String RNtail = "\r\n";
 
     // The channel which the bot will join.
-    private List<Channel> channels = Arrays.asList(new Channel("#pjircc"), new Channel("#jared"));
+    private List<Channel> channels = Arrays.asList(new Channel("#jircc"), new Channel("#jared"));
 
     public Server(Boolean DEBUGGING, String name) {
         this.name = name;
