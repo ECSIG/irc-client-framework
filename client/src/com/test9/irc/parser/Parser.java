@@ -5,6 +5,7 @@ import java.util.Arrays;
 public class Parser {
 
 	private static boolean init = false;
+	private static boolean prefix_present = false;
 	private static String prefix = "";
 	private static String command = "";
 	private static String params = "";
@@ -32,13 +33,26 @@ public class Parser {
 
 	public String parse(String message)
 	{
-		String message_split[] = message.split(" ", 2);
-
+		String message_split[];
 		if(message.startsWith(":"))
+			prefix_present = true;
+
+		if(prefix_present)
+			message_split = message.split(" ", 3);
+		else
+			message_split = message.split(" ", 2);
+		System.out.println(Arrays.toString(message_split));
+
+		if(prefix_present)
 			get_prefix(message_split[0]);
 
-		System.out.println("nickname:'"+nickname + "' user:'"+user+"' host'"+host+
-				"'server_name'"+server_name+"'");
+		command = message_split[1];
+
+		System.out.println("nickname:'"+nickname+"'");
+		System.out.println("user:'"+user+"'");
+		System.out.println("host:'"+host+"'");
+		System.out.println("server_name:'"+server_name+"'");
+		System.out.println("command:'"+command+"'");
 		return "";
 	}
 
