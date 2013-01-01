@@ -3,7 +3,16 @@ package com.test9.irc.parser;
 import java.util.Arrays;
 
 public class Parser {
-
+	/*
+	 * <message>  ::= [':' <prefix> <SPACE> ] <command> <params> <crlf> 
+	 * <prefix>   ::= <servername> | <nick> [ '!' <username> ] [ '@' <host> ] 
+	 * <command>  ::= <letter> { <letter> } | <number> <number> <number> 
+	 * <SPACE>    ::= ' ' { ' ' }
+	 * <params>   ::= <SPACE> [ ':' <trailing> | <middle> <params> ] 
+	 * <middle>   ::= <Any *non-empty* sequence of octets not including SPACE or NUL or CR or LF, the first of which may not be ':'> 
+	 * <trailing> ::= <Any, possibly *empty*, sequence of octets not including NUL or CR or LF> 
+	 * <crlf>     ::= CR LF
+	 */
 	private static boolean init = false;
 	private static boolean prefix_present = false;
 	private static String prefix = "";
@@ -18,14 +27,14 @@ public class Parser {
 	{
 		Parser p = new Parser();
 
-		System.out.println(p.parse(":irc.ecsig.com 005 jared-test CMDS=KNOCK,MAP,DCCALLOW,USERIP " +
+		p.parse(new StringBuffer(":irc.ecsig.com 005 jared-test CMDS=KNOCK,MAP,DCCALLOW,USERIP " +
 				"UHNAMES NAMESX SAFELIST HCN MAXCHANNELS=50 CHANLIMIT=#:50 MAXLIST=b:60,e:60,I:60 " +
 				"NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported " +
 				"by this server"));
 
-		System.out.println(p.parse(":jared-test!jared-test@somehost 255 jared-test :I have 12 clients and 1 servers"));
-		
-		System.out.println(p.parse("255 jared-test :I have 12 clients and 1 servers"));
+		p.parse(new StringBuffer(":jared-test!jared-test@somehost 255 jared-test :I have 12 clients and 1 servers"));
+
+		p.parse(new StringBuffer("255 jared-test :I have 12 clients and 1 servers"));
 
 	}
 
@@ -34,39 +43,37 @@ public class Parser {
 		init = true;
 	}
 
-	public String parse(String message)
+	public void parse(StringBuffer message)
 	{
 		reset_parser();
-		String message_split[];
-		if(message.startsWith(":"))
-			prefix_present = true;
 
-		if(prefix_present)
-			message_split = message.split(" ", 3);
-		else
-			message_split = message.split(" ", 2);
-		
-		System.out.println(Arrays.toString(message_split));
+		if(message.substring(0,1).equals(":"))
+		{
+			prefix_present = true;
+			message.delete(0, 1);
+		}
+		System.out.println("after ':' found : '" + message+"'");
 
 		if(prefix_present)
 		{
-			parse_prefix(message_split[0]);
-			parse_command(message_split[1]);
+			prefix = message.substring(1, message.indexOf(" ")+1);
+			message.delete(0, message.indexOf(" ") + 1);
 		}
-		else
-			parse_command(message_split[0]);
+		System.out.println("after prefix deleted: '" + message+"'");
+
+		if(prefix_present)
+			parse_prefix(prefix);
 
 		System.out.println("nickname:'"+nickname+"'");
 		System.out.println("user:'"+user+"'");
 		System.out.println("host:'"+host+"'");
 		System.out.println("server_name:'"+server_name+"'");
 		System.out.println("command:'"+command+"'");
-		return "";
 	}
 
 	private void parse_prefix(String prefix)
 	{
-		prefix = prefix.substring(1);
+		System.out.println("prefix: '"+prefix+"'");
 		String split_prefix[] = prefix.split("[!@ ]");
 		System.out.println(Arrays.toString(split_prefix));
 
@@ -83,12 +90,12 @@ public class Parser {
 		else
 			server_name = split_prefix[0];	
 	}
-	
+
 	private void parse_command(String message)
 	{
 		command = message;
 	}
-	
+
 	private void reset_parser()
 	{
 		prefix_present = false;
