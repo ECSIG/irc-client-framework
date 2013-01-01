@@ -22,8 +22,16 @@ public class Parser {
 				"UHNAMES NAMESX SAFELIST HCN MAXCHANNELS=50 CHANLIMIT=#:50 MAXLIST=b:60,e:60,I:60 " +
 				"NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported " +
 				"by this server"));
+		
+		p.reset_parser();
 
 		System.out.println(p.parse(":jared-test!jared-test@somehost 255 jared-test :I have 12 clients and 1 servers"));
+	
+		p.reset_parser();
+		
+		System.out.println(p.parse("255 jared-test :I have 12 clients and 1 servers"));
+
+		p.reset_parser();
 	}
 
 	public Parser() 
@@ -41,12 +49,16 @@ public class Parser {
 			message_split = message.split(" ", 3);
 		else
 			message_split = message.split(" ", 2);
+		
 		System.out.println(Arrays.toString(message_split));
 
 		if(prefix_present)
+		{
 			get_prefix(message_split[0]);
-
-		command = message_split[1];
+			command = message_split[1];
+		}
+		else
+			command = message_split[0];
 
 		System.out.println("nickname:'"+nickname+"'");
 		System.out.println("user:'"+user+"'");
@@ -77,6 +89,7 @@ public class Parser {
 	}
 	public void reset_parser()
 	{
+		prefix_present = false;
 		prefix = "";
 		command = "";
 		params = "";
