@@ -22,16 +22,11 @@ public class Parser {
 				"UHNAMES NAMESX SAFELIST HCN MAXCHANNELS=50 CHANLIMIT=#:50 MAXLIST=b:60,e:60,I:60 " +
 				"NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported " +
 				"by this server"));
-		
-		p.reset_parser();
 
 		System.out.println(p.parse(":jared-test!jared-test@somehost 255 jared-test :I have 12 clients and 1 servers"));
-	
-		p.reset_parser();
 		
 		System.out.println(p.parse("255 jared-test :I have 12 clients and 1 servers"));
 
-		p.reset_parser();
 	}
 
 	public Parser() 
@@ -41,6 +36,7 @@ public class Parser {
 
 	public String parse(String message)
 	{
+		reset_parser();
 		String message_split[];
 		if(message.startsWith(":"))
 			prefix_present = true;
@@ -54,11 +50,11 @@ public class Parser {
 
 		if(prefix_present)
 		{
-			get_prefix(message_split[0]);
-			command = message_split[1];
+			parse_prefix(message_split[0]);
+			parse_command(message_split[1]);
 		}
 		else
-			command = message_split[0];
+			parse_command(message_split[0]);
 
 		System.out.println("nickname:'"+nickname+"'");
 		System.out.println("user:'"+user+"'");
@@ -68,7 +64,7 @@ public class Parser {
 		return "";
 	}
 
-	private void get_prefix(String prefix)
+	private void parse_prefix(String prefix)
 	{
 		prefix = prefix.substring(1);
 		String split_prefix[] = prefix.split("[!@ ]");
@@ -87,7 +83,13 @@ public class Parser {
 		else
 			server_name = split_prefix[0];	
 	}
-	public void reset_parser()
+	
+	private void parse_command(String message)
+	{
+		command = message;
+	}
+	
+	private void reset_parser()
 	{
 		prefix_present = false;
 		prefix = "";
