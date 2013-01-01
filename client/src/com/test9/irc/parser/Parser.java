@@ -54,7 +54,7 @@ public class Parser {
 		p.parse(new StringBuffer("255 jared-test :I have 12 clients and 1 servers"));
 		System.out.println(divider);
 		
-		p.parse(new StringBuffer(":irc.ecsig.com 333 jared-test #jared Jared 1355349884"));
+		//p.parse(new StringBuffer(":irc.ecsig.com 333 jared-test #jared Jared 1355349884"));
 		
 	}
 
