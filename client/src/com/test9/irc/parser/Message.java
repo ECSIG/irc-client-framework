@@ -2,79 +2,123 @@ package com.test9.irc.parser;
 
 public class Message {
 	
-	private static String prefix = "";
-	private static String command = "";
-	private static String params = "";
-	private static String server_name = "";
-	private static String nickname = "";
-	private static String user = "";
-	private static String host = "";
+	private String prefix = "";
+	private String command = "";
+	private String params = "";
+	private String server_name = "";
+	private String nickname = "";
+	private String user = "";
+	private String host = "";
 	
-	public Message(String[] args)
+	public Message(String prefix, String command, String params, 
+			String server_name, String nickname, String user, String  host)
 	{
-		prefix = args[0];
-		command = args[1];
-		params = args[2];
-		server_name = args[3];
-		nickname = args[4];
-		user = args[5];
-		host = args[6];
+		this.prefix = prefix;
+		this.command = command;
+		this.params = params;
+		this.server_name = server_name;
+		this.nickname = nickname;
+		this.user = user;
+		this.host = host;
 	}
 
-	public static String getPrefix() {
+	/**
+	 * @return the prefix
+	 */
+	public String getPrefix() {
 		return prefix;
 	}
 
-	public static void setPrefix(String prefix) {
-		Message.prefix = prefix;
+	/**
+	 * @param prefix the prefix to set
+	 */
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 
-	public static String getCommand() {
+	/**
+	 * @return the command
+	 */
+	public String getCommand() {
 		return command;
 	}
 
-	public static void setCommand(String command) {
-		Message.command = command;
+	/**
+	 * @param command the command to set
+	 */
+	public void setCommand(String command) {
+		this.command = command;
 	}
 
-	public static String getParams() {
+	/**
+	 * @return the params
+	 */
+	public String getParams() {
 		return params;
 	}
 
-	public static void setParams(String params) {
-		Message.params = params;
+	/**
+	 * @param params the params to set
+	 */
+	public void setParams(String params) {
+		this.params = params;
 	}
 
-	public static String getServer_name() {
+	/**
+	 * @return the server_name
+	 */
+	public String getServer_name() {
 		return server_name;
 	}
 
-	public static void setServer_name(String server_name) {
-		Message.server_name = server_name;
+	/**
+	 * @param server_name the server_name to set
+	 */
+	public void setServer_name(String server_name) {
+		this.server_name = server_name;
 	}
 
-	public static String getNickname() {
+	/**
+	 * @return the nickname
+	 */
+	public String getNickname() {
 		return nickname;
 	}
 
-	public static void setNickname(String nickname) {
-		Message.nickname = nickname;
+	/**
+	 * @param nickname the nickname to set
+	 */
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
-	public static String getUser() {
+	/**
+	 * @return the user
+	 */
+	public String getUser() {
 		return user;
 	}
 
-	public static void setUser(String user) {
-		Message.user = user;
+	/**
+	 * @param user the user to set
+	 */
+	public void setUser(String user) {
+		this.user = user;
 	}
 
-	public static String getHost() {
+	/**
+	 * @return the host
+	 */
+	public String getHost() {
 		return host;
 	}
 
-	public static void setHost(String host) {
-		Message.host = host;
+	/**
+	 * @param host the host to set
+	 */
+	public void setHost(String host) {
+		this.host = host;
 	}
 
+	
 }

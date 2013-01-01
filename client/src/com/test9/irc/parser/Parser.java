@@ -35,7 +35,7 @@ public class Parser {
 		//"NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported " +
 		//"by this server"));
 
-		//p.parse(new StringBuffer(":irc.ecsig.com 255 jared-test :I have 12 clients and 1 servers")).toString();
+		p.parse(new StringBuffer(":irc.ecsig.com 255 jared-test :I have 12 clients and 1 servers")).toString();
 
 		//p.parse(new StringBuffer("255 jared-test :I have 12 clients and 1 servers"));
 
@@ -79,7 +79,7 @@ public class Parser {
 
 		print_stuff();
 
-		return(new Message(new String[] {prefix, command, params, server_name, nickname, user, host}));
+		return(new Message(prefix, command, params, server_name, nickname, user, host));
 
 	}
 
