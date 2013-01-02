@@ -157,8 +157,8 @@ public class Parser {
 		System.out.println("Params: \t'"+ params + "'");
 		System.out.println("Server_name: \t'" + server_name + "'");
 		System.out.println("Nickname: \t'" + nickname + "'");
-		System.out.println("User: \t'"+ user + "'");
-		System.out.println("Host: \t'"+host + "'");
+		System.out.println("User: \t\t'"+ user + "'");
+		System.out.println("Host: \t\t'"+host + "'");
 		System.out.println("Content: \t'"+content+"'");
 	}
 
@@ -168,124 +168,4 @@ public class Parser {
 	public static boolean isInit() {
 		return init;
 	}
-
-	/**
-	 * @param init the init to set
-	 */
-	public static void setInit(boolean init) {
-		Parser.init = init;
-	}
-
-	/**
-	 * @return the prefix_present
-	 */
-	public static boolean isPrefix_present() {
-		return prefix_present;
-	}
-
-	/**
-	 * @param prefix_present the prefix_present to set
-	 */
-	public static void setPrefix_present(boolean prefix_present) {
-		Parser.prefix_present = prefix_present;
-	}
-
-	/**
-	 * @return the prefix
-	 */
-	public static String getPrefix() {
-		return prefix;
-	}
-
-	/**
-	 * @param prefix the prefix to set
-	 */
-	public static void setPrefix(String prefix) {
-		Parser.prefix = prefix;
-	}
-
-	/**
-	 * @return the command
-	 */
-	public static String getCommand() {
-		return command;
-	}
-
-	/**
-	 * @param command the command to set
-	 */
-	public static void setCommand(String command) {
-		Parser.command = command;
-	}
-
-	/**
-	 * @return the params
-	 */
-	public static String getParams() {
-		return params;
-	}
-
-	/**
-	 * @param params the params to set
-	 */
-	public static void setParams(String params) {
-		Parser.params = params;
-	}
-
-	/**
-	 * @return the server_name
-	 */
-	public static String getServer_name() {
-		return server_name;
-	}
-
-	/**
-	 * @param server_name the server_name to set
-	 */
-	public static void setServer_name(String server_name) {
-		Parser.server_name = server_name;
-	}
-
-	/**
-	 * @return the nickname
-	 */
-	public static String getNickname() {
-		return nickname;
-	}
-
-	/**
-	 * @param nickname the nickname to set
-	 */
-	public static void setNickname(String nickname) {
-		Parser.nickname = nickname;
-	}
-
-	/**
-	 * @return the user
-	 */
-	public static String getUser() {
-		return user;
-	}
-
-	/**
-	 * @param user the user to set
-	 */
-	public static void setUser(String user) {
-		Parser.user = user;
-	}
-
-	/**
-	 * @return the host
-	 */
-	public static String getHost() {
-		return host;
-	}
-
-	/**
-	 * @param host the host to set
-	 */
-	public static void setHost(String host) {
-		Parser.host = host;
-	}
-
 }
