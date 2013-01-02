@@ -53,6 +53,9 @@ public class Parser {
 		System.out.println(DIVIDER);
 		
 		p.parse(new StringBuffer(":irc.ecsig.com 333 jared-test #jared Jared 1355349884"));
+		System.out.println(DIVIDER);
+		
+		p.parse(new StringBuffer("PING :irc.ecsig.com"));
 		
 	}
 
