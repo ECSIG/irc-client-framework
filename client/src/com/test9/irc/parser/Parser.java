@@ -43,12 +43,10 @@ public class Parser {
 		p.parse(new StringBuffer(":jared-test!jared-test@ecsig-A1B219D7.ri.ri.cox.net JOIN :#jared"));
 		System.out.println(divider);
 
-		p.parse(new StringBuffer(":Jared!Jared@ecsig-A1B219D7.ri.ri.cox.net PRIVMSG #jircc " +
-				":ermahgard"));
+		p.parse(new StringBuffer(":Jared!Jared@ecsig-A1B219D7.ri.ri.cox.net PRIVMSG #jircc :ermahgard"));
 		System.out.println(divider);
 
-		p.parse(new StringBuffer(":Jared!Jared@ecsig-A1B219D7.ri.ri.cox.net PRIVMSG #jared" +
-				" ::here is a message: with : some :semicolons:::"));
+		p.parse(new StringBuffer(":Jared!Jared@ecsig-A1B219D7.ri.ri.cox.net PRIVMSG #jared ::here is a message: with : some :semicolons:::"));
 		System.out.println(divider);
 
 		p.parse(new StringBuffer("255 jared-test :I have 12 clients and 1 servers"));
@@ -84,26 +82,26 @@ public class Parser {
 
 		if(prefix_present)
 		{
-			prefix = message.substring(0, message.indexOf(" ")+1);
+			prefix = message.substring(0, message.indexOf(" "));
 			message.delete(0, message.indexOf(" ") + 1);
 			parse_prefix(prefix);
 		}
 
 		command = message.substring(0, message.indexOf(" "));
 		message.delete(0, message.indexOf(" "));
-		
-		if(message.indexOf(" :") > 0)
+
+		if(message.indexOf(" :") >= 0)
 		{
-			params = message.substring(0, message.indexOf(" :"));
+			params = message.substring(0, message.indexOf(" :")).trim();
 			message.delete(0, message.indexOf(" :") + 2);
 			
 			content = message.substring(0, message.length());
 		}
 		else
 		{
-			params = message.substring(0, message.length());
+			params = message.substring(0, message.length()).trim();
 			message.delete(0, message.length());
-			content = null;
+			content = "";
 		}
 
 		print_stuff();
