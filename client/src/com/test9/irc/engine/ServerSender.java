@@ -10,7 +10,7 @@ public class ServerSender extends Thread implements Runnable {
 
 	private String output = null;
 	BufferedWriter out = null;
-	private BufferedReader in = null;
+//	private BufferedReader in = null;
 	private Server server;
 
 	ServerSender(Server server) throws IOException {
@@ -18,7 +18,7 @@ public class ServerSender extends Thread implements Runnable {
 
 		this.out = new BufferedWriter(new OutputStreamWriter(server.getSocket()
 				.getOutputStream()));
-		this.in = new BufferedReader(new InputStreamReader(System.in));
+//		this.in = new BufferedReader(new InputStreamReader(System.in));
 
 		// Begin initial chat with server.
 		this.out.write("USER " + server.getLogin() + " 0 * JavaIRC"
@@ -34,25 +34,31 @@ public class ServerSender extends Thread implements Runnable {
 			//System.out.println("in serversender run()");
 			//System.out.println(server.isConnected);
 			if (server.isConnected == true) {
-				joinChannel();
+				System.out.println("Server is connected!!!!!!!");
+				
+//				joinChannel();
 				return;
 			}
+			
 			try {
-				this.output = this.in.readLine();
+//				this.output = this.in.readLine();
 
 				if (this.output != null) {
-
-					if (this.output.toLowerCase().startsWith("ping ")) {
-						this.ping_pong(this.output.substring(5));
-					} else {
-						// Print the raw line received by the bot.
-						System.out.println("ServerSender outgoing message: "
-								+ this.in);
-
-						this.sendMessage(this.output);
-
-						this.out.flush();
-					}
+				System.out.println("SENDING MESSAGE: " + output);
+					this.out.write(output);
+					this.out.flush();
+					this.output = null;
+//					if (this.output.toLowerCase().startsWith("ping ")) {
+//						this.ping_pong(this.output.substring(5));
+//					} else {
+//						// Print the raw line received by the bot.
+//						System.out.println("ServerSender outgoing message: "
+//								+ this.in);
+//
+//						this.sendMessage(this.output);
+//
+//						this.out.flush();
+//					}
 				}
 			} catch (IOException e) {
 				e.getStackTrace();
@@ -67,48 +73,52 @@ public class ServerSender extends Thread implements Runnable {
 			Thread.yield();
 		}
 	}
-
-	synchronized public void joinChannel() {
-		//TODO: This currently only joins the initial channels.
-		for(Channel c : server.getChannels()){
-		System.out.println("Attempting to JOIN " + c);
-		try {
-			this.out.write("JOIN " + c.getName() + Server.RNtail);
-			this.out.flush();
-			
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		}
-		server.isConnected = false;
+	
+	public void setOutput(String output){
+		this.output = output;
 	}
 
-	synchronized public void ping_pong(String server) {
-		try {
-			System.out.println("PONG " + server);
-			this.out.write("PONG " + server + Server.RNtail);
-			this.out.flush();
-		} catch (IOException e) {
-			e.getStackTrace();
-		}
-	}
+//	synchronized public void joinChannel() {
+//		//TODO: This currently only joins the initial channels.
+//		for(Channel c : server.getChannels()){
+//		System.out.println("Attempting to JOIN " + c);
+//		try {
+//			this.out.write("JOIN " + c.getName() + Server.RNtail);
+//			this.out.flush();
+//			
+//
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		}
+//		server.isConnected = false;
+//	}
 
-	synchronized public void sendMessage(String message) {
-		//TODO: Sends message to each channel in server.getChannels().
-		for(Channel c : server.getChannels()){
-		System.out.println("[Message]" + message);
-		if (message != null) {
-			try {
-				this.out.write("PRIVMSG " + c.getName() + " :" + message
-						+ Server.RNtail);
-				this.out.flush();
+//	synchronized public void ping_pong(String server) {
+//		try {
+//			System.out.println("PONG " + server);
+//			this.out.write("PONG " + server + Server.RNtail);
+//			this.out.flush();
+//		} catch (IOException e) {
+//			e.getStackTrace();
+//		}
+//	}
 
-			} catch (IOException e) {
-				e.getStackTrace();
-			}
-		}
-		}
-	}
+//	synchronized public void sendMessage(String message) {
+//		//TODO: Sends message to each channel in server.getChannels().
+//		for(Channel c : server.getChannels()){
+//		System.out.println("[Message]" + message);
+//		if (message != null) {
+//			try {
+//				this.out.write("PRIVMSG " + c.getName() + " :" + message
+//						+ Server.RNtail);
+//				this.out.flush();
+//
+//			} catch (IOException e) {
+//				e.getStackTrace();
+//			}
+//		}
+//		}
+//	}
 }

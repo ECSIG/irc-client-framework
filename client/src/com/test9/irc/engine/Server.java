@@ -6,11 +6,15 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 
+import com.test9.irc.parser.Parser;
+
 public class Server {
 
     private final String name;
     private ServerListener listener;
     private ServerSender sender;
+    private InputManager inputManager;
+    private OutputManager outputManager;
     private Socket socket = null;
     public boolean isConnected = false;
 
@@ -36,22 +40,20 @@ public class Server {
         try {
             // Connect directly to the IRC server.
             this.socket = new Socket(this.server, 6667);
+            
+            this.inputManager = new InputManager(this);
+            this.outputManager = new OutputManager(this);
+           
+            System.out.println("========ADDDING OBSERVER=======");
+            inputManager.addObserver(outputManager);
 
-            // Apply socket to the sender and listener.
-            this.listener = new ServerListener(this);
-            this.sender = new ServerSender(this);        
-
-            // Start the listener thread
-            this.listener.start();
-            if (DEBUGGING) {
-                System.out.println("Listener started.");
-            }
-
-            // Start the sender thread
-            this.sender.start();
-            if (DEBUGGING) {
-                System.out.println("Sender started.");
-            }
+            ConsoleInput consoleInput = new ConsoleInput(this);
+            Thread t = new Thread(consoleInput);
+            t.start();
+            
+            consoleInput.addObserver(outputManager);
+            
+            
 
         } catch (UnknownHostException e) {
             System.err.println("Host not recognized: " + this.server);
@@ -69,10 +71,14 @@ public class Server {
 			sender.run();
     }
 
-    public void sendPong(String msg) {
-        if (this.sender != null) {
-            this.sender.ping_pong(msg);
-        }
+//    public void sendPong(String msg) {
+//        if (this.sender != null) {
+//            this.sender.ping_pong(msg);
+//        }
+//    }
+    
+    public InputManager getInputManager(){
+    	return inputManager;
     }
 
     public List<Channel> getChannels() {
