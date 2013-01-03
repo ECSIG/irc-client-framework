@@ -116,12 +116,12 @@ public class OutputFactory {
 	 * @param message
 	 * @return privmsg
 	 */
-	private String make_privmsg(String msgtarget, String message)
+	private String make_privmsg(String message, String target)
 	{
 		String privmsg = "";
 
 		privmsg.concat("PRIVMSG ");
-		privmsg.concat(msgtarget);
+		privmsg.concat(target);
 		privmsg.concat(" :");
 		privmsg.concat(message);
 
