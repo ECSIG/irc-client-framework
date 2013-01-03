@@ -45,7 +45,7 @@ public class OutputFactory {
 		init = true;
 	}
 
-	public String format_message(String message, String target)
+	public String formatMessage(String message, String target)
 	{
 		String formatted_message = "";
 
@@ -66,7 +66,7 @@ public class OutputFactory {
 				formatted_message = message.substring(1, message.length());
 				break;
 			case "/QUIT":
-				formatted_message = make_quit(message);
+				formatted_message = makeQuit(message);
 				break;
 			}
 		} 
@@ -75,7 +75,7 @@ public class OutputFactory {
 		{
 			switch (message.substring(0, message.indexOf(" "))) {
 			case "PRIVMSG": case "SQUERY": case "AWAY":
-				formatted_message = make_privmsg(message, target);
+				formatted_message = makePrivmsg(message, target);
 				break;
 			}
 		}
@@ -116,7 +116,7 @@ public class OutputFactory {
 	 * @param message
 	 * @return privmsg
 	 */
-	private String make_privmsg(String message, String target)
+	private String makePrivmsg(String message, String target)
 	{
 		String privmsg = "";
 
@@ -134,7 +134,7 @@ public class OutputFactory {
 	 * @param message
 	 * @return
 	 */
-	private String make_quit(String message)
+	private String makeQuit(String message)
 	{
 		String quit_message = "";
 

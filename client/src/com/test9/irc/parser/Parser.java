@@ -87,7 +87,7 @@ public class Parser {
 		{
 			prefix = message.substring(0, message.indexOf(" "));
 			message.delete(0, message.indexOf(" ") + 1);
-			parse_prefix(prefix);
+			parsePrefix(prefix);
 		}
 
 		command = message.substring(0, message.indexOf(" "));
@@ -117,7 +117,7 @@ public class Parser {
 	 * 
 	 * @param prefix
 	 */
-	private void parse_prefix(String prefix)
+	private void parsePrefix(String prefix)
 	{
 		String split_prefix[] = prefix.split("[!@ ]");
 		if(split_prefix.length == 3) {
