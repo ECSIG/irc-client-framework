@@ -107,7 +107,7 @@ public class Parser {
 			content = "";
 		}
 
-		print_stuff();
+		printStuff();
 
 		return(new Message(prefix, command, params, serverName, nickname, user, host, content));
 
@@ -153,7 +153,7 @@ public class Parser {
 	/**
 	 * 
 	 */
-	private void print_stuff()
+	private void printStuff()
 	{
 		System.out.println("Prefix: \t'" + prefix + "'");
 		System.out.println("Command: \t'" + command + "'");

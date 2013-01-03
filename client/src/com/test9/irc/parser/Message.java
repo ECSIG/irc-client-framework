@@ -5,19 +5,19 @@ public class Message {
 	private String prefix = "";
 	private String command = "";
 	private String params = "";
-	private String server_name = "";
+	private String serverName = "";
 	private String nickname = "";
 	private String user = "";
 	private String host = "";
 	private String content = "";
 	
 	public Message(String prefix, String command, String params, 
-			String server_name, String nickname, String user, String  host, String content)
+			String serverName, String nickname, String user, String  host, String content)
 	{ 
 		this.prefix = prefix;
 		this.command = command;
 		this.params = params;
-		this.server_name = server_name;
+		this.serverName = serverName;
 		this.nickname = nickname;
 		this.user = user;
 		this.host = host;
@@ -69,15 +69,15 @@ public class Message {
 	/**
 	 * @return the server_name
 	 */
-	public String getServer_name() {
-		return server_name;
+	public String getServerName() {
+		return serverName;
 	}
 
 	/**
 	 * @param server_name the server_name to set
 	 */
-	public void setServer_name(String server_name) {
-		this.server_name = server_name;
+	public void setServerName(String server_name) {
+		this.serverName = server_name;
 	}
 
 	/**
