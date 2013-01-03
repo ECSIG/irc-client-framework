@@ -194,7 +194,7 @@ public class ChatWindow extends JFrame implements ComponentListener,
      */
     synchronized public void keyPressed(KeyEvent arg0) {
         if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-            serverSender.sendMessage(inputField.getText());
+          //  serverSender.sendMessage(inputField.getText());
             outputFields.get(0).getTextArea()
                     .append("<Me> " + inputField.getText() + "\n");
             inputField.setText("");
