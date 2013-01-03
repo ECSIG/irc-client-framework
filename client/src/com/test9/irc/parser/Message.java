@@ -13,7 +13,7 @@ public class Message {
 	
 	public Message(String prefix, String command, String params, 
 			String server_name, String nickname, String user, String  host, String content)
-	{
+	{ 
 		this.prefix = prefix;
 		this.command = command;
 		this.params = params;

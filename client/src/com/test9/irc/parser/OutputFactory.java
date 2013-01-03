@@ -47,7 +47,7 @@ public class OutputFactory {
 
 	public String formatMessage(String message, String target)
 	{
-		String formatted_message = "";
+		String formattedMessage = "";
 
 		if(message.startsWith("/"))
 		{
@@ -63,10 +63,10 @@ public class OutputFactory {
 			case "/REHASH": case "/DIE": case "/RESTART":
 			case "/SUMMON": case "/USERS": case "/ISON":
 			case "/JOIN": case "/PART": case "/PONG":
-				formatted_message = message.substring(1, message.length());
+				formattedMessage = message.substring(1, message.length());
 				break;
 			case "/QUIT":
-				formatted_message = makeQuit(message);
+				formattedMessage = makeQuit(message);
 				break;
 			}
 		} 
@@ -75,7 +75,7 @@ public class OutputFactory {
 		{
 			switch (message.substring(0, message.indexOf(" "))) {
 			case "PRIVMSG": case "SQUERY": case "AWAY":
-				formatted_message = makePrivmsg(message, target);
+				formattedMessage = makePrivmsg(message, target);
 				break;
 			}
 		}
@@ -105,7 +105,7 @@ public class OutputFactory {
 		case "USERHOST":	
 		}*/
 
-		return formatted_message;
+		return formattedMessage;
 
 	}
 
@@ -136,12 +136,12 @@ public class OutputFactory {
 	 */
 	private String makeQuit(String message)
 	{
-		String quit_message = "";
+		String quitMessage = "";
 
-		quit_message.concat("QUIT :");
-		quit_message.concat(message);
+		quitMessage.concat("QUIT :");
+		quitMessage.concat(message);
 
-		return quit_message;
+		return quitMessage;
 	}
 
 

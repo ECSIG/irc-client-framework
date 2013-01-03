@@ -17,11 +17,11 @@ package com.test9.irc.parser;
 public class Parser {
 
 	private static boolean init = false;
-	private static boolean prefix_present = false;
+	private static boolean prefixPresent = false;
 	private static String prefix = "";
 	private static String command = "";
 	private static String params = "";
-	private static String server_name = "";
+	private static String serverName = "";
 	private static String nickname = "";
 	private static String user = "";
 	private static String host = "";
@@ -79,11 +79,11 @@ public class Parser {
 
 		if(message.substring(0,1).equals(":"))
 		{
-			prefix_present = true;
+			prefixPresent = true;
 			message.delete(0, 1);
 		}
 
-		if(prefix_present)
+		if(prefixPresent)
 		{
 			prefix = message.substring(0, message.indexOf(" "));
 			message.delete(0, message.indexOf(" ") + 1);
@@ -109,7 +109,7 @@ public class Parser {
 
 		print_stuff();
 
-		return(new Message(prefix, command, params, server_name, nickname, user, host, content));
+		return(new Message(prefix, command, params, serverName, nickname, user, host, content));
 
 	}
 
@@ -119,19 +119,19 @@ public class Parser {
 	 */
 	private void parsePrefix(String prefix)
 	{
-		String split_prefix[] = prefix.split("[!@ ]");
-		if(split_prefix.length == 3) {
-			nickname = split_prefix[0];
-			user = split_prefix[1];
-			host = split_prefix[2];
+		String splitPrefix[] = prefix.split("[!@ ]");
+		if(splitPrefix.length == 3) {
+			nickname = splitPrefix[0];
+			user = splitPrefix[1];
+			host = splitPrefix[2];
 		}
-		else if(split_prefix.length == 2)
+		else if(splitPrefix.length == 2)
 		{
-			nickname = split_prefix[0];
-			host = split_prefix[1];
+			nickname = splitPrefix[0];
+			host = splitPrefix[1];
 		}
 		else
-			server_name = split_prefix[0];	
+			serverName = splitPrefix[0];	
 	}
 
 	/**
@@ -139,11 +139,11 @@ public class Parser {
 	 */
 	private void reset_parser()
 	{
-		prefix_present = false;
+		prefixPresent = false;
 		prefix = "";
 		command = "";
 		params = "";
-		server_name = "";
+		serverName = "";
 		nickname = "";
 		user = "";
 		host = "";
@@ -158,7 +158,7 @@ public class Parser {
 		System.out.println("Prefix: \t'" + prefix + "'");
 		System.out.println("Command: \t'" + command + "'");
 		System.out.println("Params: \t'"+ params + "'");
-		System.out.println("Server_name: \t'" + server_name + "'");
+		System.out.println("Server_name: \t'" + serverName + "'");
 		System.out.println("Nickname: \t'" + nickname + "'");
 		System.out.println("User: \t\t'"+ user + "'");
 		System.out.println("Host: \t\t'"+host + "'");
