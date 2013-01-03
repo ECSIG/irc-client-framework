@@ -51,7 +51,7 @@ public class OutputFactory {
 
 		if(message.startsWith("/"))
 		{
-			String command = message.substring(0, message.indexOf(" "));
+			String command = message.substring(1, message.indexOf(" "));
 
 			switch(command) {
 			case "/PASS": case "/NICK": case "/OPER":
