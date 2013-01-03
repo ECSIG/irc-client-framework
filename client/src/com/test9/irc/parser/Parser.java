@@ -75,7 +75,7 @@ public class Parser {
 	 */
 	public Message parse(StringBuffer message)
 	{
-		reset_parser();
+		resetParser();
 
 		if(message.substring(0,1).equals(":"))
 		{
@@ -137,7 +137,7 @@ public class Parser {
 	/**
 	 * 
 	 */
-	private void reset_parser()
+	private void resetParser()
 	{
 		prefixPresent = false;
 		prefix = "";
