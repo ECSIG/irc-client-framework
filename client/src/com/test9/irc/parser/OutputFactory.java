@@ -1,12 +1,22 @@
 package com.test9.irc.parser;
 
 /**
- * 
+ * Creates properly formatted string that will be readable by an IRC server.
+ * Refer to http://tools.ietf.org/html/rfc2812#section-3.3 for proper use of
+ * messages and commands.
  * @author Jared Patton
  *
  */
 public class OutputFactory {
+
 	private static boolean init = false;
+
+	final private static String commands[] = 
+		{"/PASS", "/NICK", "/OPER", "/INVITE", "/MOTD", "/LUSERS", "/VERSION", "/STATS", "/LINKS",
+		"/TIME", "/CONNECT", "/TRACE", "/ADMIN", "/INFO", "/WHO", "/WHOIS", "/WHOWAS", "/PING",
+		"/REHASH", "/DIE", "/RESTART", "/SUMMON", "/USERS", "/ISON", "/JOIN", "/PART", "/PONG",
+		"/MODE", "/USER", "/SERVICE", "/SQUIT", "/TOPIC", "/NAMES", "/LIST", "/KICK", "/NOTICE",
+		"/AWAY", "/SQUERY", "/SERVLIST", "/USERHOST", "/ERROR", "/QUIT"};
 
 	public OutputFactory() {
 		init = true;
@@ -15,62 +25,43 @@ public class OutputFactory {
 	public String formatMessage(String message, String target)
 	{
 		String formattedMessage = "";
+		boolean validCommand = false;
+		String command = "";
 
 		if(message.startsWith("/"))
 		{
-			String command = message.substring(1, message.indexOf(" "));
+			command = message.substring(0, message.indexOf(" "));
+			int i = 0;
 
-			switch(command) {
-			case "/PASS": case "/NICK": case "/OPER":
-			case "/INVITE": case "/MOTD": case "/LUSERS":
-			case "/VERSION": case "/STATS": case "/LINKS":
-			case "/TIME": case "/CONNECT": case "/TRACE":
-			case "/ADMIN": case "/INFO": case "/WHO":
-			case "/WHOIS": case "/WHOWAS": case "/PING":
-			case "/REHASH": case "/DIE": case "/RESTART":
-			case "/SUMMON": case "/USERS": case "/ISON":
-			case "/JOIN": case "/PART": case "/PONG":
-				formattedMessage = message.substring(1, message.length());
-				break;
-			case "/QUIT":
-				formattedMessage = makeQuit(message);
-				break;
+			while (!validCommand && i < commands.length - 1)
+			{
+				if(command.equals(commands[i]))
+				{
+					validCommand = true;
+				}
+
+				i++;
+			}
+
+			if(validCommand)
+			{
+				if(command.equals("/QUIT"))
+					formattedMessage = makeQuit(message);
+				else
+					formattedMessage = message.substring(1, message.length());
 			}
 		} 
-
 		else 
 		{
-			switch (message.substring(0, message.indexOf(" "))) {
-			case "PRIVMSG": case "SQUERY": case "AWAY":
-				formattedMessage = makePrivmsg(message, target);
-				break;
-			}
+			formattedMessage = makePrivmsg(message, target);
 		}
 
-		/*	
-			case "USER":
-				//formatted_message = make_user()
-			case "MODE":
-			case "SERVICE":
-		 * 
+		//	case "KILL": be included
+		//	The RFC has no syntactical information about this currently.
 
-		case "SQUIT":
-			//case "MODE":
-			//TODO check difference in modes
-		case "TOPIC":
-		case "NAMES":
-		case "LIST":
-		case "KICK":
-
-		case "NOTICE":
-		case "SERVLIST":
-			//TODO should case "KILL": be included
-
-			break;
-			//TODO look into this shiz case "ERROR":
-		case "WALLOPS":
-		case "USERHOST":	
-		}*/
+		//	case "WALLOPS":
+		//	This does not need to be included and looks like it should not be 
+		//	as described in the RFC.
 
 		return formattedMessage;
 
@@ -95,7 +86,7 @@ public class OutputFactory {
 		return privmsg;
 
 	}	
-	
+
 	/**
 	 * Makes a quit message for when the user quits.
 	 * @param message
