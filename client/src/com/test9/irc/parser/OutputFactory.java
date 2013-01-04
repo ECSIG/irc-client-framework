@@ -22,6 +22,44 @@ public class OutputFactory {
 		init = true;
 	}
 
+	/**
+	 * Use this method to create a formatted message that can be sent to the server.
+	 * 
+	 * All command formats should be manually written by the user after referring to
+	 * http://tools.ietf.org/html/rfc2812#section-3.3 
+	 * 
+	 * In case of a PRIVMSG a target will be needed form the caller.
+	 * 
+	 * The target should be in the format (taken from RFC2812)
+	 * 
+	 * :Angel!wings@irc.org PRIVMSG Wiz: Are you receiving this message?
+	 * 	^ Message to Angel to Wiz.
+	 * 
+	 * PRIVMSG Angel :yes I'm receiving it! 
+	 * ^ privmsg to Angel
+	 * 
+	 * PRIVMSG jto@tolsun.oulu.fi : Hello ! 
+	 * ^ privmsg to a user jto on server tolsun.oulu.fi
+	 * 
+	 * PRIVMSG kalt%millenium.stealth.net@irc.stealth.net :Are you a frog?
+	 * 	^ Sends a message to kalt on server irc.stealth.net who is connected to host millenium.stealth.net
+	 * 
+	 * PRIVMSG kalt%millenium.stealth.net :Do you like cheese?
+	 * 	^ message to a user on the local server with username of 'kalt' and connected from the host millenium.stealth.net
+	 * 
+	 * PRIVMSG Wiz!jto@tolsum.oulu.fi :Hello !
+	 * 	^ message to the user with nickname Wiz who is connected from the host tolsum.oulu.fi and has the username "jto"
+	 * 
+	 * PRIVMSG $*.fi :Server tolsun.oulu.fi rebooting
+	 * 	^ Message to everyone on a server which has a name mathing *.fi
+	 * 
+	 * PRIVMSG #*.edu :NSFNet is undergoing work, expect interruptions
+	 * 	^ Message to all users who come from a host which has a name matching *.edu
+	 * 
+	 * @param message
+	 * @param target
+	 * @return
+	 */
 	public String formatMessage(String message, String target)
 	{
 		String formattedMessage = "";
