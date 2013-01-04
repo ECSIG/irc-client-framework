@@ -11,6 +11,17 @@ public class Message {
 	private String host = "";
 	private String content = "";
 	
+	/**
+	 * Constructs a new message from the information that was received by the parser.
+	 * @param prefix
+	 * @param command
+	 * @param params
+	 * @param serverName
+	 * @param nickname
+	 * @param user
+	 * @param host
+	 * @param content
+	 */
 	public Message(String prefix, String command, String params, 
 			String serverName, String nickname, String user, String  host, String content)
 	{ 

@@ -28,6 +28,11 @@ public class Parser {
 	private static String content = "";
 	final private static String DIVIDER = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
 
+	/**
+	 * Used to trouble shoot messages believed to not be parsing properly.
+	 * Messages must be manually added.
+	 * @param args
+	 */
 	public static void main(String[] args)
 	{
 		Parser p = new Parser();
@@ -70,6 +75,10 @@ public class Parser {
 
 	/**
 	 * 
+	 * This should be the only method that is called in this class. This is used
+	 * to parse raw output from the server and will return a new message
+	 * from the parsed information. Necessary information should be read
+	 * from the returned message. 
 	 * @param message
 	 * @return
 	 */
@@ -114,7 +123,7 @@ public class Parser {
 	}
 
 	/**
-	 * 
+	 * Parses a prefix if one is present.
 	 * @param prefix
 	 */
 	private void parsePrefix(String prefix)
@@ -135,7 +144,7 @@ public class Parser {
 	}
 
 	/**
-	 * 
+	 * Resets the parser so it can parse a new message.
 	 */
 	private void resetParser()
 	{
@@ -151,7 +160,7 @@ public class Parser {
 	}
 
 	/**
-	 * 
+	 * Used for debugging. Can print out information the parser has.
 	 */
 	private void printStuff()
 	{
