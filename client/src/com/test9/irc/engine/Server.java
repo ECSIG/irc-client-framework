@@ -6,12 +6,9 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 
-import com.test9.irc.parser.Parser;
-
 public class Server {
 
     private final String name;
-    private ServerListener listener;
     private ServerSender sender;
     private InputManager inputManager;
     private OutputManager outputManager;
@@ -70,12 +67,6 @@ public class Server {
     		System.out.println("Sending Initial MESSAGE");
 			sender.run();
     }
-
-//    public void sendPong(String msg) {
-//        if (this.sender != null) {
-//            this.sender.ping_pong(msg);
-//        }
-//    }
     
     public InputManager getInputManager(){
     	return inputManager;

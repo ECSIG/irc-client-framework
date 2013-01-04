@@ -6,7 +6,6 @@ import java.util.List;
 
 public class UserList {
 
-    private static final long serialVersionUID = 1L;
     private boolean userArrayListInit = false;
     private final List<User> userAList;
 
