@@ -3,8 +3,8 @@ package com.test9.irc.engine;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
-
 import com.test9.irc.parser.Message;
+import com.test9.irc.parser.OutputFactory;
 
 public class OutputManager implements Observer {
 
@@ -13,7 +13,7 @@ public class OutputManager implements Observer {
 
 	public OutputManager(Server server) {
 		this.server = server;
-
+		
 		try {
 			this.sender = new ServerSender(server);
 		} catch (IOException e) {
@@ -28,7 +28,9 @@ public class OutputManager implements Observer {
 		System.out.println("Sender started.");
 	}
 
-	@Override
+	/**
+	 * This method is used to send a message to the server.
+	 */
 	public void update(Observable arg0, Object arg1) {
 		if (arg1 instanceof Message) {
 			Message m = ((Message) arg1);

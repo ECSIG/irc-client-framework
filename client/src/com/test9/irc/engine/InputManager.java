@@ -2,7 +2,6 @@ package com.test9.irc.engine;
 
 import java.io.IOException;
 import java.util.Observable;
-
 import com.test9.irc.parser.Message;
 import com.test9.irc.parser.Parser;
 
