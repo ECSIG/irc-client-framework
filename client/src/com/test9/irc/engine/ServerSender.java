@@ -28,7 +28,6 @@ public class ServerSender extends Thread implements Runnable {
 		while (true) {
 			if (server.isConnected == true) {
 				System.out.println("Server is connected!!!!!!!");
-
 				return;
 			}
 

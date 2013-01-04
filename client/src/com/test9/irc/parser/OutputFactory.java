@@ -10,7 +10,8 @@ package com.test9.irc.parser;
 public class OutputFactory {
 
 	private static boolean init = false;
-
+	private static final String RNTAIL= "\r\n";
+	
 	final private static String commands[] = 
 		{"/PASS", "/NICK", "/OPER", "/INVITE", "/MOTD", "/LUSERS", "/VERSION", "/STATS", "/LINKS",
 		"/TIME", "/CONNECT", "/TRACE", "/ADMIN", "/INFO", "/WHO", "/WHOIS", "/WHOWAS", "/PING",
@@ -93,6 +94,8 @@ public class OutputFactory {
 		{
 			formattedMessage = makePrivmsg(message, target);
 		}
+		
+		formattedMessage += RNTAIL;
 
 		//	case "KILL": be included
 		//	The RFC has no syntactical information about this currently.
@@ -116,11 +119,12 @@ public class OutputFactory {
 	{
 		String privmsg = "";
 
-		privmsg.concat("PRIVMSG ");
-		privmsg.concat(target);
-		privmsg.concat(" :");
-		privmsg.concat(message);
-
+		privmsg += "PRIVMSG ";
+		privmsg += target;
+		privmsg += " :";
+		privmsg += message;
+		privmsg += RNTAIL;
+		
 		return privmsg;
 
 	}	
@@ -134,8 +138,9 @@ public class OutputFactory {
 	{
 		String quitMessage = "";
 
-		quitMessage.concat("QUIT :");
-		quitMessage.concat(message);
+		quitMessage += "QUIT :";
+		quitMessage += message;
+		quitMessage += RNTAIL;
 
 		return quitMessage;
 	}
