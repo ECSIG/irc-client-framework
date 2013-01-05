@@ -11,14 +11,15 @@ public class ServerSender extends Thread implements Runnable {
 	//	private BufferedReader in = null;
 	private Server server;
 
+	private static final String RNTAIL = "\r\n";
 	ServerSender(Server server) throws IOException {
 		this.server = server;
 
 		this.out = new BufferedWriter(new OutputStreamWriter(server.getSocket()
 				.getOutputStream()));
 		this.out.write("USER " + server.getLogin() + " 0 * JavaIRC"
-				+ Server.RNtail);
-		this.out.write("NICK " + server.getNick() + Server.RNtail);
+				+ RNTAIL);
+		this.out.write("NICK " + server.getNick() + RNTAIL);
 
 		this.out.flush();
 	}

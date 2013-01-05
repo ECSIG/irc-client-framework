@@ -21,11 +21,6 @@ public class Server {
 
     String nick = this.botRef + "";
     String login = this.botRef + "jared-test";
-    
-    /**
-     * This should not be located in server, but it will for now.
-     */
-    public static final String RNtail = "\r\n";
 
     // The channel which the bot will join.
     private List<Channel> channels = Arrays.asList(new Channel("#jircc"), new Channel("#jared"));

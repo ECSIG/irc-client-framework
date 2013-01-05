@@ -3,8 +3,7 @@ package com.test9.irc.engine;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
-import com.test9.irc.parser.Message;
-import com.test9.irc.parser.OutputFactory;
+import com.test9.irc.parser.*;
 
 public class OutputManager implements Observer {
 
@@ -64,6 +63,7 @@ public class OutputManager implements Observer {
 		for (Channel c : server.getChannels()) {
 			System.out.println("Attempting to JOIN " + c);
 			sender.setOutput(oF.formatMessage("/JOIN " + c.getName(), null));
+			sender.setOutput(oF.formatMessage("/JOIN " + "#help", null));
 		}
 		server.isConnected = false;
 	}
@@ -72,7 +72,7 @@ public class OutputManager implements Observer {
 		// TODO: Sends message to each channel in server.getChannels().
 		for (@SuppressWarnings("unused") Channel c : server.getChannels()) {
 			if (message != null) {
-				sender.setOutput(oF.formatMessage(message, "#ecsig"));
+				sender.setOutput(oF.formatMessage(message, "#help"));
 			}
 		}
 	}
