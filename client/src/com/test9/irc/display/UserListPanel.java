@@ -3,28 +3,33 @@ package com.test9.irc.display;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-public class OutputPanel extends JPanel{
+public class UserListPanel extends JPanel implements Comparator<String>{
 
 	private static final long serialVersionUID = 3331343604631033360L;
 	private static Rectangle boundsRect;
 	private String channel;
 	private JScrollPane scrollPane;
-	private JTextArea textArea; 
+	private JTextArea textArea;
+	private ArrayList<String> nicks = new ArrayList<String>();
 
 
-	public OutputPanel(String channel, int width, int height)
+	public UserListPanel(String channel, int width, int height)
 	{
+
 		setLayout(new BorderLayout());
 		boundsRect = new Rectangle(0,0,width,height);
 		setBounds(boundsRect);
 		textArea = new JTextArea();
-		textArea.setEditable(true);
-		textArea.setLineWrap(true);
+		textArea.setEditable(false);
+		textArea.setLineWrap(false);
 		scrollPane = new JScrollPane(textArea);
 		add(scrollPane, BorderLayout.CENTER);
 
@@ -35,10 +40,33 @@ public class OutputPanel extends JPanel{
 	 * This is used to append a new string to a channels text area.
 	 * @param message
 	 */
-	public void newMessage(String message)
+	public void newUser(String user)
 	{
-		textArea.append(message+"\r\n");
-		textArea.setCaretPosition(textArea.getText().length());
+		nicks.add(user+"\r\n");
+		nicks.trimToSize();
+		Collections.sort(nicks);
+		textArea.setText("");
+		for(String s : nicks)
+			textArea.append(s);
+	}
+	
+	public void deleteUser(String user)
+	{
+		boolean found = false;
+		int index = 0;
+		
+		while(!found)
+		{
+			if(nicks.get(index).equals(user))
+				nicks.remove(index);
+		}
+		
+		nicks.trimToSize();
+		Collections.sort(nicks);
+		
+		textArea.setText("");
+		for(String s : nicks)
+			textArea.append(s);
 	}
 	
 	public static void setNewBounds(int width, int height)
@@ -115,6 +143,12 @@ public class OutputPanel extends JPanel{
 	 * @param bounds the bounds to set
 	 */
 	public static void setBoundsRec(Rectangle bounds) {
-		OutputPanel.boundsRect = bounds;
+		UserListPanel.boundsRect = bounds;
+	}
+
+
+	@Override
+	public int compare(String o1, String o2) {
+		return(o1.toLowerCase().compareTo(o2.toLowerCase()));
 	}
 }
