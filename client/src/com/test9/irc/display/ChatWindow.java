@@ -15,10 +15,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -33,15 +33,13 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 	private Dimension defaultWindowSize = new Dimension(
 			KIT.getScreenSize().width / 2, KIT.getScreenSize().height / 2);
 	private static final int DEFAULTSIDEBARWIDTH = 150;
-	private static JTextArea outputField = new JTextArea();
 	private static JList<String> userList = new JList<String>();
 	private static JTree channelList = new JTree();
 	private static JTextField inputField = new JTextField();
-	private static JPanel outputInputPanel = new JPanel(new BorderLayout());
-	private static JScrollPane chatOutputScrollPane;
+	private static JPanel centerJPanel = new JPanel(new BorderLayout());
 	private static JSplitPane sidePanelSplitPane, listsAndOutputSplitPane;
-	private static JLayeredPane userLists, outputFields;
-
+	private static JLayeredPane userListsLayeredPane, outputFieldLayeredPane;
+	private static OutputPanel testOutputPanel;
 
 	public ChatWindow()
 	{
@@ -53,18 +51,22 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(true);
 
-		userLists = new JLayeredPane();
-		
-		
-		outputField.setLineWrap(true);
-		outputField.setEditable(false);
-		chatOutputScrollPane = new JScrollPane(outputField);
-		outputField.setText("Chat OUTPUT JTEXTAREA");
+		userListsLayeredPane = new JLayeredPane();
 
+		
+		outputFieldLayeredPane = new JLayeredPane();
+		
+		testOutputPanel = new OutputPanel("test", 
+				(int)outputFieldLayeredPane.getSize().getWidth(),
+				(int) outputFieldLayeredPane.getSize().getHeight());
+		
+		outputFieldLayeredPane.add(testOutputPanel);
 
+		
 		inputField.addKeyListener(this);
-		outputInputPanel.add(chatOutputScrollPane);
-		outputInputPanel.add(inputField, BorderLayout.SOUTH);
+		centerJPanel.add(outputFieldLayeredPane);
+		centerJPanel.add(inputField, BorderLayout.SOUTH);
+
 
 		userList.setBackground(Color.GRAY);
 
@@ -76,11 +78,12 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 
 
 		listsAndOutputSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				outputInputPanel, sidePanelSplitPane);
+				centerJPanel, sidePanelSplitPane);
 		listsAndOutputSplitPane.setDividerSize(SPLITPANEWIDTH);
 
 		listsAndOutputSplitPane.setDividerLocation(this.getPreferredSize().width-DEFAULTSIDEBARWIDTH);
-
+		
+		listsAndOutputSplitPane.addPropertyChangeListener(this);
 
 		add(listsAndOutputSplitPane, BorderLayout.CENTER);
 
@@ -117,19 +120,24 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 		if(e.getKeyCode() == KeyEvent.VK_ENTER)
 		{
 			System.out.println("Message was sent");
-			outputField.append(inputField.getText()+"\r\n");
+			//outputField.append(inputField.getText()+"\r\n");
 			inputField.setText("");
-			outputField.setCaretPosition(outputField.getText().length());
+			//outputField.setCaretPosition(outputField.getText().length());
+			OutputPanel.setNewBounds(outputFieldLayeredPane.getHeight(), outputFieldLayeredPane.getWidth());
+//			OutputPanel.setHeight(outputFieldLayeredPane.getHeight());
+//			OutputPanel.setWidth(outputFieldLayeredPane.getWidth());
+			
 		}
 	}
+	
 
 
 	@Override
 	public void componentResized(ComponentEvent e) 
 	{
-		System.out.println("Component Resized");
 		sidePanelSplitPane.setDividerLocation((this.getHeight()/2)-20);
 		listsAndOutputSplitPane.setDividerLocation(this.getWidth()-DEFAULTSIDEBARWIDTH);
+		
 
 	}
 
@@ -171,7 +179,9 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-
+		System.out.println("Property changed");
+		System.out.println(evt.getPropertyName());
+		System.out.println(outputFieldLayeredPane.getSize());
 	}
 
 }
