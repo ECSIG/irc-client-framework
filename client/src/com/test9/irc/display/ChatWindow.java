@@ -20,6 +20,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 
@@ -35,7 +36,8 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 	private static JTree channelTree = new JTree();
 	private static JTextField inputField = new JTextField();
 	private static JPanel centerJPanel = new JPanel(new BorderLayout());
-	private static JScrollPane treeScrollPane = new JScrollPane();
+	private static JPanel treePanel = new JPanel(new BorderLayout());
+	private static JScrollPane treeScrollPane;
 	private static JSplitPane sidePanelSplitPane, listsAndOutputSplitPane;
 	private static JLayeredPane userListsLayeredPane, outputFieldLayeredPane;
 	private static ArrayList<OutputPanel> outputPanels = new ArrayList<OutputPanel>();
@@ -66,15 +68,14 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 		centerJPanel.add(outputFieldLayeredPane);
 		centerJPanel.add(inputField, BorderLayout.SOUTH);
 
-		treeScrollPane.setBackground(Color.RED);
-		JPanel testPanel = new JPanel();
-		testPanel.setBackground(Color.BLUE);
-		testPanel.setBounds(0, 0, 50, 50);
-		treeScrollPane.add(testPanel);
-		//treeScrollPane.add(new JTree());
+		treeScrollPane = new JScrollPane(channelTree);
+		
+		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 
+		
 		sidePanelSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
-				userListsLayeredPane, testPanel);
+				userListsLayeredPane, treePanel);
+		
 		sidePanelSplitPane.setDividerSize(SPLITPANEWIDTH);
 		sidePanelSplitPane.setDividerLocation((this.getPreferredSize().height/2)-20);
 		sidePanelSplitPane.setContinuousLayout(true);
@@ -195,6 +196,8 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 		UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
 				userListsLayeredPane.getHeight());
 		
+		treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
+		
 		for(OutputPanel t : outputPanels)
 		{
 			t.setBounds(OutputPanel.getBoundsRec());
@@ -229,6 +232,8 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 			{
 				t.setBounds(UserListPanel.getBoundsRec());
 			}
+			treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
+
 		}
 		else if(evt.getSource() == sidePanelSplitPane)
 		{
@@ -239,6 +244,8 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 			{
 				t.setBounds(UserListPanel.getBoundsRec());
 			}
+			treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
+
 		}
 	}
 

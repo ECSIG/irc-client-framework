@@ -1,7 +1,6 @@
 package com.test9.irc.display;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +27,7 @@ public class UserListPanel extends JPanel implements Comparator<String>{
 		boundsRect = new Rectangle(0,0,width,height);
 		setBounds(boundsRect);
 		textArea = new JTextArea();
-		textArea.setEditable(false);
+		textArea.setEditable(true);
 		textArea.setLineWrap(false);
 		scrollPane = new JScrollPane(textArea);
 		add(scrollPane, BorderLayout.CENTER);

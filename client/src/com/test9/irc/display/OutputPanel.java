@@ -1,7 +1,6 @@
 package com.test9.irc.display;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Rectangle;
 
 import javax.swing.JPanel;
