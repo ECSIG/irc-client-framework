@@ -115,10 +115,10 @@ TreeSelectionListener {
 		treeScrollPane = new JScrollPane(channelTree);
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 		expandTree();
-		
+
 		joinServer(initialServerName);
 	}
-	
+
 	private void expandTree()
 	{
 		for (int i = 0; i < channelTree.getRowCount(); i++) {
@@ -145,7 +145,21 @@ TreeSelectionListener {
 			newOutputPanel(server, channel);
 			newUserListPanel(server, channel);
 		}
-		
+
+	}
+
+	/**
+	 * Called when the user leaves a channel on a particular server.
+	 * @param server
+	 * @param channel
+	 */
+	public void leaveChannel(String server, String channel)
+	{
+		System.out.println("leaving channel");
+		System.out.println(findChannel(server,channel,0));
+		outputPanels.remove(findChannel(server, channel, 0));
+		userListPanels.remove(findChannel(server, channel, 1));
+		removeChannelNode(server, channel);
 	}
 
 	/**
@@ -159,6 +173,15 @@ TreeSelectionListener {
 	}
 
 	/**
+	 * Called when the user leaves a server.
+	 * @param server
+	 */
+	public void leaveServer(String server)
+	{
+		removeServerNode(server);
+	}
+
+	/**
 	 * Used to add the new channel node to the JTree channelTree.
 	 * @param server
 	 * @param channel
@@ -167,7 +190,7 @@ TreeSelectionListener {
 	{
 
 		expandTree();
-		
+
 		DefaultMutableTreeNode newChannelNode = new DefaultMutableTreeNode(channel);
 		newChannelNode.setAllowsChildren(false);
 		TreePath path = channelTree.getNextMatch(server, 0, Position.Bias.Forward);
@@ -178,6 +201,16 @@ TreeSelectionListener {
 		expandTree();
 
 
+	}
+
+	private void removeChannelNode(String server, String channel)
+	{
+		System.out.println("removechannelnode");
+//		TreePath path = channelTree.getNextMatch(server, 0, Position.Bias.Forward);
+//		DefaultMutableTreeNode removeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+//
+//		model.removeNodeFromParent(removeNode);
+//		expandTree();
 	}
 
 	/**
@@ -193,6 +226,16 @@ TreeSelectionListener {
 		expandTree();
 
 
+	}
+	
+	private void removeServerNode(String server)
+	{
+		System.out.println("removeServerNode");
+		TreePath path = channelTree.getNextMatch(server, 0, Position.Bias.Forward);
+		DefaultMutableTreeNode removeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+
+		model.removeNodeFromParent(removeNode);
+		expandTree();
 	}
 
 	/**
@@ -269,41 +312,42 @@ TreeSelectionListener {
 
 	/**
 	 * Finds the appropriate channel for a given action.
+	 * 
 	 * @param server
 	 * @param channel
-	 * @param type
+	 * @param type (0 is for outputPanels, 1 for userListPanels)
 	 * @return
 	 */
 	private int findChannel(String server, String channel, int type)
 	{
+		System.out.println("findChannel called");
 		boolean found = false;
 		int i = 0;
 		if(type==0)
 		{
+			System.out.println("type0");
 			while(!found && i < outputPanels.size())
 			{
-				if(outputPanels.get(i).getServer().equals(server))
+				System.out.println(i);
+				if(outputPanels.get(i).getServer().equals(server) && 
+						outputPanels.get(i).getChannel().equals(channel))
 				{
-					if(outputPanels.get(i).getChannel().equals(channel))
-					{
-						found = true;
-						return i;
-					}
-				}	
-				else i++;
+					found = true;
+					return i;
+				}
+				else 
+					i++;
 			}
 		}
 		else if (type==1)
 		{
 			while(!found && i < userListPanels.size())
 			{
-				if(userListPanels.get(i).getServer().equals(server))
+				if(userListPanels.get(i).getServer().equals(server) && 
+						userListPanels.get(i).getChannel().equals(channel))
 				{
-					if(userListPanels.get(i).getChannel().equals(channel))
-					{
-						found = true;
-						return i;
-					}
+					found = true;
+					return i;
 				}	
 				else i++;
 			}
@@ -391,14 +435,15 @@ TreeSelectionListener {
 	 */
 	public void valueChanged(TreeSelectionEvent e) {
 		System.out.println("treeValueChanged");
-		
+
 		activeChannel = channelTree.getSelectionPath().getLastPathComponent().toString();
 		activeServer = channelTree.getSelectionPath().getParentPath().getLastPathComponent().toString();
 
 		if(activeServer.equals("root"))
 			activeServer = activeChannel;
-		
+
 		System.out.println(activeChannel+","+activeServer);
+
 		for(OutputPanel t : outputPanels)
 		{
 			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))

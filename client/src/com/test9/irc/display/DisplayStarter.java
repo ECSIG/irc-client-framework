@@ -10,7 +10,8 @@ public class DisplayStarter {
 		cw.joinServer("server2");
 		cw.joinChannel("server1", "chan1", false);
 		cw.joinChannel("server2", "channel1", false);
-		
+		cw.leaveChannel("server2", "channel1");
+		cw.leaveServer("server2");
 		
 	}
 
