@@ -13,6 +13,7 @@ import java.awt.event.WindowStateListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
@@ -26,6 +27,8 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.Position;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -156,7 +159,6 @@ TreeSelectionListener {
 	public void leaveChannel(String server, String channel)
 	{
 		System.out.println("leaving channel");
-		System.out.println(findChannel(server,channel,0));
 		outputPanels.remove(findChannel(server, channel, 0));
 		userListPanels.remove(findChannel(server, channel, 1));
 		removeChannelNode(server, channel);
@@ -195,7 +197,6 @@ TreeSelectionListener {
 		newChannelNode.setAllowsChildren(false);
 		TreePath path = channelTree.getNextMatch(server, 0, Position.Bias.Forward);
 		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
-
 		model.insertNodeInto(newChannelNode, parentNode, parentNode.getChildCount());
 		channelTree.expandPath(path);
 		expandTree();
@@ -205,12 +206,25 @@ TreeSelectionListener {
 
 	private void removeChannelNode(String server, String channel)
 	{
-		System.out.println("removechannelnode");
-//		TreePath path = channelTree.getNextMatch(server, 0, Position.Bias.Forward);
-//		DefaultMutableTreeNode removeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
-//
-//		model.removeNodeFromParent(removeNode);
-//		expandTree();
+		System.out.println("removeChannelNode");
+		for (Object node : Collections.list(root.children()))
+		{
+			DefaultMutableTreeNode serverNode = (DefaultMutableTreeNode) node;
+
+			if(serverNode.getUserObject().toString().trim().equals(server.trim())) {
+				for (Object channelNode : Collections.list(serverNode.children()))
+				{
+					DefaultMutableTreeNode checkChannelNode = (DefaultMutableTreeNode) channelNode;
+					
+					if(checkChannelNode.getUserObject().toString().trim().equals(channel.trim()))
+					{
+						checkChannelNode.removeFromParent();
+					}
+				}
+			}
+		}
+		model.reload();
+		expandTree();
 	}
 
 	/**
@@ -227,14 +241,15 @@ TreeSelectionListener {
 
 
 	}
-	
+
 	private void removeServerNode(String server)
 	{
 		System.out.println("removeServerNode");
 		TreePath path = channelTree.getNextMatch(server, 0, Position.Bias.Forward);
+		System.out.println("pathserver"+path);
 		DefaultMutableTreeNode removeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
-
 		model.removeNodeFromParent(removeNode);
+		model.reload();
 		expandTree();
 	}
 
@@ -320,15 +335,12 @@ TreeSelectionListener {
 	 */
 	private int findChannel(String server, String channel, int type)
 	{
-		System.out.println("findChannel called");
 		boolean found = false;
 		int i = 0;
 		if(type==0)
 		{
-			System.out.println("type0");
 			while(!found && i < outputPanels.size())
 			{
-				System.out.println(i);
 				if(outputPanels.get(i).getServer().equals(server) && 
 						outputPanels.get(i).getChannel().equals(channel))
 				{
