@@ -1,6 +1,8 @@
 package com.test9.irc.display;
 
+import com.test9.irc.engine.OutputManager;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
@@ -27,8 +29,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.Position;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -55,10 +55,11 @@ TreeSelectionListener {
 	private static String activeChannel;
 	private static DefaultTreeModel model;
 	private static DefaultMutableTreeNode root;
+	private static OutputManager outputManager;
 
-
-	public ChatWindow(String initialServerName)
+	public ChatWindow(String initialServerName, OutputManager outputManager)
 	{
+		ChatWindow.outputManager = outputManager;
 		setTitle(initialServerName);
 		addComponentListener(this);
 		addWindowFocusListener(this);
@@ -71,6 +72,7 @@ TreeSelectionListener {
 
 
 		outputFieldLayeredPane = new JLayeredPane();
+		outputFieldLayeredPane.setBackground(Color.BLACK);
 		userListsLayeredPane = new JLayeredPane();
 		initializeChannelTree(initialServerName);
 
@@ -204,6 +206,7 @@ TreeSelectionListener {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void removeChannelNode(String server, String channel)
 	{
 		System.out.println("removeChannelNode");
@@ -371,8 +374,7 @@ TreeSelectionListener {
 	public void keyReleased(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_ENTER)
 		{
-			System.out.println("Message was sent");
-			inputField.setText("");
+			outputManager.sendMessage(activeServer, activeChannel, inputField.getText());
 		}
 	}
 

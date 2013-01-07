@@ -1,6 +1,9 @@
 package com.test9.irc.display;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.Rectangle;
 
 import javax.swing.JPanel;
@@ -14,6 +17,8 @@ public class OutputPanel extends JPanel{
 	private String channel, server;
 	private JScrollPane scrollPane;
 	private JTextArea textArea; 
+	@SuppressWarnings("unused")
+	private static Font font = new Font("Lucida Grande", Font.PLAIN, 12);
 
 
 	public OutputPanel(String server, String channel, int width, int height)
@@ -23,9 +28,14 @@ public class OutputPanel extends JPanel{
 		setLayout(new BorderLayout());
 		boundsRect = new Rectangle(0,0,width,height);
 		setBounds(boundsRect);
+		setBackground(Color.BLACK);
 		textArea = new JTextArea();
+		textArea.setMargin(new Insets(5,5,5,5));
 		textArea.setEditable(true);
 		textArea.setLineWrap(true);
+		//textArea.setBackground(Color.BLACK);
+		//textArea.setForeground(Color.WHITE);
+		//textArea.setFont(font);
 		scrollPane = new JScrollPane(textArea);
 		add(scrollPane, BorderLayout.CENTER);
 

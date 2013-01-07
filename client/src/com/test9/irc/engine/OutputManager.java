@@ -77,4 +77,10 @@ public class OutputManager implements Observer {
 		}
 	}
 
+	public void sendMessage(String activeServer, String activeChannel,
+			String text) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

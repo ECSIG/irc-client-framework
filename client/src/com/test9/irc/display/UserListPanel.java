@@ -1,6 +1,9 @@
 package com.test9.irc.display;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +21,7 @@ public class UserListPanel extends JPanel implements Comparator<String>{
 	private JScrollPane scrollPane;
 	private JTextArea textArea;
 	private ArrayList<String> nicks = new ArrayList<String>();
+	private static Font font = new Font("Lucida Grande", Font.PLAIN, 12);
 
 
 	public UserListPanel(String server, String channel, int width, int height)
@@ -27,9 +31,14 @@ public class UserListPanel extends JPanel implements Comparator<String>{
 		setLayout(new BorderLayout());
 		boundsRect = new Rectangle(0,0,width,height);
 		setBounds(boundsRect);
+		setBackground(Color.BLACK);
 		textArea = new JTextArea();
+		textArea.setMargin(new Insets(5,5,5,5));
 		textArea.setEditable(true);
-		textArea.setLineWrap(false);
+		textArea.setLineWrap(true);
+//		textArea.setBackground(Color.BLACK);
+//		textArea.setForeground(Color.WHITE);
+		textArea.setFont(font);
 		scrollPane = new JScrollPane(textArea);
 		add(scrollPane, BorderLayout.CENTER);
 
