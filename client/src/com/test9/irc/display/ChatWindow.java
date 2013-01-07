@@ -113,8 +113,16 @@ TreeSelectionListener {
 		channelTree.addTreeSelectionListener(this);
 		treeScrollPane = new JScrollPane(channelTree);
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
-
+		expandTree();
+		
 		joinServer(initialServerName);
+	}
+	
+	private void expandTree()
+	{
+		for (int i = 0; i < channelTree.getRowCount(); i++) {
+			channelTree.expandRow(i);
+		}
 	}
 
 	/**
@@ -136,6 +144,7 @@ TreeSelectionListener {
 			newOutputPanel(server, channel);
 			newUserListPanel(server, channel);
 		}
+		
 	}
 
 	/**
@@ -162,9 +171,10 @@ TreeSelectionListener {
 
 		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
 
-		
 		model.insertNodeInto(newChannelNode, parentNode, parentNode.getChildCount());
 		channelTree.expandPath(path);
+		expandTree();
+
 
 	}
 
@@ -174,10 +184,13 @@ TreeSelectionListener {
 	 */
 	private void newServerNode(String server)
 	{
+		System.out.println("newServerNodeCalled");
 		DefaultMutableTreeNode newServerNode = new DefaultMutableTreeNode(server.trim());
 		newServerNode.setAllowsChildren(true);
 		root.add(newServerNode);
-		
+		expandTree();
+
+
 	}
 
 	/**
