@@ -109,6 +109,7 @@ TreeSelectionListener {
 		root = new DefaultMutableTreeNode("root");
 		model = new DefaultTreeModel(root);
 		channelTree = new JTree(model);
+		channelTree.setRootVisible(false);
 		channelTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		channelTree.addTreeSelectionListener(this);
 		treeScrollPane = new JScrollPane(channelTree);
@@ -165,10 +166,11 @@ TreeSelectionListener {
 	private void newChannelNode(String server, String channel)
 	{
 
+		expandTree();
+		
 		DefaultMutableTreeNode newChannelNode = new DefaultMutableTreeNode(channel);
 		newChannelNode.setAllowsChildren(false);
 		TreePath path = channelTree.getNextMatch(server, 0, Position.Bias.Forward);
-
 		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
 
 		model.insertNodeInto(newChannelNode, parentNode, parentNode.getChildCount());
@@ -184,10 +186,10 @@ TreeSelectionListener {
 	 */
 	private void newServerNode(String server)
 	{
-		System.out.println("newServerNodeCalled");
 		DefaultMutableTreeNode newServerNode = new DefaultMutableTreeNode(server.trim());
 		newServerNode.setAllowsChildren(true);
 		root.add(newServerNode);
+		model.reload();
 		expandTree();
 
 
@@ -388,9 +390,15 @@ TreeSelectionListener {
 	 * changes the channel that is selected.
 	 */
 	public void valueChanged(TreeSelectionEvent e) {
+		System.out.println("treeValueChanged");
+		
 		activeChannel = channelTree.getSelectionPath().getLastPathComponent().toString();
-		activeServer = channelTree.getSelectionPath().getPathComponent(0).toString();
+		activeServer = channelTree.getSelectionPath().getParentPath().getLastPathComponent().toString();
 
+		if(activeServer.equals("root"))
+			activeServer = activeChannel;
+		
+		System.out.println(activeChannel+","+activeServer);
 		for(OutputPanel t : outputPanels)
 		{
 			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
