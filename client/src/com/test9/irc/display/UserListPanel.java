@@ -14,15 +14,16 @@ public class UserListPanel extends JPanel implements Comparator<String>{
 
 	private static final long serialVersionUID = 3331343604631033360L;
 	private static Rectangle boundsRect;
-	private String channel;
+	private String channel, server;
 	private JScrollPane scrollPane;
 	private JTextArea textArea;
 	private ArrayList<String> nicks = new ArrayList<String>();
 
 
-	public UserListPanel(String channel, int width, int height)
+	public UserListPanel(String server, String channel, int width, int height)
 	{
-
+		this.server = server;
+		this.channel = channel;
 		setLayout(new BorderLayout());
 		boundsRect = new Rectangle(0,0,width,height);
 		setBounds(boundsRect);
@@ -149,5 +150,21 @@ public class UserListPanel extends JPanel implements Comparator<String>{
 	@Override
 	public int compare(String o1, String o2) {
 		return(o1.toLowerCase().compareTo(o2.toLowerCase()));
+	}
+
+
+	/**
+	 * @return the server
+	 */
+	public String getServer() {
+		return server;
+	}
+
+
+	/**
+	 * @param server the server to set
+	 */
+	public void setServer(String server) {
+		this.server = server;
 	}
 }

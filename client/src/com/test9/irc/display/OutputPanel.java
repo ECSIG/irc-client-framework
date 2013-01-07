@@ -11,13 +11,15 @@ public class OutputPanel extends JPanel{
 
 	private static final long serialVersionUID = 3331343604631033360L;
 	private static Rectangle boundsRect;
-	private String channel;
+	private String channel, server;
 	private JScrollPane scrollPane;
 	private JTextArea textArea; 
 
 
-	public OutputPanel(String channel, int width, int height)
+	public OutputPanel(String server, String channel, int width, int height)
 	{
+		this.server = server;
+		this.channel = channel;
 		setLayout(new BorderLayout());
 		boundsRect = new Rectangle(0,0,width,height);
 		setBounds(boundsRect);
@@ -115,5 +117,21 @@ public class OutputPanel extends JPanel{
 	 */
 	public static void setBoundsRec(Rectangle bounds) {
 		OutputPanel.boundsRect = bounds;
+	}
+
+
+	/**
+	 * @return the server
+	 */
+	public String getServer() {
+		return server;
+	}
+
+
+	/**
+	 * @param server the server to set
+	 */
+	public void setServer(String server) {
+		this.server = server;
 	}
 }

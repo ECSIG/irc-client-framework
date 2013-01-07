@@ -1,7 +1,6 @@
 package com.test9.irc.display;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
@@ -20,12 +19,19 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.text.Position;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 public class ChatWindow extends JFrame implements ComponentListener,
-KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
+KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
+TreeSelectionListener {
 
 	private static final long serialVersionUID = -6373704295052845871L;
 	private static final Toolkit KIT = Toolkit.getDefaultToolkit();
@@ -33,7 +39,7 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 	private Dimension defaultWindowSize = new Dimension(
 			KIT.getScreenSize().width / 2, KIT.getScreenSize().height / 2);
 	private static final int DEFAULTSIDEBARWIDTH = 150;
-	private static JTree channelTree = new JTree();
+	private static JTree channelTree;
 	private static JTextField inputField = new JTextField();
 	private static JPanel centerJPanel = new JPanel(new BorderLayout());
 	private static JPanel treePanel = new JPanel(new BorderLayout());
@@ -42,10 +48,15 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 	private static JLayeredPane userListsLayeredPane, outputFieldLayeredPane;
 	private static ArrayList<OutputPanel> outputPanels = new ArrayList<OutputPanel>();
 	private static ArrayList<UserListPanel> userListPanels = new ArrayList<UserListPanel>();
+	private static String activeServer;
+	private static String activeChannel;
+	private static DefaultTreeModel model;
+	private static DefaultMutableTreeNode root;
 
-	public ChatWindow()
+
+	public ChatWindow(String initialServerName)
 	{
-
+		setTitle(initialServerName);
 		addComponentListener(this);
 		addWindowFocusListener(this);
 		setPreferredSize(defaultWindowSize);
@@ -57,25 +68,19 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 
 
 		outputFieldLayeredPane = new JLayeredPane();
-		newOutputPanel("test"); //TODO this is Hardcode, make sure to remove upon implementation
-		outputFieldLayeredPane.add(outputPanels.get(0));//TODO this to^
-
 		userListsLayeredPane = new JLayeredPane();
-		newUserListPanel("test");
-		userListsLayeredPane.add(userListPanels.get(0));
+		initializeChannelTree(initialServerName);
+
 
 		inputField.addKeyListener(this);
 		centerJPanel.add(outputFieldLayeredPane);
 		centerJPanel.add(inputField, BorderLayout.SOUTH);
 
-		treeScrollPane = new JScrollPane(channelTree);
-		
-		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 
-		
+
 		sidePanelSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
 				userListsLayeredPane, treePanel);
-		
+
 		sidePanelSplitPane.setDividerSize(SPLITPANEWIDTH);
 		sidePanelSplitPane.setDividerLocation((this.getPreferredSize().height/2)-20);
 		sidePanelSplitPane.setContinuousLayout(true);
@@ -99,52 +104,162 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 		setVisible(true);
 	}
 
+	private void initializeChannelTree(String initialServerName)
+	{
+		root = new DefaultMutableTreeNode("root");
+		model = new DefaultTreeModel(root);
+		channelTree = new JTree(model);
+		channelTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		channelTree.addTreeSelectionListener(this);
+		treeScrollPane = new JScrollPane(channelTree);
+		treePanel.add(treeScrollPane, BorderLayout.CENTER);
+
+		joinServer(initialServerName);
+	}
+
+	/**
+	 * Must be called when a channel is joined on a particular server (or the server itself).
+	 * @param server
+	 * @param channel
+	 * @param isServer
+	 */
+	public void joinChannel(String server, String channel, boolean isServer)
+	{
+		if(!isServer)
+		{
+			newOutputPanel(server, channel);
+			newUserListPanel(server, channel);
+			newChannelNode(server, channel);
+		}
+		else
+		{
+			newOutputPanel(server, channel);
+			newUserListPanel(server, channel);
+		}
+	}
+
+	/**
+	 * Called when a server is joined. Updates the gui.
+	 * @param server
+	 */
+	public void joinServer(String server)
+	{
+		newServerNode(server);
+		joinChannel(server, server, true);
+	}
+
+	/**
+	 * Used to add the new channel node to the JTree channelTree.
+	 * @param server
+	 * @param channel
+	 */
+	private void newChannelNode(String server, String channel)
+	{
+
+		DefaultMutableTreeNode newChannelNode = new DefaultMutableTreeNode(channel);
+		newChannelNode.setAllowsChildren(false);
+		TreePath path = channelTree.getNextMatch(server, 0, Position.Bias.Forward);
+
+		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+
+		
+		model.insertNodeInto(newChannelNode, parentNode, parentNode.getChildCount());
+		channelTree.expandPath(path);
+
+	}
+
+	/**
+	 * Used to add a new servers parent node.
+	 * @param server
+	 */
+	private void newServerNode(String server)
+	{
+		DefaultMutableTreeNode newServerNode = new DefaultMutableTreeNode(server.trim());
+		newServerNode.setAllowsChildren(true);
+		root.add(newServerNode);
+		
+	}
+
 	/**
 	 * This method must be called each time a channel or server is joined or connected to.
 	 * @param channel
 	 */
-	public void newOutputPanel(String channel)
+	public void newOutputPanel(String server, String channel)
 	{
-		outputPanels.add(new OutputPanel(channel, 
+		OutputPanel newOutputPanel = new OutputPanel(server, channel, 
 				(int) outputFieldLayeredPane.getSize().getWidth(),
-				(int) outputFieldLayeredPane.getSize().getHeight()));
+				(int) outputFieldLayeredPane.getSize().getHeight());
+
+		outputPanels.add(newOutputPanel);
+		outputFieldLayeredPane.add(newOutputPanel);
 	}
 
 	/**
 	 * This needs to be called alone with newOutputPanel
 	 */
-	public void newUserListPanel(String channel)
+	public void newUserListPanel(String server, String channel)
 	{
-		userListPanels.add(new UserListPanel(channel,
+		UserListPanel newUserListPanel = new UserListPanel(server, channel,
 				(int) userListsLayeredPane.getSize().getWidth(),
-				(int) userListsLayeredPane.getSize().getHeight()));
+				(int) userListsLayeredPane.getSize().getHeight());
+		userListPanels.add(newUserListPanel);
+		userListsLayeredPane.add(newUserListPanel);
 	}
 
-	public void newMessage(String channel, String message)
+	/**
+	 * This method is used to update the GUI with new messages from the server for a 
+	 * parcitular channel.
+	 * @param server
+	 * @param channel
+	 * @param message
+	 */
+	public void newMessage(String server, String channel, String message)
 	{
-		if(findChannel(channel,0) != -1)
-			outputPanels.get(findChannel(channel, 0)).newMessage(message);
+		if(findChannel(server, channel,0) != -1)
+			outputPanels.get(findChannel(server, channel, 0)).newMessage(message);
 		else
 			System.err.println("Cound not find channel to append message to.");
 	}
-	
-	public void newUser(String channel, String user)
+
+	/**
+	 * When a user joins a channel this method is used to update
+	 * the user list for that channel.
+	 * @param server
+	 * @param channel
+	 * @param user
+	 */
+	public void newUser(String server, String channel, String user)
 	{
-		if(findChannel(channel,1) != -1)
-			userListPanels.get(findChannel(channel,1)).newUser(user);
-		else
-			System.err.println("Cound not find channel to add new user.");
-	}
-	
-	public void deleteUser(String channel, String user)
-	{
-		if(findChannel(channel,1) != -1)
-			userListPanels.get(findChannel(channel,1)).deleteUser(user);
+		if(findChannel(server, channel,1) != -1)
+			userListPanels.get(findChannel(server, channel,1)).newUser(user);
 		else
 			System.err.println("Cound not find channel to add new user.");
 	}
 
-	private int findChannel(String channel, int type)
+	/**
+	 * When a user leaves a channel this method is used to 
+	 * update the user list for that channel.
+	 * @param server
+	 * @param channel
+	 * @param user
+	 */
+	public void deleteUser(String server, String channel, String user)
+	{
+		if(findChannel(server,channel,1) != -1)
+			userListPanels.get(findChannel(server, channel,1)).deleteUser(user);
+		else
+			System.err.println("Cound not find channel to add new user.");
+	}
+
+
+	/**
+	 * Finds the appropriate channel for a given action.
+	 * @param server
+	 * @param channel
+	 * @param type
+	 * @return
+	 */
+	private int findChannel(String server, String channel, int type)
 	{
 		boolean found = false;
 		int i = 0;
@@ -152,22 +267,28 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 		{
 			while(!found && i < outputPanels.size())
 			{
-				if(outputPanels.get(i).getChannel().equals(channel))
+				if(outputPanels.get(i).getServer().equals(server))
 				{
-					found = true;
-					return i;
+					if(outputPanels.get(i).getChannel().equals(channel))
+					{
+						found = true;
+						return i;
+					}
 				}	
 				else i++;
 			}
 		}
-		else if(type == 1)
+		else if (type==1)
 		{
 			while(!found && i < userListPanels.size())
 			{
-				if(userListPanels.get(i).getChannel().equals(channel))
+				if(userListPanels.get(i).getServer().equals(server))
 				{
-					found = true;
-					return i;
+					if(userListPanels.get(i).getChannel().equals(channel))
+					{
+						found = true;
+						return i;
+					}
 				}	
 				else i++;
 			}
@@ -195,9 +316,9 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 
 		UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
 				userListsLayeredPane.getHeight());
-		
+
 		treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
-		
+
 		for(OutputPanel t : outputPanels)
 		{
 			t.setBounds(OutputPanel.getBoundsRec());
@@ -247,6 +368,32 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 			treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
 
 		}
+	}
+
+	/**
+	 * Used by the tree to listen for when the user 
+	 * changes the channel that is selected.
+	 */
+	public void valueChanged(TreeSelectionEvent e) {
+		activeChannel = channelTree.getSelectionPath().getLastPathComponent().toString();
+		activeServer = channelTree.getSelectionPath().getPathComponent(0).toString();
+
+		for(OutputPanel t : outputPanels)
+		{
+			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
+				outputFieldLayeredPane.moveToBack(t);
+			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
+				outputFieldLayeredPane.moveToFront(t);
+		}
+
+		for(UserListPanel t : userListPanels)
+		{
+			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
+				userListsLayeredPane.moveToBack(t);
+			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
+				userListsLayeredPane.moveToFront(t);
+		}
+
 	}
 
 	@Override
@@ -303,4 +450,34 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener {
 		// TODO Auto-generated method stub
 
 	}
+
+	/**
+	 * @return the activeServer
+	 */
+	public static String getActiveServer() {
+		return activeServer;
+	}
+
+	/**
+	 * @param activeServer the activeServer to set
+	 */
+	public static void setActiveServer(String activeServer) {
+		ChatWindow.activeServer = activeServer;
+	}
+
+	/**
+	 * @return the activeChannel
+	 */
+	public static String getActiveChannel() {
+		return activeChannel;
+	}
+
+	/**
+	 * @param activeChannel the activeChannel to set
+	 */
+	public static void setActiveChannel(String activeChannel) {
+		ChatWindow.activeChannel = activeChannel;
+	}
+
+
 }
