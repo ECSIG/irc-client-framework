@@ -69,7 +69,14 @@ public class OutputFactory {
 
 		if(message.startsWith("/"))
 		{
-			command = message.substring(0, message.indexOf(" "));
+
+			try {
+				command = message.substring(0, message.indexOf(" "));
+			} catch (StringIndexOutOfBoundsException e) {
+				System.out.println("Probably not a vaild command");
+				command = message;
+			}
+
 			int i = 0;
 
 			while (!validCommand && i < commands.length - 1)

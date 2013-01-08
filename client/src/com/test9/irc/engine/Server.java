@@ -6,6 +6,8 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 
+import com.test9.irc.display.ChatWindow;
+
 public class Server {
 
     private final String name;
@@ -23,7 +25,7 @@ public class Server {
     String login = this.botRef + "jared-test";
 
     // The channel which the bot will join.
-    private List<Channel> channels = Arrays.asList(new Channel("#jircc"), new Channel("#jared"));
+    private List<Channel> channels = Arrays.asList(new Channel("#ecsig"));
 
     public Server(Boolean DEBUGGING, String name) {
         this.name = name;
@@ -90,4 +92,25 @@ public class Server {
     public String getLogin() {
         return this.login;
     }
+
+	/**
+	 * @return the outputManager
+	 */
+	public OutputManager getOutputManager() {
+		return outputManager;
+	}
+
+	/**
+	 * @param outputManager the outputManager to set
+	 */
+	public void setOutputManager(OutputManager outputManager) {
+		this.outputManager = outputManager;
+	}
+
+	/**
+	 * @param inputManager the inputManager to set
+	 */
+	public void setInputManager(InputManager inputManager) {
+		this.inputManager = inputManager;
+	}
 }

@@ -30,8 +30,8 @@ public class InputManager extends Observable {
 	
 	public void sendMessage(String s){
 		Message m = p.parse(new StringBuffer(s));
+
 		setChanged();
-		
 		notifyObservers(m);
 	}
 }

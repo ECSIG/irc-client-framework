@@ -5,6 +5,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
@@ -19,8 +21,12 @@ import java.util.Collections;
 
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -34,7 +40,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 public class ChatWindow extends JFrame implements ComponentListener,
 KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
-TreeSelectionListener {
+TreeSelectionListener, ActionListener {
 
 	private static final long serialVersionUID = -6373704295052845871L;
 	private static final Toolkit KIT = Toolkit.getDefaultToolkit();
@@ -56,9 +62,17 @@ TreeSelectionListener {
 	private static DefaultTreeModel model;
 	private static DefaultMutableTreeNode root;
 	private static OutputManager outputManager;
+	private static JMenuBar menuBar;
 
+	/**
+	 * Initializes a new ChatWindow
+	 * @param initialServerName
+	 * @param outputManager
+	 */
 	public ChatWindow(String initialServerName, OutputManager outputManager)
 	{
+		menuBar = initMenuBar();
+		setJMenuBar(menuBar);
 		ChatWindow.outputManager = outputManager;
 		setTitle(initialServerName);
 		addComponentListener(this);
@@ -107,6 +121,24 @@ TreeSelectionListener {
 		pack();
 		inputField.requestFocus();
 		setVisible(true);
+	}
+
+	private JMenuBar initMenuBar() {
+		JMenuBar newMenuBar = new JMenuBar();
+		JMenu fileMenu = new JMenu("File");
+		JMenu editMenu = new JMenu("Edit");
+
+		JMenuItem[] editMenuItems = {
+				new JMenuItem("Cut"), new JMenuItem("Copy"), 
+				new JMenuItem("Paste")
+		}; 
+
+		for(JMenuItem insert : editMenuItems)
+			editMenu.add(insert);
+
+		newMenuBar.add(editMenu);
+
+		return newMenuBar;
 	}
 
 	private void initializeChannelTree(String initialServerName)
@@ -391,6 +423,7 @@ TreeSelectionListener {
 		if(e.getKeyCode() == KeyEvent.VK_ENTER)
 		{
 			outputManager.sendMessage(activeServer, activeChannel, inputField.getText());
+			inputField.setText("");
 		}
 	}
 
@@ -576,6 +609,12 @@ TreeSelectionListener {
 	 */
 	public static void setActiveChannel(String activeChannel) {
 		ChatWindow.activeChannel = activeChannel;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 
 

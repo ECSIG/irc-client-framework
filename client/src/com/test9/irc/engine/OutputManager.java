@@ -72,15 +72,17 @@ public class OutputManager implements Observer {
 		// TODO: Sends message to each channel in server.getChannels().
 		for (@SuppressWarnings("unused") Channel c : server.getChannels()) {
 			if (message != null) {
-				sender.setOutput(oF.formatMessage(message, "#help"));
+				sender.setOutput(oF.formatMessage(message, "#ecsig"));
 			}
 		}
 	}
 
-	public void sendMessage(String activeServer, String activeChannel,
-			String text) {
-		// TODO Auto-generated method stub
-		
+	public void sendMessage(String activeServer, String activeChannel, String message) {
+		for (@SuppressWarnings("unused") Channel c : server.getChannels()) {
+			if (message != null) {
+				sender.setOutput(oF.formatMessage(message, "#ecsig"));
+			}
+		}
 	}
 
 }

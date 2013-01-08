@@ -31,11 +31,8 @@ public class OutputPanel extends JPanel{
 		setBackground(Color.BLACK);
 		textArea = new JTextArea();
 		textArea.setMargin(new Insets(5,5,5,5));
-		textArea.setEditable(true);
+		textArea.setEditable(false);
 		textArea.setLineWrap(true);
-		//textArea.setBackground(Color.BLACK);
-		//textArea.setForeground(Color.WHITE);
-		//textArea.setFont(font);
 		scrollPane = new JScrollPane(textArea);
 		add(scrollPane, BorderLayout.CENTER);
 
