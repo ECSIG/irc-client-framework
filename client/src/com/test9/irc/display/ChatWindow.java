@@ -182,6 +182,22 @@ TreeSelectionListener {
 	 */
 	public void leaveServer(String server)
 	{
+		for(OutputPanel oPanel: outputPanels)
+		{
+			if(oPanel.getServer().equals(server))
+			{
+				outputFieldLayeredPane.remove(oPanel);
+				outputPanels.remove(oPanel);
+			}
+		}
+		for(UserListPanel uLPanel: userListPanels)
+		{
+			if(uLPanel.getServer().equals(server))
+			{
+				userListsLayeredPane.remove(uLPanel);
+				userListPanels.remove(uLPanel);
+			}
+		}
 		removeServerNode(server);
 	}
 
@@ -218,7 +234,7 @@ TreeSelectionListener {
 				for (Object channelNode : Collections.list(serverNode.children()))
 				{
 					DefaultMutableTreeNode checkChannelNode = (DefaultMutableTreeNode) channelNode;
-					
+
 					if(checkChannelNode.getUserObject().toString().trim().equals(channel.trim()))
 					{
 						checkChannelNode.removeFromParent();
@@ -403,6 +419,8 @@ TreeSelectionListener {
 		{
 			t.setBounds(UserListPanel.getBoundsRec());
 		}
+
+		this.revalidate();
 	}
 
 	@Override
@@ -441,6 +459,7 @@ TreeSelectionListener {
 			treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
 
 		}
+		this.revalidate();
 	}
 
 	/**

@@ -29,6 +29,9 @@ public class DisplayStarter {
 
 		//cw.leaveServer("server2");
 		
+		//new NewServerWindow();
+		
+		
 	}
 
 }

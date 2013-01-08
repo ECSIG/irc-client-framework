@@ -35,7 +35,7 @@ public class UserListPanel extends JPanel implements Comparator<String>{
 		textArea = new JTextArea();
 		textArea.setMargin(new Insets(5,5,5,5));
 		textArea.setEditable(true);
-		textArea.setLineWrap(true);
+//		textArea.setLineWrap(true);
 //		textArea.setBackground(Color.BLACK);
 //		textArea.setForeground(Color.WHITE);
 		textArea.setFont(font);
