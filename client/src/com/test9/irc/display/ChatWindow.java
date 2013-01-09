@@ -75,6 +75,7 @@ TreeSelectionListener, ActionListener {
 	 */
 	public ChatWindow(String initialServerName, OutputManager outputManager)
 	{
+		addKeyListener(this);
 		menuBar = initMenuBar();
 		setJMenuBar(menuBar);
 		ChatWindow.outputManager = outputManager;
@@ -126,7 +127,142 @@ TreeSelectionListener, ActionListener {
 		inputField.requestFocus();
 		setVisible(true);
 	}
+	
+	/**
+	 * Called when a server is joined. 
+	 * Takes in the name of the server that is being joined.
+	 * @param server
+	 */
+	public void joinServer(String server)
+	{
+		newServerNode(server);
+		joinChannel(server, server, true);
+	}
 
+	/**
+	 * Called when the user leaves a server.
+	 * Takes in the name of the server that the user is leaving.
+	 * @param server
+	 */
+	public void leaveServer(String server)
+	{
+		for(OutputPanel oPanel: outputPanels)
+		{
+			if(oPanel.getServer().equals(server))
+			{
+				outputFieldLayeredPane.remove(oPanel);
+				outputPanels.remove(oPanel);
+			}
+		}
+		for(UserListPanel uLPanel: userListPanels)
+		{
+			if(uLPanel.getServer().equals(server))
+			{
+				userListsLayeredPane.remove(uLPanel);
+				userListPanels.remove(uLPanel);
+			}
+		}
+		removeServerNode(server);
+	}
+	
+	/**
+	 * Called when a user wishes to join a channel. This takes in
+	 * the name of the server that the channel is on, the name 
+	 * of the channel, and if being called outside of the ChatWindow
+	 * class, isServer should always be false.
+	 * @param server
+	 * @param channel
+	 * @param isServer
+	 */
+	public void joinChannel(String server, String channel, boolean isServer)
+	{
+		if(!isServer)
+		{
+			newOutputPanel(server, channel);
+			newUserListPanel(server, channel);
+			newChannelNode(server, channel);
+		}
+		else
+		{
+			newOutputPanel(server, channel);
+			newUserListPanel(server, channel);
+		}
+
+	}
+
+	/**
+	 * Called when the user leaves a channel on a particular server.
+	 * Takes in the server the channel is on, and the channel name.
+	 * @param server
+	 * @param channel
+	 */
+	public void leaveChannel(String server, String channel)
+	{
+		System.out.println("leaving channel");
+		outputPanels.remove(findChannel(server, channel, 0));
+		userListPanels.remove(findChannel(server, channel, 1));
+		removeChannelNode(server, channel);
+	}
+
+	/**
+	 * Called when a message is received. It takes in the server name, 
+	 * the channel name, and the actual message.
+	 * ChatWindow has a channel for the server connection itself that is of the same
+	 * name as the server. The server channel should receive messages that are command
+	 * responses.
+	 * @param server
+	 * @param channel
+	 * @param message
+	 */
+	public void newMessage(String server, String channel, String message)
+	{
+		if(findChannel(server, channel,0) != -1)
+			outputPanels.get(findChannel(server, channel, 0)).newMessage(message);
+		else
+			System.err.println("Cound not find channel to append message to.");
+	}
+
+	/**
+	 * Called when a new user joins a channel. Takes in the server name, 
+	 * the channel, and the user's nick.
+	 * @param server
+	 * @param channel
+	 * @param user
+	 */
+	public void newUser(String server, String channel, String user)
+	{
+		if(findChannel(server, channel,1) != -1)
+			userListPanels.get(findChannel(server, channel,1)).newUser(user);
+		else
+			System.err.println("Cound not find channel to add new user.");
+	}
+
+	/**
+	 * Called when a user leaves a channel. Takes in the server name, channel 
+	 * name, and the users nick.
+	 * @param server
+	 * @param channel
+	 * @param user
+	 */
+	public void deleteUser(String server, String channel, String user)
+	{
+		if(findChannel(server,channel,1) != -1)
+			userListPanels.get(findChannel(server, channel,1)).deleteUser(user);
+		else
+			System.err.println("Cound not find channel to add new user.");
+	}
+
+	/**
+	 * Used to send a message to a particular server and channel.
+	 */
+	public void keyReleased(KeyEvent e) {
+		if(e.getKeyCode() == KeyEvent.VK_ENTER)
+		{
+			outputManager.sendMessage(activeServer, activeChannel, inputField.getText());
+			inputField.setText("");
+		}
+	}
+	
 	private JMenuBar initMenuBar() {
 		JMenuBar newMenuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
@@ -170,76 +306,6 @@ TreeSelectionListener, ActionListener {
 		for (int i = 0; i < channelTree.getRowCount(); i++) {
 			channelTree.expandRow(i);
 		}
-	}
-
-	/**
-	 * Must be called when a channel is joined on a particular server (or the server itself).
-	 * @param server
-	 * @param channel
-	 * @param isServer
-	 */
-	public void joinChannel(String server, String channel, boolean isServer)
-	{
-		if(!isServer)
-		{
-			newOutputPanel(server, channel);
-			newUserListPanel(server, channel);
-			newChannelNode(server, channel);
-		}
-		else
-		{
-			newOutputPanel(server, channel);
-			newUserListPanel(server, channel);
-		}
-
-	}
-
-	/**
-	 * Called when the user leaves a channel on a particular server.
-	 * @param server
-	 * @param channel
-	 */
-	public void leaveChannel(String server, String channel)
-	{
-		System.out.println("leaving channel");
-		outputPanels.remove(findChannel(server, channel, 0));
-		userListPanels.remove(findChannel(server, channel, 1));
-		removeChannelNode(server, channel);
-	}
-
-	/**
-	 * Called when a server is joined. Updates the gui.
-	 * @param server
-	 */
-	public void joinServer(String server)
-	{
-		newServerNode(server);
-		joinChannel(server, server, true);
-	}
-
-	/**
-	 * Called when the user leaves a server.
-	 * @param server
-	 */
-	public void leaveServer(String server)
-	{
-		for(OutputPanel oPanel: outputPanels)
-		{
-			if(oPanel.getServer().equals(server))
-			{
-				outputFieldLayeredPane.remove(oPanel);
-				outputPanels.remove(oPanel);
-			}
-		}
-		for(UserListPanel uLPanel: userListPanels)
-		{
-			if(uLPanel.getServer().equals(server))
-			{
-				userListsLayeredPane.remove(uLPanel);
-				userListPanels.remove(uLPanel);
-			}
-		}
-		removeServerNode(server);
 	}
 
 	/**
@@ -340,51 +406,6 @@ TreeSelectionListener, ActionListener {
 		userListsLayeredPane.add(newUserListPanel);
 	}
 
-	/**
-	 * This method is used to update the GUI with new messages from the server for a 
-	 * parcitular channel.
-	 * @param server
-	 * @param channel
-	 * @param message
-	 */
-	public void newMessage(String server, String channel, String message)
-	{
-		if(findChannel(server, channel,0) != -1)
-			outputPanels.get(findChannel(server, channel, 0)).newMessage(message);
-		else
-			System.err.println("Cound not find channel to append message to.");
-	}
-
-	/**
-	 * When a user joins a channel this method is used to update
-	 * the user list for that channel.
-	 * @param server
-	 * @param channel
-	 * @param user
-	 */
-	public void newUser(String server, String channel, String user)
-	{
-		if(findChannel(server, channel,1) != -1)
-			userListPanels.get(findChannel(server, channel,1)).newUser(user);
-		else
-			System.err.println("Cound not find channel to add new user.");
-	}
-
-	/**
-	 * When a user leaves a channel this method is used to 
-	 * update the user list for that channel.
-	 * @param server
-	 * @param channel
-	 * @param user
-	 */
-	public void deleteUser(String server, String channel, String user)
-	{
-		if(findChannel(server,channel,1) != -1)
-			userListPanels.get(findChannel(server, channel,1)).deleteUser(user);
-		else
-			System.err.println("Cound not find channel to add new user.");
-	}
-
 
 	/**
 	 * Finds the appropriate channel for a given action.
@@ -428,14 +449,7 @@ TreeSelectionListener, ActionListener {
 		return -1;
 	}
 
-	@Override
-	public void keyReleased(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_ENTER)
-		{
-			outputManager.sendMessage(activeServer, activeChannel, inputField.getText());
-			inputField.setText("");
-		}
-	}
+
 
 	@Override
 	public void componentResized(ComponentEvent e) 
@@ -540,22 +554,19 @@ TreeSelectionListener, ActionListener {
 
 	@Override
 	public void windowStateChanged(WindowEvent e) {
-		// TODO Auto-generated method stub
-
+		System.out.println("windowStateChanged");
 	}
 
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-
+		System.out.println("keyTyped");
 	}
 
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-
+		System.out.println("keyPressed");
 	}
 
 
@@ -582,8 +593,7 @@ TreeSelectionListener, ActionListener {
 
 	@Override
 	public void windowGainedFocus(WindowEvent e) {
-		// TODO Auto-generated method stub
-
+		inputField.requestFocus();
 	}
 
 

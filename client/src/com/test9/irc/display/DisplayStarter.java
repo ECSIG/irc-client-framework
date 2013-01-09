@@ -9,6 +9,7 @@ public class DisplayStarter {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		
 		if(System.getProperty("os.name").equals("Mac OS X"))
 		{
 			try {
@@ -33,13 +34,13 @@ public class DisplayStarter {
 		cw.newUser("server2", "channel3", "chris");
 		cw.newUser("server2", "channel3", "scott");
 
-		cw.leaveChannel("server1", "channel1");
+		//cw.leaveChannel("server1", "channel1");
 		cw.newMessage("server2","channel2","does it work?");
-		cw.leaveChannel("server2", "channel4");
-		cw.newMessage("server2", "channel5", "server2channel5");
-		cw.newMessage("server1", "channel1", "server1channel1");
-		cw.newMessage("server2", "channel3", "server2channel3");
-		cw.newMessage("server2", "channel2", "server2channel2");
+		//cw.leaveChannel("server2", "channel4");
+		cw.newMessage("server2", "channel5", "Messages from server2, channel5");
+		cw.newMessage("server1", "channel1", "Messages from server1, channel1");
+		cw.newMessage("server2", "channel3", "Messages from server2, channel3");
+		cw.newMessage("server2", "channel2", "Messages from server2, channel2");
 
 		//cw.leaveServer("server2");
 		
