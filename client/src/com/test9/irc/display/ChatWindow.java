@@ -19,6 +19,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
@@ -33,6 +34,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.Position;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -62,6 +64,9 @@ TreeSelectionListener, ActionListener {
 	private static DefaultMutableTreeNode root;
 	private static OutputManager outputManager;
 	private static JMenuBar menuBar;
+	private static DefaultTreeCellRenderer treeRenderer;
+	private static ImageIcon closedArrow = new ImageIcon("images/arrowClosed.png");
+	private static ImageIcon openArrow = new ImageIcon("images/arrowOpen.png");
 
 	/**
 	 * Initializes a new ChatWindow
@@ -144,10 +149,15 @@ TreeSelectionListener, ActionListener {
 	{
 		root = new DefaultMutableTreeNode("root");
 		model = new DefaultTreeModel(root);
+		treeRenderer = new DefaultTreeCellRenderer();
+		treeRenderer.setClosedIcon(closedArrow);
+		treeRenderer.setOpenIcon(openArrow);
+		treeRenderer.setLeafIcon(null);
 		channelTree = new JTree(model);
 		channelTree.setRootVisible(false);
 		channelTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		channelTree.addTreeSelectionListener(this);
+		channelTree.setCellRenderer(treeRenderer);
 		treeScrollPane = new JScrollPane(channelTree);
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 		expandTree();
@@ -249,6 +259,7 @@ TreeSelectionListener, ActionListener {
 		model.insertNodeInto(newChannelNode, parentNode, parentNode.getChildCount());
 		channelTree.expandPath(path);
 		expandTree();
+		
 
 
 	}
