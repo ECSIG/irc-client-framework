@@ -47,7 +47,7 @@ public class ChatWindow extends Observable implements ComponentListener,
 KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
 TreeSelectionListener, ActionListener, Observer {
 
-	JFrame frame = new JFrame();
+	private static final JFrame frame = new JFrame();
 	private static final long serialVersionUID = -6373704295052845871L;
 	private static final Toolkit KIT = Toolkit.getDefaultToolkit();
 	private static final int SPLITPANEWIDTH = 4;
@@ -67,7 +67,7 @@ TreeSelectionListener, ActionListener, Observer {
 	private static String activeChannel;
 	private static DefaultTreeModel model;
 	private static DefaultMutableTreeNode root;
-//	private static OutputManager outputManager;
+	//	private static OutputManager outputManager;
 	private static JMenuBar menuBar;
 	private static DefaultTreeCellRenderer treeRenderer;
 	private static ImageIcon closedArrow = new ImageIcon("images/arrowClosed.png");
@@ -81,9 +81,9 @@ TreeSelectionListener, ActionListener, Observer {
 	public ChatWindow(String initialServerName)
 	{
 		frame.addKeyListener(this);
-		menuBar = initMenuBar();
+		//menuBar = initMenuBar();
 		frame.setJMenuBar(menuBar);
-//		ChatWindow.outputManager = outputManager;
+		//		ChatWindow.outputManager = outputManager;
 		frame.setTitle(initialServerName);
 		frame.addComponentListener(this);
 		frame.addWindowFocusListener(this);
@@ -132,7 +132,30 @@ TreeSelectionListener, ActionListener, Observer {
 		inputField.requestFocus();
 		frame.setVisible(true);
 	}
-	
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof InputManager && arg instanceof Message) {
+			Message m = ((Message) arg);
+			if(m.getCommand().equals("AUTH"))
+				joinServer(m.getServerName());
+			if(m.getCommand().equals("JOIN"))
+				joinChannel("irc.ecsig.com", m.getContent(), false);
+			if(m.getCommand().equals("PRIVMSG"))
+				newMessage("irc.ecsig.com", m.getParams(), "[ " + m.getNickname()+ " ] "+m.getContent());
+			if(m.getCommand().equals("353"))
+			{
+				String channel = m.getParams().substring(m.getParams().indexOf("= ")+2, m.getParams().length());
+				System.out.println(channel);
+				String users = m.getContent().trim();
+				String[] usersList = users.split(" ");
+				for(String u : usersList)
+					newUser(m.getServerName(), channel, u);
+			}
+			// TODO nick change
+		}
+	}
+
 	/**
 	 * Called when a server is joined. 
 	 * Takes in the name of the server that is being joined.
@@ -169,7 +192,7 @@ TreeSelectionListener, ActionListener, Observer {
 		}
 		removeServerNode(server);
 	}
-	
+
 	/**
 	 * Called when a user wishes to join a channel. This takes in
 	 * the name of the server that the channel is on, the name 
@@ -264,14 +287,15 @@ TreeSelectionListener, ActionListener, Observer {
 		if(e.getKeyCode() == KeyEvent.VK_ENTER)
 		{
 			String m = inputField.getText();
-	//		outputManager.sendMessage(activeServer, activeChannel, inputField.getText());
+			if(!m.startsWith("/"))
+				newMessage(activeServer, activeChannel, "[ me ] "+m);
 			setChanged();
 			notifyObservers(m);
-			
+
 			inputField.setText("");
 		}
 	}
-	
+
 	private JMenuBar initMenuBar() {
 		JMenuBar newMenuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
@@ -334,7 +358,7 @@ TreeSelectionListener, ActionListener, Observer {
 		model.insertNodeInto(newChannelNode, parentNode, parentNode.getChildCount());
 		channelTree.expandPath(path);
 		expandTree();
-		
+
 
 
 	}
@@ -569,13 +593,13 @@ TreeSelectionListener, ActionListener, Observer {
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		System.out.println("keyTyped");
+		//System.out.println("keyTyped");
 	}
 
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		System.out.println("keyPressed");
+		//System.out.println("keyPressed");
 	}
 
 
@@ -646,15 +670,6 @@ TreeSelectionListener, ActionListener, Observer {
 
 	}
 
-	@Override
-	public void update(Observable o, Object arg) {
-		if (o instanceof InputManager && arg instanceof Message) {
-			Message m = ((Message) arg);
-
-			newMessage(m.getServerName(), m.getParams(), m.getContent());
-		}
-		
-	}
 
 
 }
