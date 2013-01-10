@@ -1,6 +1,8 @@
 package com.test9.irc.display;
 
-import com.test9.irc.engine.OutputManager;
+import com.test9.irc.engine.InputManager;
+import com.test9.irc.parser.Message;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,6 +20,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -39,10 +43,11 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-public class ChatWindow extends JFrame implements ComponentListener,
+public class ChatWindow extends Observable implements ComponentListener,
 KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
-TreeSelectionListener, ActionListener {
+TreeSelectionListener, ActionListener, Observer {
 
+	JFrame frame = new JFrame();
 	private static final long serialVersionUID = -6373704295052845871L;
 	private static final Toolkit KIT = Toolkit.getDefaultToolkit();
 	private static final int SPLITPANEWIDTH = 4;
@@ -62,7 +67,7 @@ TreeSelectionListener, ActionListener {
 	private static String activeChannel;
 	private static DefaultTreeModel model;
 	private static DefaultMutableTreeNode root;
-	private static OutputManager outputManager;
+//	private static OutputManager outputManager;
 	private static JMenuBar menuBar;
 	private static DefaultTreeCellRenderer treeRenderer;
 	private static ImageIcon closedArrow = new ImageIcon("images/arrowClosed.png");
@@ -73,19 +78,19 @@ TreeSelectionListener, ActionListener {
 	 * @param initialServerName
 	 * @param outputManager
 	 */
-	public ChatWindow(String initialServerName, OutputManager outputManager)
+	public ChatWindow(String initialServerName)
 	{
-		addKeyListener(this);
+		frame.addKeyListener(this);
 		menuBar = initMenuBar();
-		setJMenuBar(menuBar);
-		ChatWindow.outputManager = outputManager;
-		setTitle(initialServerName);
-		addComponentListener(this);
-		addWindowFocusListener(this);
-		setPreferredSize(defaultWindowSize);
+		frame.setJMenuBar(menuBar);
+//		ChatWindow.outputManager = outputManager;
+		frame.setTitle(initialServerName);
+		frame.addComponentListener(this);
+		frame.addWindowFocusListener(this);
+		frame.setPreferredSize(defaultWindowSize);
 
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setResizable(true);
+		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+		frame.setResizable(true);
 
 		userListsLayeredPane = new JLayeredPane();
 
@@ -106,7 +111,7 @@ TreeSelectionListener, ActionListener {
 				userListsLayeredPane, treePanel);
 
 		sidePanelSplitPane.setDividerSize(SPLITPANEWIDTH);
-		sidePanelSplitPane.setDividerLocation((this.getPreferredSize().height/2)-20);
+		sidePanelSplitPane.setDividerLocation((frame.getPreferredSize().height/2)-20);
 		sidePanelSplitPane.setContinuousLayout(true);
 
 		listsAndOutputSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
@@ -114,18 +119,18 @@ TreeSelectionListener, ActionListener {
 		listsAndOutputSplitPane.setContinuousLayout(true);
 		listsAndOutputSplitPane.setDividerSize(SPLITPANEWIDTH);
 
-		listsAndOutputSplitPane.setDividerLocation(this.getPreferredSize().width-DEFAULTSIDEBARWIDTH);
+		listsAndOutputSplitPane.setDividerLocation(frame.getPreferredSize().width-DEFAULTSIDEBARWIDTH);
 
 
 		sidePanelSplitPane.addPropertyChangeListener(this);
 		listsAndOutputSplitPane.addPropertyChangeListener(this);
 
-		add(listsAndOutputSplitPane, BorderLayout.CENTER);
+		frame.add(listsAndOutputSplitPane, BorderLayout.CENTER);
 
 
-		pack();
+		frame.pack();
 		inputField.requestFocus();
-		setVisible(true);
+		frame.setVisible(true);
 	}
 	
 	/**
@@ -258,7 +263,11 @@ TreeSelectionListener, ActionListener {
 	public void keyReleased(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_ENTER)
 		{
-			outputManager.sendMessage(activeServer, activeChannel, inputField.getText());
+			String m = inputField.getText();
+	//		outputManager.sendMessage(activeServer, activeChannel, inputField.getText());
+			setChanged();
+			notifyObservers(m);
+			
 			inputField.setText("");
 		}
 	}
@@ -454,8 +463,8 @@ TreeSelectionListener, ActionListener {
 	@Override
 	public void componentResized(ComponentEvent e) 
 	{
-		sidePanelSplitPane.setDividerLocation((this.getHeight()/2)-20);
-		listsAndOutputSplitPane.setDividerLocation(this.getWidth()-DEFAULTSIDEBARWIDTH);
+		sidePanelSplitPane.setDividerLocation((frame.getHeight()/2)-20);
+		listsAndOutputSplitPane.setDividerLocation(frame.getWidth()-DEFAULTSIDEBARWIDTH);
 
 		OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
 				outputFieldLayeredPane.getHeight());
@@ -477,7 +486,7 @@ TreeSelectionListener, ActionListener {
 			t.setBounds(UserListPanel.getBoundsRec());
 		}
 
-		this.revalidate();
+		frame.revalidate();
 	}
 
 	@Override
@@ -516,7 +525,7 @@ TreeSelectionListener, ActionListener {
 			treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
 
 		}
-		this.revalidate();
+		frame.revalidate();
 	}
 
 	/**
@@ -635,6 +644,16 @@ TreeSelectionListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof InputManager && arg instanceof Message) {
+			Message m = ((Message) arg);
+
+			newMessage(m.getServerName(), m.getParams(), m.getContent());
+		}
+		
 	}
 
 

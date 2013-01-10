@@ -10,6 +10,6 @@ public class Engine {
     @SuppressWarnings("unused")
     public static void main(String[] args) throws Exception {
         Server jircc = new Server(DEBUGGING, "jircc");
-        ChatWindow chatWindow = new ChatWindow(jircc.getName(), jircc.getOutputManager());
+     //   ChatWindow chatWindow = new ChatWindow(jircc.getName());
     }
 }

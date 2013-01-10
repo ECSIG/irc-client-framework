@@ -37,16 +37,18 @@ public class Server {
             
             this.inputManager = new InputManager(this);
             this.outputManager = new OutputManager(this);
-           
-            System.out.println("========ADDDING OBSERVER=======");
+            ChatWindow cw = new ChatWindow(server);
+            
+            System.out.println("========ADDDING OBSERVERS=======");
             inputManager.addObserver(outputManager);
-
-            ConsoleInput consoleInput = new ConsoleInput(this);
-            Thread t = new Thread(consoleInput);
-            t.start();
+           	inputManager.addObserver(cw);
+        //    ConsoleInput consoleInput = new ConsoleInput(this);
+       //     Thread t = new Thread(consoleInput);
+      //      t.start();
             
-            consoleInput.addObserver(outputManager);
+      //      consoleInput.addObserver(outputManager);
             
+            cw.addObserver(outputManager);
             
 
         } catch (UnknownHostException e) {

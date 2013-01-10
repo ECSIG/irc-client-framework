@@ -21,7 +21,7 @@ public class DisplayStarter {
 
             
 		}
-		ChatWindow cw = new ChatWindow("server1", null);
+		ChatWindow cw = new ChatWindow("server1");
 		cw.joinServer("server2");
 		cw.joinChannel("server2", "channel2", false);
 		cw.joinChannel("server1", "channel1", false);

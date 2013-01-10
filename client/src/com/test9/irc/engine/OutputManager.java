@@ -31,9 +31,9 @@ public class OutputManager implements Observer {
 	/**
 	 * This method is used to send a message to the server.
 	 */
-	public void update(Observable arg0, Object arg1) {
-		if (arg1 instanceof Message) {
-			Message m = ((Message) arg1);
+	public void update(Observable o, Object arg) {
+		if (arg instanceof Message) {
+			Message m = ((Message) arg);
 
 			if (server.isConnected == true) {
 				System.out.println("Server is connected!!!!!!!");
@@ -45,20 +45,20 @@ public class OutputManager implements Observer {
 			if (m.getCommand().equals("PING")) {
 				pingPong(m.getContent());
 			}
-		} else if (!(arg0 instanceof InputManager)) {
-			if(arg1 instanceof String){
-				String s = ((String) arg1);
+		} else if (!(o instanceof InputManager)) {
+			if(arg instanceof String){
+				String s = ((String) arg);
 				sendMessage(s);
 			}
-		}
+		} 
 	}
 
-	public void pingPong(String server) {
+	private void pingPong(String server) {
 		//String output = "PONG " + server + Server.RNtail;
 		sender.setOutput(oF.formatMessage("/PONG " + server, null));
 	}
 
-	synchronized public void joinChannel() {
+	synchronized private void joinChannel() {
 		// TODO: This currently only joins the initial channels.
 		for (Channel c : server.getChannels()) {
 			System.out.println("Attempting to JOIN " + c);
@@ -68,7 +68,7 @@ public class OutputManager implements Observer {
 		server.isConnected = false;
 	}
 
-	synchronized public void sendMessage(String message) {
+	synchronized private void sendMessage(String message) {
 		// TODO: Sends message to each channel in server.getChannels().
 		for (@SuppressWarnings("unused") Channel c : server.getChannels()) {
 			if (message != null) {
@@ -77,7 +77,7 @@ public class OutputManager implements Observer {
 		}
 	}
 
-	public void sendMessage(String activeServer, String activeChannel, String message) {
+	private void sendMessage(String activeServer, String activeChannel, String message) {
 		for (@SuppressWarnings("unused") Channel c : server.getChannels()) {
 			if (message != null) {
 				sender.setOutput(oF.formatMessage(message, "#ecsig"));
