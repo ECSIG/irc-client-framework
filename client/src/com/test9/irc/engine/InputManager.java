@@ -30,7 +30,22 @@ public class InputManager extends Observable {
 	
 	public void sendMessage(String s){
 		Message m = p.parse(new StringBuffer(s));
-
+		
+//		if(m.getCommand().equals("AUTH"))
+//			joinServer(m.getServerName());
+//		if(m.getCommand().equals("JOIN"))
+//			joinChannel("irc.ecsig.com", m.getContent(), false);
+//		if(m.getCommand().equals("PRIVMSG"))
+//			newMessage("irc.ecsig.com", m.getParams(), "[ " + m.getNickname()+ " ] "+m.getContent());
+//		if(m.getCommand().equals("353"))
+//		{
+//			String channel = m.getParams().substring(m.getParams().indexOf("= ")+2, m.getParams().length());
+//			System.out.println(channel);
+//			String users = m.getContent().trim();
+//			String[] usersList = users.split(" ");
+//			for(String u : usersList)
+//				newUser(m.getServerName(), channel, u);
+//		}
 		setChanged();
 		notifyObservers(m);
 	}

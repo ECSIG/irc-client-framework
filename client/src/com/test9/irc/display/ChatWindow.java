@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
@@ -48,7 +47,6 @@ KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener,
 TreeSelectionListener, ActionListener, Observer {
 
 	private static final JFrame frame = new JFrame();
-	private static final long serialVersionUID = -6373704295052845871L;
 	private static final Toolkit KIT = Toolkit.getDefaultToolkit();
 	private static final int SPLITPANEWIDTH = 4;
 	private Dimension defaultWindowSize = new Dimension(
@@ -67,11 +65,8 @@ TreeSelectionListener, ActionListener, Observer {
 	private static String activeChannel;
 	private static DefaultTreeModel model;
 	private static DefaultMutableTreeNode root;
-	//	private static OutputManager outputManager;
 	private static JMenuBar menuBar;
 	private static DefaultTreeCellRenderer treeRenderer;
-	private static ImageIcon closedArrow = new ImageIcon("images/arrowClosed.png");
-	private static ImageIcon openArrow = new ImageIcon("images/arrowOpen.png");
 
 	/**
 	 * Initializes a new ChatWindow
@@ -81,23 +76,29 @@ TreeSelectionListener, ActionListener, Observer {
 	public ChatWindow(String initialServerName)
 	{
 		frame.addKeyListener(this);
-		//menuBar = initMenuBar();
-		frame.setJMenuBar(menuBar);
-		//		ChatWindow.outputManager = outputManager;
+		if(System.getProperty("os.name").equals("Mac OS X"))
+		{
+			menuBar = initMenuBar();
+			frame.setJMenuBar(menuBar);
+		}
 		frame.setTitle(initialServerName);
 		frame.addComponentListener(this);
 		frame.addWindowFocusListener(this);
 		frame.setPreferredSize(defaultWindowSize);
 
-		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(true);
+		
+		frame.setBackground(Color.BLACK);
 
 		userListsLayeredPane = new JLayeredPane();
 
 
 		outputFieldLayeredPane = new JLayeredPane();
 		outputFieldLayeredPane.setBackground(Color.BLACK);
+		
 		userListsLayeredPane = new JLayeredPane();
+		userListsLayeredPane.setBackground(Color.BLACK);
 		initializeChannelTree(initialServerName);
 
 
@@ -133,25 +134,12 @@ TreeSelectionListener, ActionListener, Observer {
 		frame.setVisible(true);
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof InputManager && arg instanceof Message) {
 			Message m = ((Message) arg);
-			if(m.getCommand().equals("AUTH"))
-				joinServer(m.getServerName());
-			if(m.getCommand().equals("JOIN"))
-				joinChannel("irc.ecsig.com", m.getContent(), false);
-			if(m.getCommand().equals("PRIVMSG"))
-				newMessage("irc.ecsig.com", m.getParams(), "[ " + m.getNickname()+ " ] "+m.getContent());
-			if(m.getCommand().equals("353"))
-			{
-				String channel = m.getParams().substring(m.getParams().indexOf("= ")+2, m.getParams().length());
-				System.out.println(channel);
-				String users = m.getContent().trim();
-				String[] usersList = users.split(" ");
-				for(String u : usersList)
-					newUser(m.getServerName(), channel, u);
-			}
+
 			// TODO nick change
 		}
 	}
@@ -296,6 +284,7 @@ TreeSelectionListener, ActionListener, Observer {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private JMenuBar initMenuBar() {
 		JMenuBar newMenuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
@@ -319,14 +308,19 @@ TreeSelectionListener, ActionListener, Observer {
 		root = new DefaultMutableTreeNode("root");
 		model = new DefaultTreeModel(root);
 		treeRenderer = new DefaultTreeCellRenderer();
-		treeRenderer.setClosedIcon(closedArrow);
-		treeRenderer.setOpenIcon(openArrow);
+		treeRenderer.setClosedIcon(null);
+		treeRenderer.setOpenIcon(null);
 		treeRenderer.setLeafIcon(null);
+		treeRenderer.setBackgroundNonSelectionColor(Color.BLACK);
+		treeRenderer.setForeground(Color.WHITE);
+		treeRenderer.setBackground(Color.BLACK);
 		channelTree = new JTree(model);
 		channelTree.setRootVisible(false);
 		channelTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		channelTree.addTreeSelectionListener(this);
+		channelTree.setShowsRootHandles(true);
 		channelTree.setCellRenderer(treeRenderer);
+		channelTree.setBackground(Color.BLACK);
 		treeScrollPane = new JScrollPane(channelTree);
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 		expandTree();
@@ -348,7 +342,6 @@ TreeSelectionListener, ActionListener, Observer {
 	 */
 	private void newChannelNode(String server, String channel)
 	{
-
 		expandTree();
 
 		DefaultMutableTreeNode newChannelNode = new DefaultMutableTreeNode(channel);
@@ -358,9 +351,6 @@ TreeSelectionListener, ActionListener, Observer {
 		model.insertNodeInto(newChannelNode, parentNode, parentNode.getChildCount());
 		channelTree.expandPath(path);
 		expandTree();
-
-
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -669,7 +659,4 @@ TreeSelectionListener, ActionListener, Observer {
 		// TODO Auto-generated method stub
 
 	}
-
-
-
 }

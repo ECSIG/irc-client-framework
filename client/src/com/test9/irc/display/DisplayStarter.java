@@ -1,7 +1,6 @@
 package com.test9.irc.display;
 
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 public class DisplayStarter {
 
