@@ -36,8 +36,6 @@ public class UserListPanel extends JPanel implements Comparator<String>{
 		textArea.setMargin(new Insets(5,5,5,5));
 		textArea.setEditable(false);
 		textArea.setFont(font);
-		textArea.setBackground(Color.BLACK);
-		textArea.setForeground(Color.WHITE);
 		scrollPane = new JScrollPane(textArea);
 		add(scrollPane, BorderLayout.CENTER);
 

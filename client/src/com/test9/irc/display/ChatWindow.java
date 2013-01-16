@@ -311,16 +311,12 @@ TreeSelectionListener, ActionListener, Observer {
 		treeRenderer.setClosedIcon(null);
 		treeRenderer.setOpenIcon(null);
 		treeRenderer.setLeafIcon(null);
-		treeRenderer.setBackgroundNonSelectionColor(Color.BLACK);
-		treeRenderer.setForeground(Color.WHITE);
-		treeRenderer.setBackground(Color.BLACK);
 		channelTree = new JTree(model);
 		channelTree.setRootVisible(false);
 		channelTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		channelTree.addTreeSelectionListener(this);
 		channelTree.setShowsRootHandles(true);
 		channelTree.setCellRenderer(treeRenderer);
-		channelTree.setBackground(Color.BLACK);
 		treeScrollPane = new JScrollPane(channelTree);
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 		expandTree();
