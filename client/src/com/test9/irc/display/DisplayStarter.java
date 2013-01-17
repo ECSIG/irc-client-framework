@@ -32,7 +32,8 @@ public class DisplayStarter {
 		cw.newUser("server2", "channel3", "jared");
 		cw.newUser("server2", "channel3", "chris");
 		cw.newUser("server2", "channel3", "scott");
-
+		cw.newUser("server1", "channel1", "chris");
+		cw.newUser("server2", "channel4", "jared");
 		//cw.leaveChannel("server1", "channel1");
 		cw.newMessage("server2","channel2","does it work?");
 		//cw.leaveChannel("server2", "channel4");

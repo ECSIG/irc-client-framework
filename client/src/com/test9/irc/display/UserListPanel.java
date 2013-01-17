@@ -12,13 +12,15 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-public class UserListPanel extends JPanel implements Comparator<String>{
+public class UserListPanel extends JPanel implements Comparator<String>, ListSelectionListener{
 
 	private static final long serialVersionUID = 3331343604631033360L;
 	private static Rectangle boundsRect;
 	private static Font font = new Font("Lucida Grande", Font.PLAIN, 12);
-	private static DefaultListModel<String> listModel = new DefaultListModel<String>();
+	private DefaultListModel<String> listModel = new DefaultListModel<String>();
 	private String channel, server;
 	private JScrollPane scrollPane;
 	private JList<String> jList;
@@ -35,6 +37,7 @@ public class UserListPanel extends JPanel implements Comparator<String>{
 		setBackground(Color.BLACK);
 		jList = new JList<String>(listModel);
 		jList.setFont(font);
+		
 		scrollPane = new JScrollPane(jList);
 		add(scrollPane, BorderLayout.CENTER);
 
@@ -78,6 +81,11 @@ public class UserListPanel extends JPanel implements Comparator<String>{
 	public static void setNewBounds(int width, int height)
 	{
 		boundsRect.setBounds(0, 0, width, height);
+	}
+	
+	
+	public void valueChanged(ListSelectionEvent e) {
+		
 	}
 
 
