@@ -3,25 +3,26 @@ package com.test9.irc.display;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Insets;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 public class UserListPanel extends JPanel implements Comparator<String>{
 
 	private static final long serialVersionUID = 3331343604631033360L;
 	private static Rectangle boundsRect;
+	private static Font font = new Font("Lucida Grande", Font.PLAIN, 12);
+	private static DefaultListModel<String> listModel = new DefaultListModel<String>();
 	private String channel, server;
 	private JScrollPane scrollPane;
-	private JTextArea textArea;
+	private JList<String> jList;
 	private ArrayList<String> nicks = new ArrayList<String>();
-	private static Font font = new Font("Lucida Grande", Font.PLAIN, 12);
 
 
 	public UserListPanel(String server, String channel, int width, int height)
@@ -32,11 +33,9 @@ public class UserListPanel extends JPanel implements Comparator<String>{
 		boundsRect = new Rectangle(0,0,width,height);
 		setBounds(boundsRect);
 		setBackground(Color.BLACK);
-		textArea = new JTextArea();
-		textArea.setMargin(new Insets(5,5,5,5));
-		textArea.setEditable(false);
-		textArea.setFont(font);
-		scrollPane = new JScrollPane(textArea);
+		jList = new JList<String>(listModel);
+		jList.setFont(font);
+		scrollPane = new JScrollPane(jList);
 		add(scrollPane, BorderLayout.CENTER);
 
 	}
@@ -51,9 +50,10 @@ public class UserListPanel extends JPanel implements Comparator<String>{
 		nicks.add(user+"\r\n");
 		nicks.trimToSize();
 		Collections.sort(nicks);
-		textArea.setText("");
+		
+		listModel.clear();
 		for(String s : nicks)
-			textArea.append(s);
+			listModel.addElement(s);
 	}
 	
 	public void deleteUser(String user)
@@ -70,9 +70,9 @@ public class UserListPanel extends JPanel implements Comparator<String>{
 		nicks.trimToSize();
 		Collections.sort(nicks);
 		
-		textArea.setText("");
+		listModel.clear();
 		for(String s : nicks)
-			textArea.append(s);
+			listModel.addElement(s);
 	}
 	
 	public static void setNewBounds(int width, int height)
@@ -111,23 +111,7 @@ public class UserListPanel extends JPanel implements Comparator<String>{
 	public void setScrollPane(JScrollPane scrollPane) {
 		this.scrollPane = scrollPane;
 	}
-
-
-	/**
-	 * @return the textArea
-	 */
-	public JTextArea getTextArea() {
-		return textArea;
-	}
-
-
-	/**
-	 * @param textArea the textArea to set
-	 */
-	public void setTextArea(JTextArea textArea) {
-		this.textArea = textArea;
-	}
-
+	
 
 	/**
 	 * @return the serialversionuid
