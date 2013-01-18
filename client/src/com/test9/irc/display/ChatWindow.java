@@ -23,9 +23,7 @@ import java.util.Observer;
 
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -38,15 +36,16 @@ ActionListener, Observer {
 	private static final JFrame frame = new JFrame();
 	private static final Toolkit KIT = Toolkit.getDefaultToolkit();
 	private static final int SPLITPANEWIDTH = 4;
-	private Dimension defaultWindowSize = new Dimension(
-			KIT.getScreenSize().width / 2, KIT.getScreenSize().height / 2);
 	private static final int DEFAULTSIDEBARWIDTH = 150;
+	private static Dimension defaultWindowSize = new Dimension(
+			KIT.getScreenSize().width / 2, KIT.getScreenSize().height / 2);
 	private static ConnectionTree connectionTree;
-	private static JTextField inputField = new JTextField();
+	private static final JTextField inputField = new JTextField();
 	private static JPanel centerJPanel = new JPanel(new BorderLayout());
 	private static JPanel treePanel = new JPanel(new BorderLayout());
 	private static JSplitPane sidePanelSplitPane, listsAndOutputSplitPane;
-	private static JLayeredPane userListsLayeredPane, outputFieldLayeredPane;
+	private static final JLayeredPane userListsLayeredPane = new JLayeredPane();
+	private static final JLayeredPane outputFieldLayeredPane = new JLayeredPane();
 	private static ArrayList<OutputPanel> outputPanels = new ArrayList<OutputPanel>();
 	private static ArrayList<UserListPanel> userListPanels = new ArrayList<UserListPanel>();
 	private static String activeServer;
@@ -62,73 +61,94 @@ ActionListener, Observer {
 	 */
 	public ChatWindow(String initialServerName)
 	{
-		frame.addKeyListener(this);
+		/*
+		 * Checks to see if the global OS X menu bar should be used.
+		 */
 		if(System.getProperty("os.name").equals("Mac OS X"))
 		{
-			menuBar = initMenuBar();
+			//menuBar = initMenuBar();
 			frame.setJMenuBar(menuBar);
 		}
+		
+		/*
+		 * Adds some general features to the frame.
+		 */
+		frame.addKeyListener(this);
 		frame.setTitle(initialServerName);
 		frame.addComponentListener(this);
 		frame.addWindowFocusListener(this);
 		frame.setPreferredSize(defaultWindowSize);
-
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(true);
-		
-		userListsLayeredPane = new JLayeredPane();
 
-
-		outputFieldLayeredPane = new JLayeredPane();
-		
-		userListsLayeredPane = new JLayeredPane();
-
+		/*
+		 * Sets up the connection tree that will list all server
+		 * and channel connections.
+		 */
 		connectionTree = new ConnectionTree(initialServerName, this);
-		System.out.println(connectionTree.toString());
 		treeScrollPane = new JScrollPane(connectionTree);
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
+		
+		// Joins the first server.
 		joinServer(initialServerName);
 
-
-
+		// Adds the required keylistener to the input field.
 		inputField.addKeyListener(this);
+		
+		/*
+		 * Adds the outputLayeredPane and the input field to the 
+		 * center panel.
+		 */
 		centerJPanel.add(outputFieldLayeredPane);
 		centerJPanel.add(inputField, BorderLayout.SOUTH);
-
-
+		
+		/*
+		 * Sets up the side panel with a vertial split (one item on
+		 * top of the other) and adds the userListLayeredPane and the 
+		 * connection tree.
+		 */
 		sidePanelSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
 				userListsLayeredPane, treePanel);
-
 		sidePanelSplitPane.setDividerSize(SPLITPANEWIDTH);
 		sidePanelSplitPane.setDividerLocation((frame.getPreferredSize().height/2)-20);
 		sidePanelSplitPane.setContinuousLayout(true);
 
+		/*
+		 * Sets up the split pane that splits the side panel
+		 * and the main output/input area.
+		 */
 		listsAndOutputSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				centerJPanel, sidePanelSplitPane);
 		listsAndOutputSplitPane.setContinuousLayout(true);
 		listsAndOutputSplitPane.setDividerSize(SPLITPANEWIDTH);
+		listsAndOutputSplitPane.setDividerLocation(
+				frame.getPreferredSize().width-DEFAULTSIDEBARWIDTH);
 
-		listsAndOutputSplitPane.setDividerLocation(frame.getPreferredSize().width-DEFAULTSIDEBARWIDTH);
 
-
+		/*
+		 * Adds the property changed listener to catch resizing
+		 * events of the frame.
+		 */
 		sidePanelSplitPane.addPropertyChangeListener(this);
 		listsAndOutputSplitPane.addPropertyChangeListener(this);
 
+		/*
+		 * Adds the split pane that contains all the other components
+		 * to the frame.
+		 * Packs it and gives the inputField focus.
+		 * Presents the packed frame to the user.
+		 */
 		frame.add(listsAndOutputSplitPane, BorderLayout.CENTER);
-
-
 		frame.pack();
 		inputField.requestFocus();
 		frame.setVisible(true);
 	}
 
 	@SuppressWarnings("unused")
-	@Override
 	public void update(Observable o, Object arg) {
-		if (o instanceof InputManager && arg instanceof Message) {
+		if (o instanceof InputManager && arg instanceof Message) 
+		{
 			Message m = ((Message) arg);
-
-			// TODO nick change
 		}
 	}
 
@@ -140,7 +160,7 @@ ActionListener, Observer {
 	public void joinServer(String server)
 	{
 		connectionTree.newServerNode(server);
-		joinChannel(server, server, true);
+		joinChannel(server);
 	}
 
 	/**
@@ -170,28 +190,28 @@ ActionListener, Observer {
 	}
 
 	/**
-	 * Called when a user wishes to join a channel. This takes in
-	 * the name of the server that the channel is on, the name 
-	 * of the channel, and if being called outside of the ChatWindow
-	 * class, isServer should always be false.
+	 * Called when a user wishes to join a channel on a server
+	 * that has already been connected to.
 	 * @param server
 	 * @param channel
 	 * @param isServer
 	 */
-	public void joinChannel(String server, String channel, boolean isServer)
+	public void joinChannel(String server, String channel)
 	{
-		if(!isServer)
-		{
-			newOutputPanel(server, channel);
-			newUserListPanel(server, channel);
-			connectionTree.newChannelNode(server, channel);
-		}
-		else
-		{
-			newOutputPanel(server, channel);
-			newUserListPanel(server, channel);
-		}
+		newOutputPanel(server, channel);
+		newUserListPanel(server, channel);
+		connectionTree.newChannelNode(server, channel);
+	}
 
+	/**
+	 * Constructs a channel for a server connection. Does not join
+	 * any channels on the server.
+	 * @param server
+	 */
+	public void joinChannel(String server)
+	{
+		newOutputPanel(server, server);
+		newUserListPanel(server, server);
 	}
 
 	/**
@@ -272,25 +292,6 @@ ActionListener, Observer {
 		}
 	}
 
-	@SuppressWarnings("unused")
-	private JMenuBar initMenuBar() {
-		JMenuBar newMenuBar = new JMenuBar();
-		JMenu fileMenu = new JMenu("File");
-		JMenu editMenu = new JMenu("Edit");
-
-		JMenuItem[] editMenuItems = {
-				new JMenuItem("Cut"), new JMenuItem("Copy"), 
-				new JMenuItem("Paste")
-		}; 
-
-		for(JMenuItem insert : editMenuItems)
-			editMenu.add(insert);
-
-		newMenuBar.add(editMenu);
-
-		return newMenuBar;
-	}
-
 	/**
 	 * This method must be called each time a channel or server is joined or connected to.
 	 * @param channel
@@ -361,7 +362,6 @@ ActionListener, Observer {
 	}
 
 
-
 	@Override
 	public void componentResized(ComponentEvent e) 
 	{
@@ -428,10 +428,45 @@ ActionListener, Observer {
 		}
 		frame.revalidate();
 	}
+	
+	/**
+	 * Called by the ConnectionTree class when a new node on the 
+	 * tree is selected.
+	 * Brings the appropriate output field and user lists
+	 * to the front of their JLayeredPanes.
+	 * @param activeServer
+	 * @param activeChannel
+	 */
+	protected void newPanelSelections(String activeServer, String activeChannel) {
+		ChatWindow.activeServer = activeServer;
+		ChatWindow.activeChannel = activeChannel;
+		
+		frame.setTitle(activeServer + " " + activeChannel);
+
+		for(OutputPanel t : outputPanels)
+		{
+			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
+				outputFieldLayeredPane.moveToBack(t);
+			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
+				outputFieldLayeredPane.moveToFront(t);
+		}
+
+		for(UserListPanel t : userListPanels)
+		{
+			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
+				userListsLayeredPane.moveToBack(t);
+			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
+				userListsLayeredPane.moveToFront(t);
+		}		
+	}
+	
+	public void windowGainedFocus(WindowEvent e) {
+		inputField.requestFocus();
+	}
 
 	@Override
 	public void windowStateChanged(WindowEvent e) {
-		System.out.println("windowStateChanged");
+		
 	}
 
 
@@ -449,89 +484,33 @@ ActionListener, Observer {
 
 	@Override
 	public void componentMoved(ComponentEvent e) {
-		// TODO Auto-generated method stub
+		//  Auto-generated method stub
 
 	}
 
 
 	@Override
 	public void componentShown(ComponentEvent e) {
-		// TODO Auto-generated method stub
+		//  Auto-generated method stub
 
 	}
 
 
 	@Override
 	public void componentHidden(ComponentEvent e) {
-		// TODO Auto-generated method stub
+		//  Auto-generated method stub
 
 	}
-
-
-	@Override
-	public void windowGainedFocus(WindowEvent e) {
-		inputField.requestFocus();
-	}
-
 
 	@Override
 	public void windowLostFocus(WindowEvent e) {
-		// TODO Auto-generated method stub
+		//  Auto-generated method stub
 
-	}
-
-	/**
-	 * @return the activeServer
-	 */
-	public static String getActiveServer() {
-		return activeServer;
-	}
-
-	/**
-	 * @param activeServer the activeServer to set
-	 */
-	public static void setActiveServer(String activeServer) {
-		ChatWindow.activeServer = activeServer;
-	}
-
-	/**
-	 * @return the activeChannel
-	 */
-	public static String getActiveChannel() {
-		return activeChannel;
-	}
-
-	/**
-	 * @param activeChannel the activeChannel to set
-	 */
-	public static void setActiveChannel(String activeChannel) {
-		ChatWindow.activeChannel = activeChannel;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+		//  Auto-generated method stub
 
-	}
-
-	public void newPanelSelections(String activeServer, String activeChannel) {
-		
-		frame.setTitle(activeServer + " " + activeChannel);
-		
-		for(OutputPanel t : outputPanels)
-		{
-			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
-				outputFieldLayeredPane.moveToBack(t);
-			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
-				outputFieldLayeredPane.moveToFront(t);
-		}
-
-		for(UserListPanel t : userListPanels)
-		{
-			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
-				userListsLayeredPane.moveToBack(t);
-			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
-				userListsLayeredPane.moveToFront(t);
-		}		
 	}
 }

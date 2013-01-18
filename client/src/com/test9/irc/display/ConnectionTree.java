@@ -16,7 +16,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 
 	private static final long serialVersionUID = 8988928665652702491L;
 	
-	private static DefaultTreeCellRenderer treeRenderer;
+	private static final DefaultTreeCellRenderer treeRenderer = new DefaultTreeCellRenderer();
 	private static DefaultTreeModel model;
 	private static DefaultMutableTreeNode root;
 	private static ChatWindow chatWindow;
@@ -30,7 +30,6 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		ConnectionTree.chatWindow = chatWindow;
 		root = new DefaultMutableTreeNode("root");
 		model = new DefaultTreeModel(root);
-		treeRenderer = new DefaultTreeCellRenderer();
 		treeRenderer.setClosedIcon(null);
 		treeRenderer.setOpenIcon(null);
 		treeRenderer.setLeafIcon(null);
@@ -125,9 +124,10 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	 * changes the channel that is selected.
 	 */
 	public void valueChanged(TreeSelectionEvent e) {
+		
 		String activeChannel = this.getSelectionPath().getLastPathComponent().toString();
 		String activeServer = this.getSelectionPath().getParentPath().getLastPathComponent().toString();
-
+		
 		if(activeServer.equals("root"))
 			activeServer = activeChannel;
 		

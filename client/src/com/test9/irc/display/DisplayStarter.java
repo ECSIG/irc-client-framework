@@ -22,12 +22,12 @@ public class DisplayStarter {
 		}
 		ChatWindow cw = new ChatWindow("server1");
 		cw.joinServer("server2");
-		cw.joinChannel("server2", "channel2", false);
-		cw.joinChannel("server1", "channel1", false);
-		cw.joinChannel("server2", "channel1", false);
-		cw.joinChannel("server2", "channel3", false);
-		cw.joinChannel("server2", "channel4", false);
-		cw.joinChannel("server2", "channel5", false);
+		cw.joinChannel("server2", "channel2");
+		cw.joinChannel("server1", "channel1");
+		cw.joinChannel("server2", "channel1");
+		cw.joinChannel("server2", "channel3");
+		cw.joinChannel("server2", "channel4");
+		cw.joinChannel("server2", "channel5");
 		
 		cw.newUser("server2", "channel3", "Jared");
 		cw.newUser("server2", "channel3", "chris");
