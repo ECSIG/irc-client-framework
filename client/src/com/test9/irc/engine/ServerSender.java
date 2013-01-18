@@ -17,9 +17,9 @@ public class ServerSender extends Thread implements Runnable {
 
 		this.out = new BufferedWriter(new OutputStreamWriter(server.getSocket()
 				.getOutputStream()));
-		this.out.write("USER " + server.getLogin() + " 0 * JavaIRC"
-				+ RNTAIL);
-		this.out.write("NICK " + server.getNick() + RNTAIL);
+//		this.out.write("USER " + server.getLogin() + " 0 * JavaIRC"
+//				+ RNTAIL);
+//		this.out.write("NICK " + server.getNick() + RNTAIL);
 
 		this.out.flush();
 	}

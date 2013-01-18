@@ -85,4 +85,18 @@ public class OutputManager implements Observer {
 		}
 	}
 
+	/**
+	 * @return the sender
+	 */
+	public ServerSender getSender() {
+		return sender;
+	}
+
+	/**
+	 * @param sender the sender to set
+	 */
+	public void setSender(ServerSender sender) {
+		this.sender = sender;
+	}
+
 }
