@@ -29,12 +29,17 @@ public class DisplayStarter {
 		cw.joinChannel("server2", "channel4", false);
 		cw.joinChannel("server2", "channel5", false);
 		
-		cw.newUser("server2", "channel3", "jared");
+		cw.newUser("server2", "channel3", "Jared");
 		cw.newUser("server2", "channel3", "chris");
-		cw.newUser("server2", "channel3", "scott");
+		cw.newUser("server2", "channel3", "Scott");
+		cw.newUser("server2", "channel3", "~tim");
+		cw.newUser("server2", "channel3", "&jake");
+		cw.deleteUser("server2", "channel3", "&jake");
+
 		cw.newUser("server1", "channel1", "chris");
 		cw.newUser("server2", "channel4", "jared");
 		//cw.leaveChannel("server1", "channel1");
+		
 		cw.newMessage("server2","channel2","does it work?");
 		//cw.leaveChannel("server2", "channel4");
 		cw.newMessage("server2", "channel5", "Messages from server2, channel5");
@@ -44,9 +49,7 @@ public class DisplayStarter {
 
 		//cw.leaveServer("server2");
 		
-		//new NewServerWindow();
-		
-		
+		//new NewServerWindow();		
 	}
 
 }

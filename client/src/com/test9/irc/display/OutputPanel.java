@@ -43,13 +43,13 @@ public class OutputPanel extends JPanel{
 	 * This is used to append a new string to a channels text area.
 	 * @param message
 	 */
-	public void newMessage(String message)
+	protected void newMessage(String message)
 	{
 		textArea.append(message+"\r\n");
 		textArea.setCaretPosition(textArea.getText().length());
 	}
 	
-	public static void setNewBounds(int width, int height)
+	protected static void setNewBounds(int width, int height)
 	{
 		boundsRect.setBounds(0, 0, width, height);
 	}
@@ -58,7 +58,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @return the channel
 	 */
-	public String getChannel() {
+	protected String getChannel() {
 		return channel;
 	}
 
@@ -66,7 +66,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @param channel the channel to set
 	 */
-	public void setChannel(String channel) {
+	protected void setChannel(String channel) {
 		this.channel = channel;
 	}
 
@@ -74,7 +74,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @return the scrollPane
 	 */
-	public JScrollPane getScrollPane() {
+	protected JScrollPane getScrollPane() {
 		return scrollPane;
 	}
 
@@ -82,7 +82,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @param scrollPane the scrollPane to set
 	 */
-	public void setScrollPane(JScrollPane scrollPane) {
+	protected void setScrollPane(JScrollPane scrollPane) {
 		this.scrollPane = scrollPane;
 	}
 
@@ -90,7 +90,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @return the textArea
 	 */
-	public JTextArea getTextArea() {
+	protected JTextArea getTextArea() {
 		return textArea;
 	}
 
@@ -98,7 +98,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @param textArea the textArea to set
 	 */
-	public void setTextArea(JTextArea textArea) {
+	protected void setTextArea(JTextArea textArea) {
 		this.textArea = textArea;
 	}
 
@@ -106,7 +106,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @return the serialversionuid
 	 */
-	public static long getSerialversionuid() {
+	protected static long getSerialversionuid() {
 		return serialVersionUID;
 	}
 
@@ -114,7 +114,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @return the bounds
 	 */
-	public static Rectangle getBoundsRec() {
+	protected static Rectangle getBoundsRec() {
 		return boundsRect;
 	}
 
@@ -122,7 +122,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @param bounds the bounds to set
 	 */
-	public static void setBoundsRec(Rectangle bounds) {
+	protected static void setBoundsRec(Rectangle bounds) {
 		OutputPanel.boundsRect = bounds;
 	}
 
@@ -130,7 +130,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @return the server
 	 */
-	public String getServer() {
+	protected String getServer() {
 		return server;
 	}
 
@@ -138,7 +138,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @param server the server to set
 	 */
-	public void setServer(String server) {
+	protected void setServer(String server) {
 		this.server = server;
 	}
 }

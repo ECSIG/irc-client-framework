@@ -4,7 +4,6 @@ import com.test9.irc.engine.InputManager;
 import com.test9.irc.parser.Message;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -19,7 +18,6 @@ import java.awt.event.WindowStateListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -32,19 +30,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.text.Position;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 
 public class ChatWindow extends Observable implements ComponentListener,
 KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
-TreeSelectionListener, ActionListener, Observer {
+ActionListener, Observer {
 
 	private static final JFrame frame = new JFrame();
 	private static final Toolkit KIT = Toolkit.getDefaultToolkit();
@@ -52,21 +41,19 @@ TreeSelectionListener, ActionListener, Observer {
 	private Dimension defaultWindowSize = new Dimension(
 			KIT.getScreenSize().width / 2, KIT.getScreenSize().height / 2);
 	private static final int DEFAULTSIDEBARWIDTH = 150;
-	private static JTree channelTree;
+	private static ConnectionTree connectionTree;
 	private static JTextField inputField = new JTextField();
 	private static JPanel centerJPanel = new JPanel(new BorderLayout());
 	private static JPanel treePanel = new JPanel(new BorderLayout());
-	private static JScrollPane treeScrollPane;
 	private static JSplitPane sidePanelSplitPane, listsAndOutputSplitPane;
 	private static JLayeredPane userListsLayeredPane, outputFieldLayeredPane;
 	private static ArrayList<OutputPanel> outputPanels = new ArrayList<OutputPanel>();
 	private static ArrayList<UserListPanel> userListPanels = new ArrayList<UserListPanel>();
 	private static String activeServer;
 	private static String activeChannel;
-	private static DefaultTreeModel model;
-	private static DefaultMutableTreeNode root;
+	private static JScrollPane treeScrollPane;
 	private static JMenuBar menuBar;
-	private static DefaultTreeCellRenderer treeRenderer;
+
 
 	/**
 	 * Initializes a new ChatWindow
@@ -89,23 +76,24 @@ TreeSelectionListener, ActionListener, Observer {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(true);
 		
-		frame.setBackground(Color.BLACK);
-
 		userListsLayeredPane = new JLayeredPane();
 
 
 		outputFieldLayeredPane = new JLayeredPane();
-		outputFieldLayeredPane.setBackground(Color.BLACK);
 		
 		userListsLayeredPane = new JLayeredPane();
-		userListsLayeredPane.setBackground(Color.BLACK);
-		initializeChannelTree(initialServerName);
+
+		connectionTree = new ConnectionTree(initialServerName, this);
+		System.out.println(connectionTree.toString());
+		treeScrollPane = new JScrollPane(connectionTree);
+		treePanel.add(treeScrollPane, BorderLayout.CENTER);
+		joinServer(initialServerName);
+
 
 
 		inputField.addKeyListener(this);
 		centerJPanel.add(outputFieldLayeredPane);
 		centerJPanel.add(inputField, BorderLayout.SOUTH);
-
 
 
 		sidePanelSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
@@ -151,7 +139,7 @@ TreeSelectionListener, ActionListener, Observer {
 	 */
 	public void joinServer(String server)
 	{
-		newServerNode(server);
+		connectionTree.newServerNode(server);
 		joinChannel(server, server, true);
 	}
 
@@ -178,7 +166,7 @@ TreeSelectionListener, ActionListener, Observer {
 				userListPanels.remove(uLPanel);
 			}
 		}
-		removeServerNode(server);
+		connectionTree.removeServerNode(server);
 	}
 
 	/**
@@ -196,7 +184,7 @@ TreeSelectionListener, ActionListener, Observer {
 		{
 			newOutputPanel(server, channel);
 			newUserListPanel(server, channel);
-			newChannelNode(server, channel);
+			connectionTree.newChannelNode(server, channel);
 		}
 		else
 		{
@@ -217,7 +205,7 @@ TreeSelectionListener, ActionListener, Observer {
 		System.out.println("leaving channel");
 		outputPanels.remove(findChannel(server, channel, 0));
 		userListPanels.remove(findChannel(server, channel, 1));
-		removeChannelNode(server, channel);
+		connectionTree.removeChannelNode(server, channel);
 	}
 
 	/**
@@ -301,102 +289,6 @@ TreeSelectionListener, ActionListener, Observer {
 		newMenuBar.add(editMenu);
 
 		return newMenuBar;
-	}
-
-	private void initializeChannelTree(String initialServerName)
-	{
-		root = new DefaultMutableTreeNode("root");
-		model = new DefaultTreeModel(root);
-		treeRenderer = new DefaultTreeCellRenderer();
-		treeRenderer.setClosedIcon(null);
-		treeRenderer.setOpenIcon(null);
-		treeRenderer.setLeafIcon(null);
-		channelTree = new JTree(model);
-		channelTree.setRootVisible(false);
-		channelTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		channelTree.addTreeSelectionListener(this);
-		channelTree.setShowsRootHandles(true);
-		channelTree.setCellRenderer(treeRenderer);
-		treeScrollPane = new JScrollPane(channelTree);
-		treePanel.add(treeScrollPane, BorderLayout.CENTER);
-		expandTree();
-
-		joinServer(initialServerName);
-	}
-
-	private void expandTree()
-	{
-		for (int i = 0; i < channelTree.getRowCount(); i++) {
-			channelTree.expandRow(i);
-		}
-	}
-
-	/**
-	 * Used to add the new channel node to the JTree channelTree.
-	 * @param server
-	 * @param channel
-	 */
-	private void newChannelNode(String server, String channel)
-	{
-		expandTree();
-
-		DefaultMutableTreeNode newChannelNode = new DefaultMutableTreeNode(channel);
-		newChannelNode.setAllowsChildren(false);
-		TreePath path = channelTree.getNextMatch(server, 0, Position.Bias.Forward);
-		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
-		model.insertNodeInto(newChannelNode, parentNode, parentNode.getChildCount());
-		channelTree.expandPath(path);
-		expandTree();
-	}
-
-	@SuppressWarnings("unchecked")
-	private void removeChannelNode(String server, String channel)
-	{
-		System.out.println("removeChannelNode");
-		for (Object node : Collections.list(root.children()))
-		{
-			DefaultMutableTreeNode serverNode = (DefaultMutableTreeNode) node;
-
-			if(serverNode.getUserObject().toString().trim().equals(server.trim())) {
-				for (Object channelNode : Collections.list(serverNode.children()))
-				{
-					DefaultMutableTreeNode checkChannelNode = (DefaultMutableTreeNode) channelNode;
-
-					if(checkChannelNode.getUserObject().toString().trim().equals(channel.trim()))
-					{
-						checkChannelNode.removeFromParent();
-					}
-				}
-			}
-		}
-		model.reload();
-		expandTree();
-	}
-
-	/**
-	 * Used to add a new servers parent node.
-	 * @param server
-	 */
-	private void newServerNode(String server)
-	{
-		DefaultMutableTreeNode newServerNode = new DefaultMutableTreeNode(server.trim());
-		newServerNode.setAllowsChildren(true);
-		root.add(newServerNode);
-		model.reload();
-		expandTree();
-
-
-	}
-
-	private void removeServerNode(String server)
-	{
-		System.out.println("removeServerNode");
-		TreePath path = channelTree.getNextMatch(server, 0, Position.Bias.Forward);
-		System.out.println("pathserver"+path);
-		DefaultMutableTreeNode removeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
-		model.removeNodeFromParent(removeNode);
-		model.reload();
-		expandTree();
 	}
 
 	/**
@@ -499,7 +391,6 @@ TreeSelectionListener, ActionListener, Observer {
 		frame.revalidate();
 	}
 
-	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if(evt.getSource() == listsAndOutputSplitPane)
 		{
@@ -536,39 +427,6 @@ TreeSelectionListener, ActionListener, Observer {
 
 		}
 		frame.revalidate();
-	}
-
-	/**
-	 * Used by the tree to listen for when the user 
-	 * changes the channel that is selected.
-	 */
-	public void valueChanged(TreeSelectionEvent e) {
-		System.out.println("treeValueChanged");
-
-		activeChannel = channelTree.getSelectionPath().getLastPathComponent().toString();
-		activeServer = channelTree.getSelectionPath().getParentPath().getLastPathComponent().toString();
-
-		if(activeServer.equals("root"))
-			activeServer = activeChannel;
-
-		System.out.println(activeChannel+","+activeServer);
-
-		for(OutputPanel t : outputPanels)
-		{
-			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
-				outputFieldLayeredPane.moveToBack(t);
-			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
-				outputFieldLayeredPane.moveToFront(t);
-		}
-
-		for(UserListPanel t : userListPanels)
-		{
-			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
-				userListsLayeredPane.moveToBack(t);
-			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
-				userListsLayeredPane.moveToFront(t);
-		}
-
 	}
 
 	@Override
@@ -654,5 +512,26 @@ TreeSelectionListener, ActionListener, Observer {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void newPanelSelections(String activeServer, String activeChannel) {
+		
+		frame.setTitle(activeServer + " " + activeChannel);
+		
+		for(OutputPanel t : outputPanels)
+		{
+			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
+				outputFieldLayeredPane.moveToBack(t);
+			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
+				outputFieldLayeredPane.moveToFront(t);
+		}
+
+		for(UserListPanel t : userListPanels)
+		{
+			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
+				userListsLayeredPane.moveToBack(t);
+			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
+				userListsLayeredPane.moveToFront(t);
+		}		
 	}
 }
