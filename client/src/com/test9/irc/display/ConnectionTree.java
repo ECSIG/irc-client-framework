@@ -19,7 +19,6 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	private static final DefaultTreeCellRenderer treeRenderer = new DefaultTreeCellRenderer();
 	private static DefaultTreeModel model;
 	private static DefaultMutableTreeNode root;
-	private static ChatWindow chatWindow;
 
 	/**
 	 * 
@@ -27,7 +26,6 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	 */
 	protected ConnectionTree(String initialServerName, ChatWindow chatWindow)
 	{
-		ConnectionTree.chatWindow = chatWindow;
 		root = new DefaultMutableTreeNode("root");
 		model = new DefaultTreeModel(root);
 		treeRenderer.setClosedIcon(null);
@@ -131,7 +129,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		if(activeServer.equals("root"))
 			activeServer = activeChannel;
 		
-		chatWindow.newPanelSelections(activeServer, activeChannel);
+		ChatWindow.newPanelSelections(activeServer, activeChannel);
 	}
 
 }

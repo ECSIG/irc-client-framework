@@ -69,7 +69,7 @@ ActionListener, Observer {
 			//menuBar = initMenuBar();
 			frame.setJMenuBar(menuBar);
 		}
-		
+
 		/*
 		 * Adds some general features to the frame.
 		 */
@@ -88,20 +88,20 @@ ActionListener, Observer {
 		connectionTree = new ConnectionTree(initialServerName, this);
 		treeScrollPane = new JScrollPane(connectionTree);
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
-		
+
 		// Joins the first server.
 		joinServer(initialServerName);
 
 		// Adds the required keylistener to the input field.
 		inputField.addKeyListener(this);
-		
+
 		/*
 		 * Adds the outputLayeredPane and the input field to the 
 		 * center panel.
 		 */
 		centerJPanel.add(outputFieldLayeredPane);
 		centerJPanel.add(inputField, BorderLayout.SOUTH);
-		
+
 		/*
 		 * Sets up the side panel with a vertial split (one item on
 		 * top of the other) and adds the userListLayeredPane and the 
@@ -428,7 +428,7 @@ ActionListener, Observer {
 		}
 		frame.revalidate();
 	}
-	
+
 	/**
 	 * Called by the ConnectionTree class when a new node on the 
 	 * tree is selected.
@@ -437,10 +437,10 @@ ActionListener, Observer {
 	 * @param activeServer
 	 * @param activeChannel
 	 */
-	protected void newPanelSelections(String activeServer, String activeChannel) {
+	protected static void newPanelSelections(String activeServer, String activeChannel) {
 		ChatWindow.activeServer = activeServer;
 		ChatWindow.activeChannel = activeChannel;
-		
+
 		frame.setTitle(activeServer + " " + activeChannel);
 
 		for(OutputPanel t : outputPanels)
@@ -459,14 +459,14 @@ ActionListener, Observer {
 				userListsLayeredPane.moveToFront(t);
 		}		
 	}
-	
+
 	public void windowGainedFocus(WindowEvent e) {
 		inputField.requestFocus();
 	}
 
 	@Override
 	public void windowStateChanged(WindowEvent e) {
-		
+
 	}
 
 
