@@ -258,7 +258,7 @@ ActionListener, Observer {
 		if(findChannel(server, channel,1) != -1)
 			userListPanels.get(findChannel(server, channel,1)).newUser(user);
 		else
-			System.err.println("Cound not find channel to add new user.");
+			System.err.println("[ChatWindowError] Cound not find channel to add new user.");
 	}
 
 	/**

@@ -19,10 +19,10 @@ public class Server {
 
     // The server to connect to and our details.
     String server = "irc.ecsig.com";
-    String botRef = "blo-test";
+    String botRef = "jared-test";
 
     String nick = this.botRef + "";
-    String login = this.botRef + "blo-test";
+    String login = this.botRef + "jared-test";
 
     // The channel which the bot will join.
     private List<Channel> channels = Arrays.asList(new Channel("#ecsig"));
