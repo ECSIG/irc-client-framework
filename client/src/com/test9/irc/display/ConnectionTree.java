@@ -24,7 +24,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	 * 
 	 * @param initialServerName
 	 */
-	protected ConnectionTree(String initialServerName, ChatWindow chatWindow)
+	ConnectionTree(String initialServerName, ChatWindow chatWindow)
 	{
 		root = new DefaultMutableTreeNode("root");
 		model = new DefaultTreeModel(root);
@@ -54,7 +54,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	 * @param server
 	 * @param channel
 	 */
-	protected void newChannelNode(String server, String channel)
+	void newChannelNode(String server, String channel)
 	{
 		expandTree();
 
@@ -68,7 +68,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void removeChannelNode(String server, String channel)
+	void removeChannelNode(String server, String channel)
 	{
 		System.out.println("removeChannelNode");
 		for (Object node : Collections.list(root.children()))
@@ -95,7 +95,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	 * Used to add a new servers parent node.
 	 * @param server
 	 */
-	protected void newServerNode(String server)
+	void newServerNode(String server)
 	{
 		DefaultMutableTreeNode newServerNode = new DefaultMutableTreeNode(server.trim());
 		newServerNode.setAllowsChildren(true);
@@ -106,7 +106,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 
 	}
 
-	protected void removeServerNode(String server)
+	void removeServerNode(String server)
 	{
 		System.out.println("removeServerNode");
 		TreePath path = this.getNextMatch(server, 0, Position.Bias.Forward);
@@ -131,5 +131,4 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		
 		ChatWindow.newPanelSelections(activeServer, activeChannel);
 	}
-
 }

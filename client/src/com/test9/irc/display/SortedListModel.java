@@ -12,7 +12,7 @@ class SortedListModel extends AbstractListModel {
 	Comparator comparator;
 
 	@SuppressWarnings("unchecked")
-	public SortedListModel() {
+	SortedListModel() {
 		comparator = new MyComparator();
 		model = new TreeSet<Object>(comparator);
 		

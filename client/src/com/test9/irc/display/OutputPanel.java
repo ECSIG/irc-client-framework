@@ -21,7 +21,7 @@ public class OutputPanel extends JPanel{
 	private static Font font = new Font("Lucida Grande", Font.PLAIN, 12);
 
 
-	public OutputPanel(String server, String channel, int width, int height)
+	OutputPanel(String server, String channel, int width, int height)
 	{
 		this.server = server;
 		this.channel = channel;
@@ -43,13 +43,13 @@ public class OutputPanel extends JPanel{
 	 * This is used to append a new string to a channels text area.
 	 * @param message
 	 */
-	protected void newMessage(String message)
+	void newMessage(String message)
 	{
 		textArea.append(message+"\r\n");
 		textArea.setCaretPosition(textArea.getText().length());
 	}
 	
-	protected static void setNewBounds(int width, int height)
+	static void setNewBounds(int width, int height)
 	{
 		boundsRect.setBounds(0, 0, width, height);
 	}
@@ -58,7 +58,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @return the channel
 	 */
-	protected String getChannel() {
+	public String getChannel() {
 		return channel;
 	}
 
@@ -66,7 +66,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @param channel the channel to set
 	 */
-	protected void setChannel(String channel) {
+	void setChannel(String channel) {
 		this.channel = channel;
 	}
 
@@ -74,7 +74,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @return the scrollPane
 	 */
-	protected JScrollPane getScrollPane() {
+	public JScrollPane getScrollPane() {
 		return scrollPane;
 	}
 
@@ -82,7 +82,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @param scrollPane the scrollPane to set
 	 */
-	protected void setScrollPane(JScrollPane scrollPane) {
+	void setScrollPane(JScrollPane scrollPane) {
 		this.scrollPane = scrollPane;
 	}
 
@@ -90,7 +90,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @return the textArea
 	 */
-	protected JTextArea getTextArea() {
+	public JTextArea getTextArea() {
 		return textArea;
 	}
 
@@ -98,7 +98,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @param textArea the textArea to set
 	 */
-	protected void setTextArea(JTextArea textArea) {
+	void setTextArea(JTextArea textArea) {
 		this.textArea = textArea;
 	}
 
@@ -106,7 +106,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @return the serialversionuid
 	 */
-	protected static long getSerialversionuid() {
+	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
 
@@ -114,7 +114,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @return the bounds
 	 */
-	protected static Rectangle getBoundsRec() {
+	public static Rectangle getBoundsRec() {
 		return boundsRect;
 	}
 
@@ -122,7 +122,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @param bounds the bounds to set
 	 */
-	protected static void setBoundsRec(Rectangle bounds) {
+	static void setBoundsRec(Rectangle bounds) {
 		OutputPanel.boundsRect = bounds;
 	}
 
@@ -130,7 +130,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @return the server
 	 */
-	protected String getServer() {
+	public String getServer() {
 		return server;
 	}
 
@@ -138,7 +138,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @param server the server to set
 	 */
-	protected void setServer(String server) {
+	void setServer(String server) {
 		this.server = server;
 	}
 }

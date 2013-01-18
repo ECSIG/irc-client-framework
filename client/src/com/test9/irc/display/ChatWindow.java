@@ -437,7 +437,7 @@ ActionListener, Observer {
 	 * @param activeServer
 	 * @param activeChannel
 	 */
-	protected static void newPanelSelections(String activeServer, String activeChannel) {
+	static void newPanelSelections(String activeServer, String activeChannel) {
 		ChatWindow.activeServer = activeServer;
 		ChatWindow.activeChannel = activeChannel;
 

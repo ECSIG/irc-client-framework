@@ -24,7 +24,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 
 
 	@SuppressWarnings("unchecked")
-	public UserListPanel(String server, String channel, int width, int height)
+	UserListPanel(String server, String channel, int width, int height)
 	{
 		this.server = server;
 		this.channel = channel;
@@ -44,18 +44,18 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	 * This is used to append a new string to a channels text area.
 	 * @param message
 	 */
-	protected void newUser(String user)
+	void newUser(String user)
 	{
 		listModel.add(user);
 	}
 
 
-	protected void deleteUser(String user)
+	void deleteUser(String user)
 	{
 		listModel.removeElement(user);
 	}
 
-	protected static void setNewBounds(int width, int height)
+	static void setNewBounds(int width, int height)
 	{
 		boundsRect.setBounds(0, 0, width, height);
 	}
@@ -69,7 +69,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	/**
 	 * @return the channel
 	 */
-	protected String getChannel() {
+	public String getChannel() {
 		return channel;
 	}
 
@@ -77,7 +77,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	/**
 	 * @param channel the channel to set
 	 */
-	protected void setChannel(String channel) {
+	void setChannel(String channel) {
 		this.channel = channel;
 	}
 
@@ -85,7 +85,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	/**
 	 * @return the scrollPane
 	 */
-	protected JScrollPane getScrollPane() {
+	public JScrollPane getScrollPane() {
 		return scrollPane;
 	}
 
@@ -93,7 +93,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	/**
 	 * @param scrollPane the scrollPane to set
 	 */
-	protected void setScrollPane(JScrollPane scrollPane) {
+	void setScrollPane(JScrollPane scrollPane) {
 		this.scrollPane = scrollPane;
 	}
 
@@ -101,7 +101,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	/**
 	 * @return the serialversionuid
 	 */
-	protected static long getSerialversionuid() {
+	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
 
@@ -109,7 +109,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	/**
 	 * @return the bounds
 	 */
-	protected static Rectangle getBoundsRec() {
+	public static Rectangle getBoundsRec() {
 		return boundsRect;
 	}
 
@@ -117,14 +117,14 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	/**
 	 * @param bounds the bounds to set
 	 */
-	protected static void setBoundsRec(Rectangle bounds) {
+	static void setBoundsRec(Rectangle bounds) {
 		UserListPanel.boundsRect = bounds;
 	}
 
 	/**
 	 * @return the server
 	 */
-	protected String getServer() {
+	public String getServer() {
 		return server;
 	}
 
@@ -132,7 +132,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	/**
 	 * @param server the server to set
 	 */
-	protected void setServer(String server) {
+	void setServer(String server) {
 		this.server = server;
 	}
 }
