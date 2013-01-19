@@ -6,96 +6,140 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 
+import com.test9.irc.display.ChatWindow;
+
 public class Server {
-
-    private final String name;
-    private ServerListener listener;
+	private static final String RNTAIL = "\r\n";
+    //private final String name;
     private ServerSender sender;
-    private Socket socket = null;
+    private InputManager inputManager;
+    private OutputManager outputManager;
+    private Socket socket;
     public boolean isConnected = false;
-
-    // The server to connect to and our details.
-    String server = "irc.ecsig.com";
-    String botRef = "jared-test";
-
-    String nick = this.botRef + "";
-    String login = this.botRef + "jared-test";
-    
-    /**
-     * This should not be located in server, but it will for now.
-     */
-    public static final String RNtail = "\r\n";
+//    private String server = "irc.ecsig.com";
+//    private String botRef = "jared-test";
+//    private String nick = this.botRef + "";
+//    private String login = this.botRef + "jared-test";
+    private String nick;
+	protected byte level = 0;
+	protected String host;
+	private String pass;
+	private String realname;
+	private String username;
+	private int port;
 
     // The channel which the bot will join.
-    private List<Channel> channels = Arrays.asList(new Channel("#jircc"), new Channel("#jared"));
+    private List<Channel> channels = Arrays.asList(new Channel("#ecsig"));
 
-    public Server(Boolean DEBUGGING, String name) {
-        this.name = name;
+    /**
+     * 
+     * @param host
+     * @param port
+     * @param pass
+     * @param nick
+     * @param username
+     * @param realname
+     */
+    public Server(String host, int port, String pass, String nick, 
+			String username, String realname) {
+		this.host = host;
+		this.port = port;
+		this.pass = (pass != null && pass.length() == 0) ? null : pass;
+		this.nick = nick;
+		this.username = username;
+		this.realname = realname;
 
         // Try to connect to the server at some string server address
         try {
             // Connect directly to the IRC server.
-            this.socket = new Socket(this.server, 6667);
-
-            // Apply socket to the sender and listener.
-            this.listener = new ServerListener(this);
-            this.sender = new ServerSender(this);        
-
-            // Start the listener thread
-            this.listener.start();
-            if (DEBUGGING) {
-                System.out.println("Listener started.");
-            }
-
-            // Start the sender thread
-            this.sender.start();
-            if (DEBUGGING) {
-                System.out.println("Sender started.");
-            }
+            this.socket = new Socket(this.host, this.port);
+            
+            this.inputManager = new InputManager(this);
+            this.outputManager = new OutputManager(this);
+            ChatWindow cw = new ChatWindow(host);
+            
+            System.out.println("========ADDDING OBSERVERS=======");
+            inputManager.addObserver(outputManager);
+           	inputManager.addObserver(cw);
+            
+            cw.addObserver(outputManager);
+            
+            register();
+            
 
         } catch (UnknownHostException e) {
-            System.err.println("Host not recognized: " + this.server);
+            System.err.println("Host not recognized: " + this.host);
             System.exit(1);
         } catch (IOException e) {
             System.err.println("Couldn't get I/O for " + "the connection to: "
-                    + this.server);
+                    + this.host);
             System.exit(1);
         }
     }
+    
+	private void register() {
+		System.out.println("registering");
+		if (pass != null)
+			outputManager.getSender().setOutput("PASS "+ pass+RNTAIL);
+		outputManager.getSender().setOutput("NICK "+ nick+RNTAIL); 
+		outputManager.getSender().setOutput("USER "+ username +" "+ socket.getLocalAddress() +" "+ host 
+				+" :"+ realname+RNTAIL); 
+	}
     
     public void sendInitialMessage(){
     	
     		System.out.println("Sending Initial MESSAGE");
 			sender.run();
     }
-
-    public void sendPong(String msg) {
-        if (this.sender != null) {
-            this.sender.ping_pong(msg);
-        }
+    
+    public InputManager getInputManager(){
+    	return inputManager;
     }
 
     public List<Channel> getChannels() {
         return this.channels;
     }
 
-    public String getName() {
-        return this.name;
-    }
-
     public Socket getSocket() {
         return this.socket;
-    }
-
-    public String getBotRef() {
-        return this.botRef;
     }
 
     public String getNick() {
         return this.nick;
     }
 
-    public String getLogin() {
-        return this.login;
-    }
+	/**
+	 * @return the outputManager
+	 */
+	public OutputManager getOutputManager() {
+		return outputManager;
+	}
+
+	/**
+	 * @param outputManager the outputManager to set
+	 */
+	public void setOutputManager(OutputManager outputManager) {
+		this.outputManager = outputManager;
+	}
+
+	/**
+	 * @param inputManager the inputManager to set
+	 */
+	public void setInputManager(InputManager inputManager) {
+		this.inputManager = inputManager;
+	}
+
+	/**
+	 * @return the host
+	 */
+	public String getHost() {
+		return host;
+	}
+
+	/**
+	 * @param host the host to set
+	 */
+	public void setHost(String host) {
+		this.host = host;
+	}
 }

@@ -1,267 +1,516 @@
 package com.test9.irc.display;
 
-import java.awt.*;
-import java.awt.event.*;
+import com.test9.irc.engine.InputManager;
+import com.test9.irc.parser.Message;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.awt.event.WindowStateListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
+import java.util.Observable;
+import java.util.Observer;
 
-import com.test9.irc.engine.ServerSender;
-import com.test9.irc.engine.User;
+import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 
-/**
- * @author Jared Patton Class for the Chat Window/GUI.
- */
-public class ChatWindow extends JFrame implements ComponentListener,
-        KeyListener, WindowStateListener, WindowFocusListener {
+public class ChatWindow extends Observable implements ComponentListener,
+KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
+ActionListener, Observer {
 
-    /***/
-    private static final long serialVersionUID = 1L;
-    private final Toolkit kit = Toolkit.getDefaultToolkit();
-    private final int eastPanelWidth = 150;
-    private JPanel inputPanel, northPanel, eastPanel;
-    private JLayeredPane outputLayeredPane, userListPane;
-    private JTextField inputField;
-    private Dimension screenSize = kit.getScreenSize();
-    private int screenWidth = (int) screenSize.getWidth() / 2;
-    private int screenHeight = (int) screenSize.getHeight() / 2;
-    private JScrollPane chanScrollPane;
-    private JMenuBar menuBar;
-    private ServerSender serverSender;
-    private Dimension chanListDim;
-    private JTree chanTree;
-    private DefaultTreeCellRenderer treeRenderer = new DefaultTreeCellRenderer();
-    private Icon openTreeIcon = new ImageIcon("images/downArrow.png");
-    private Icon closedTreeIcon = new ImageIcon("images/rightArrow.png");
-    private ArrayList<ChatWindowOutputField> outputFields;
-    private ArrayList<ChatWindowUserListField> userLists;
-    private int count = 0;
+	private static final JFrame frame = new JFrame();
+	private static final Toolkit KIT = Toolkit.getDefaultToolkit();
+	private static final int SPLITPANEWIDTH = 4;
+	private static final int DEFAULTSIDEBARWIDTH = 150;
+	private static Dimension defaultWindowSize = new Dimension(
+			KIT.getScreenSize().width / 2, KIT.getScreenSize().height / 2);
+	private static ConnectionTree connectionTree;
+	private static final JTextField inputField = new JTextField();
+	private static JPanel centerJPanel = new JPanel(new BorderLayout());
+	private static JPanel treePanel = new JPanel(new BorderLayout());
+	private static JSplitPane sidePanelSplitPane, listsAndOutputSplitPane;
+	private static final JLayeredPane userListsLayeredPane = new JLayeredPane();
+	private static final JLayeredPane outputFieldLayeredPane = new JLayeredPane();
+	private static ArrayList<OutputPanel> outputPanels = new ArrayList<OutputPanel>();
+	private static ArrayList<UserListPanel> userListPanels = new ArrayList<UserListPanel>();
+	private static String activeServer;
+	private static String activeChannel;
+	private static JScrollPane treeScrollPane;
+	private static JMenuBar menuBar;
 
-    public ChatWindow() {
-        setLayout(new BorderLayout());
-        addWindowStateListener(this);
-        addComponentListener(this);
-        addWindowFocusListener(this);
 
-        setSize(screenWidth, screenHeight);
+	/**
+	 * Initializes a new ChatWindow
+	 * @param initialServerName
+	 * @param outputManager
+	 */
+	public ChatWindow(String initialServerName)
+	{
+		/*
+		 * Checks to see if the global OS X menu bar should be used.
+		 */
+		if(System.getProperty("os.name").equals("Mac OS X"))
+		{
+			//menuBar = initMenuBar();
+			frame.setJMenuBar(menuBar);
+		}
 
-        inputPanel = new JPanel(new BorderLayout(1, 1));
-        inputField = new JTextField();
-        inputField.addKeyListener(this);
-        inputPanel.add(inputField);
+		/*
+		 * Adds some general features to the frame.
+		 */
+		frame.addKeyListener(this);
+		frame.setTitle(initialServerName);
+		frame.addComponentListener(this);
+		frame.addWindowFocusListener(this);
+		frame.setPreferredSize(defaultWindowSize);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setResizable(true);
 
-        outputLayeredPane = new JLayeredPane();
+		/*
+		 * Sets up the connection tree that will list all server
+		 * and channel connections.
+		 */
+		connectionTree = new ConnectionTree(initialServerName, this);
+		treeScrollPane = new JScrollPane(connectionTree);
+		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 
-        outputFields = new ArrayList<ChatWindowOutputField>(1);
-        outputFields.add(new ChatWindowOutputField("#jircc", screenWidth,
-                screenHeight));
-        outputLayeredPane.setPreferredSize(ChatWindowOutputField.sizeCalc(
-                screenWidth, screenHeight));
-        outputLayeredPane.add(outputFields.get(0));
-        outputLayeredPane.moveToFront(outputFields.get(0));
+		// Joins the first server.
+		joinServer(initialServerName);
 
-        outputFields.add(new ChatWindowOutputField("#jared", screenWidth,
-                screenHeight));
-        outputLayeredPane.add(outputFields.get(1));
-        outputLayeredPane.moveToFront(outputFields.get(1));
+		// Adds the required keylistener to the input field.
+		inputField.addKeyListener(this);
 
-        eastPanel = new JPanel();
+		/*
+		 * Adds the outputLayeredPane and the input field to the 
+		 * center panel.
+		 */
+		centerJPanel.add(outputFieldLayeredPane);
+		centerJPanel.add(inputField, BorderLayout.SOUTH);
 
-        userListPane = new JLayeredPane();
-        userListPane.setPreferredSize(ChatWindowUserListField
-                .sizeCalc(screenHeight));
+		/*
+		 * Sets up the side panel with a vertial split (one item on
+		 * top of the other) and adds the userListLayeredPane and the 
+		 * connection tree.
+		 */
+		sidePanelSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
+				userListsLayeredPane, treePanel);
+		sidePanelSplitPane.setDividerSize(SPLITPANEWIDTH);
+		sidePanelSplitPane.setDividerLocation((frame.getPreferredSize().height/2)-20);
+		sidePanelSplitPane.setContinuousLayout(true);
 
-        userLists = new ArrayList<ChatWindowUserListField>(1);
-        userLists.add(new ChatWindowUserListField("#jircc", screenHeight));
-        userListPane.add(userLists.get(0));
+		/*
+		 * Sets up the split pane that splits the side panel
+		 * and the main output/input area.
+		 */
+		listsAndOutputSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				centerJPanel, sidePanelSplitPane);
+		listsAndOutputSplitPane.setContinuousLayout(true);
+		listsAndOutputSplitPane.setDividerSize(SPLITPANEWIDTH);
+		listsAndOutputSplitPane.setDividerLocation(
+				frame.getPreferredSize().width-DEFAULTSIDEBARWIDTH);
 
-        menuBar = new JMenuBar();
-        menuBar.add(new JMenu("File"));
-        northPanel = new JPanel(new BorderLayout(1, 1));
-        northPanel.add(menuBar);
 
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode("Root");
-        createRootNodes(top);
-        chanTree = new JTree(top);
+		/*
+		 * Adds the property changed listener to catch resizing
+		 * events of the frame.
+		 */
+		sidePanelSplitPane.addPropertyChangeListener(this);
+		listsAndOutputSplitPane.addPropertyChangeListener(this);
 
-        chanTree.setCellRenderer(treeRenderer);
-        treeRenderer.setOpenIcon(openTreeIcon);
-        treeRenderer.setClosedIcon(closedTreeIcon);
-        treeRenderer.setLeafIcon(null);
-        chanScrollPane = new JScrollPane(chanTree);
-        chanListDim = new Dimension(eastPanelWidth, screenHeight / 2);
-        chanScrollPane.setPreferredSize(chanListDim);
+		/*
+		 * Adds the split pane that contains all the other components
+		 * to the frame.
+		 * Packs it and gives the inputField focus.
+		 * Presents the packed frame to the user.
+		 */
+		frame.add(listsAndOutputSplitPane, BorderLayout.CENTER);
+		frame.pack();
+		inputField.requestFocus();
+		frame.setVisible(true);
+	}
 
-        eastPanel.setPreferredSize(new Dimension(eastPanelWidth, screenHeight));
-        eastPanel.add(userListPane, BorderLayout.NORTH);
-        eastPanel.add(chanScrollPane, BorderLayout.SOUTH);
+	@SuppressWarnings("unused")
+	public void update(Observable o, Object arg) {
+		if (o instanceof InputManager && arg instanceof Message) 
+		{
+			Message m = ((Message) arg);
+		}
+	}
 
-        add(inputPanel, BorderLayout.SOUTH);
-        add(northPanel, BorderLayout.NORTH);
-        add(eastPanel, BorderLayout.EAST);
-        add(outputLayeredPane, BorderLayout.CENTER);
+	/**
+	 * Called when a server is joined. 
+	 * Takes in the name of the server that is being joined.
+	 * @param server
+	 */
+	public void joinServer(String server)
+	{
+		connectionTree.newServerNode(server);
+		joinChannel(server);
+	}
 
-        System.out.println("output layered pane preferred size..."
-                + outputLayeredPane.getPreferredSize());
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        pack();
-        setVisible(true);
+	/**
+	 * Called when the user leaves a server.
+	 * Takes in the name of the server that the user is leaving.
+	 * @param server
+	 */
+	public void leaveServer(String server)
+	{
+		for(OutputPanel oPanel: outputPanels)
+		{
+			if(oPanel.getServer().equals(server))
+			{
+				outputFieldLayeredPane.remove(oPanel);
+				outputPanels.remove(oPanel);
+			}
+		}
+		for(UserListPanel uLPanel: userListPanels)
+		{
+			if(uLPanel.getServer().equals(server))
+			{
+				userListsLayeredPane.remove(uLPanel);
+				userListPanels.remove(uLPanel);
+			}
+		}
+		connectionTree.removeServerNode(server);
+	}
 
-    }
+	/**
+	 * Called when a user wishes to join a channel on a server
+	 * that has already been connected to.
+	 * @param server
+	 * @param channel
+	 * @param isServer
+	 */
+	public void joinChannel(String server, String channel)
+	{
+		newOutputPanel(server, channel);
+		newUserListPanel(server, channel);
+		connectionTree.newChannelNode(server, channel);
+	}
 
-    synchronized public void updateUserList(ArrayList<User> userList) {
-        userLists.get(0).getTextArea().setText("");
-        for (User nick : userList)
-            userLists.get(0).getTextArea().append(nick.getNick() + "\n");
-    }
+	/**
+	 * Constructs a channel for a server connection. Does not join
+	 * any channels on the server.
+	 * @param server
+	 */
+	public void joinChannel(String server)
+	{
+		newOutputPanel(server, server);
+		newUserListPanel(server, server);
+	}
 
-    synchronized private void createRootNodes(DefaultMutableTreeNode top) {
-        DefaultMutableTreeNode category = null;
+	/**
+	 * Called when the user leaves a channel on a particular server.
+	 * Takes in the server the channel is on, and the channel name.
+	 * @param server
+	 * @param channel
+	 */
+	public void leaveChannel(String server, String channel)
+	{
+		System.out.println("leaving channel");
+		outputPanels.remove(findChannel(server, channel, 0));
+		userListPanels.remove(findChannel(server, channel, 1));
+		connectionTree.removeChannelNode(server, channel);
+	}
 
-        category = new DefaultMutableTreeNode("Books");
-        top.add(category);
-    }
+	/**
+	 * Called when a message is received. It takes in the server name, 
+	 * the channel name, and the actual message.
+	 * ChatWindow has a channel for the server connection itself that is of the same
+	 * name as the server. The server channel should receive messages that are command
+	 * responses.
+	 * @param server
+	 * @param channel
+	 * @param message
+	 */
+	public void newMessage(String server, String channel, String message)
+	{
+		if(findChannel(server, channel,0) != -1)
+			outputPanels.get(findChannel(server, channel, 0)).newMessage(message);
+		else
+			System.err.println("Cound not find channel to append message to.");
+	}
 
-    synchronized public void createChannelNode(String channel) {
+	/**
+	 * Called when a new user joins a channel. Takes in the server name, 
+	 * the channel, and the user's nick.
+	 * @param server
+	 * @param channel
+	 * @param user
+	 */
+	public void newUser(String server, String channel, String user)
+	{
+		if(findChannel(server, channel,1) != -1)
+			userListPanels.get(findChannel(server, channel,1)).newUser(user);
+		else
+			System.err.println("[ChatWindowError] Cound not find channel to add new user.");
+	}
 
-    }
+	/**
+	 * Called when a user leaves a channel. Takes in the server name, channel 
+	 * name, and the users nick.
+	 * @param server
+	 * @param channel
+	 * @param user
+	 */
+	public void deleteUser(String server, String channel, String user)
+	{
+		if(findChannel(server,channel,1) != -1)
+			userListPanels.get(findChannel(server, channel,1)).deleteUser(user);
+		else
+			System.err.println("Cound not find channel to add new user.");
+	}
 
-    /**
-     * @param output
-     *            Appends the channel output to the output panel.
-     */
-    synchronized public void appendOutput(String output) {
-        try {
-            outputFields.get(0).getTextArea().append(output);
-            outputFields
-                    .get(0)
-                    .getTextArea()
-                    .setCaretPosition(
-                            outputFields.get(0).getTextArea().getText()
-                                    .length());
-        } catch (Exception e) {
-        }
-    }
+	/**
+	 * Used to send a message to a particular server and channel.
+	 */
+	public void keyReleased(KeyEvent e) {
+		if(e.getKeyCode() == KeyEvent.VK_ENTER)
+		{
+			String m = inputField.getText();
+			if(!m.startsWith("/"))
+				newMessage(activeServer, activeChannel, "[ me ] "+m);
+			setChanged();
+			notifyObservers(m);
 
-    /**
-     * Will be used to manage the Channel JTree when a user joins a channel.
-     */
-    synchronized public void joinedChannel() {
+			inputField.setText("");
+		}
+	}
 
-    }
+	/**
+	 * This method must be called each time a channel or server is joined or connected to.
+	 * @param channel
+	 */
+	public void newOutputPanel(String server, String channel)
+	{
+		OutputPanel newOutputPanel = new OutputPanel(server, channel, 
+				(int) outputFieldLayeredPane.getSize().getWidth(),
+				(int) outputFieldLayeredPane.getSize().getHeight());
 
-    /**
-     * Will be used to manage the Channel JTree when a user parts from a
-     * channel.
-     */
-    synchronized public void partedChannel() {
+		outputPanels.add(newOutputPanel);
+		outputFieldLayeredPane.add(newOutputPanel);
+	}
 
-    }
+	/**
+	 * This needs to be called alone with newOutputPanel
+	 */
+	public void newUserListPanel(String server, String channel)
+	{
+		UserListPanel newUserListPanel = new UserListPanel(server, channel,
+				(int) userListsLayeredPane.getSize().getWidth(),
+				(int) userListsLayeredPane.getSize().getHeight());
+		userListPanels.add(newUserListPanel);
+		userListsLayeredPane.add(newUserListPanel);
+	}
 
-    /**
-     * Fixes the size of components in the frame when window is resized.
-     */
-    synchronized public void componentResized(ComponentEvent e) {
-        System.out.println("component resized");
-        screenWidth = this.getWidth();
-        screenHeight = this.getHeight();
-        try {
-            outputLayeredPane.setPreferredSize(ChatWindowOutputField.sizeCalc(
-                    screenWidth, screenHeight));
-            for (ChatWindowOutputField temp : outputFields)
-                temp.resize();
 
-            userListPane.setPreferredSize(ChatWindowUserListField
-                    .sizeCalc(screenHeight));
-            chanListDim.setSize(eastPanelWidth, screenHeight / 2);
-            outputLayeredPane.revalidate();
-            eastPanel.revalidate();
-        } catch (Exception e1) {
-            System.out.println("componentResize could not be done yet.");
-        }
-    }
+	/**
+	 * Finds the appropriate channel for a given action.
+	 * 
+	 * @param server
+	 * @param channel
+	 * @param type (0 is for outputPanels, 1 for userListPanels)
+	 * @return
+	 */
+	private int findChannel(String server, String channel, int type)
+	{
+		boolean found = false;
+		int i = 0;
+		if(type==0)
+		{
+			while(!found && i < outputPanels.size())
+			{
+				if(outputPanels.get(i).getServer().equals(server) && 
+						outputPanels.get(i).getChannel().equals(channel))
+				{
+					found = true;
+					return i;
+				}
+				else 
+					i++;
+			}
+		}
+		else if (type==1)
+		{
+			while(!found && i < userListPanels.size())
+			{
+				if(userListPanels.get(i).getServer().equals(server) && 
+						userListPanels.get(i).getChannel().equals(channel))
+				{
+					found = true;
+					return i;
+				}	
+				else i++;
+			}
+		}
+		return -1;
+	}
 
-    /**
-     * Handles a window maximization/resize.
-     */
-    synchronized public void windowStateChanged(WindowEvent arg0) {
-        System.out.println("windowStateChanged");
-    }
 
-    /**
-     * Calls certain methods after certain keystrokes.
-     */
-    synchronized public void keyPressed(KeyEvent arg0) {
-        if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-            serverSender.sendMessage(inputField.getText());
-            outputFields.get(0).getTextArea()
-                    .append("<Me> " + inputField.getText() + "\n");
-            inputField.setText("");
-            outputFields
-                    .get(0)
-                    .getTextArea()
-                    .setCaretPosition(
-                            outputFields.get(0).getTextArea().getText()
-                                    .length());
-        }
-        if (arg0.getKeyCode() == 157)
-            if (count % 2 == 0) {
-                count++;
-                outputLayeredPane.moveToBack(outputFields.get(0));
-            } else {
-                count++;
-                outputLayeredPane.moveToBack(outputFields.get(1));
-            }
-    }
+	@Override
+	public void componentResized(ComponentEvent e) 
+	{
+		sidePanelSplitPane.setDividerLocation((frame.getHeight()/2)-20);
+		listsAndOutputSplitPane.setDividerLocation(frame.getWidth()-DEFAULTSIDEBARWIDTH);
 
-    /**
-     * Gives focus to user input text field when the window gains focus.
-     */
-    synchronized public void windowGainedFocus(WindowEvent arg0) {
-        inputField.requestFocus();
-    }
+		OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
+				outputFieldLayeredPane.getHeight());
 
-    public void keyTyped(KeyEvent arg0) {
-    }
+		UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
+				userListsLayeredPane.getHeight());
 
-    @Override
-    public void windowLostFocus(WindowEvent arg0) {
-    }
+		treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
 
-    @Override
-    public void componentHidden(ComponentEvent e) {
+		for(OutputPanel t : outputPanels)
+		{
+			t.setBounds(OutputPanel.getBoundsRec());
+			t.getScrollPane().getVerticalScrollBar().setValue(
+					t.getScrollPane().getVerticalScrollBar().getMaximum());
+		}
 
-    }
+		for(UserListPanel t: userListPanels)
+		{
+			t.setBounds(UserListPanel.getBoundsRec());
+		}
 
-    @Override
-    public void componentMoved(ComponentEvent e) {
+		frame.revalidate();
+	}
 
-    }
+	public void propertyChange(PropertyChangeEvent evt) {
+		if(evt.getSource() == listsAndOutputSplitPane)
+		{
+			OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
+					outputFieldLayeredPane.getHeight());
 
-    @Override
-    public void componentShown(ComponentEvent arg0) {
+			UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
+					userListsLayeredPane.getHeight());
 
-    }
+			for(OutputPanel t : outputPanels)
+			{
+				t.setBounds(OutputPanel.getBoundsRec());
+				t.getScrollPane().getVerticalScrollBar().setValue(
+						t.getScrollPane().getVerticalScrollBar().getMaximum());
+			}
 
-    @Override
-    public void keyReleased(KeyEvent arg0) {
+			for(UserListPanel t: userListPanels)
+			{
+				t.setBounds(UserListPanel.getBoundsRec());
+			}
+			treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
 
-    }
+		}
+		else if(evt.getSource() == sidePanelSplitPane)
+		{
+			UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
+					userListsLayeredPane.getHeight());
 
-    synchronized public ServerSender getServerSender() {
-        return serverSender;
-    }
+			for(UserListPanel t: userListPanels)
+			{
+				t.setBounds(UserListPanel.getBoundsRec());
+			}
+			treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
 
-    synchronized public void setServerSender(ServerSender serverSender) {
-        this.serverSender = serverSender;
-    }
+		}
+		frame.revalidate();
+	}
 
-    synchronized public JTextField getInputField() {
-        return inputField;
-    }
+	/**
+	 * Called by the ConnectionTree class when a new node on the 
+	 * tree is selected.
+	 * Brings the appropriate output field and user lists
+	 * to the front of their JLayeredPanes.
+	 * @param activeServer
+	 * @param activeChannel
+	 */
+	static void newPanelSelections(String activeServer, String activeChannel) {
+		ChatWindow.activeServer = activeServer;
+		ChatWindow.activeChannel = activeChannel;
 
-    synchronized public void setInputField(JTextField inputField) {
-        this.inputField = inputField;
-    }
+		frame.setTitle(activeServer + " " + activeChannel);
+
+		for(OutputPanel t : outputPanels)
+		{
+			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
+				outputFieldLayeredPane.moveToBack(t);
+			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
+				outputFieldLayeredPane.moveToFront(t);
+		}
+
+		for(UserListPanel t : userListPanels)
+		{
+			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
+				userListsLayeredPane.moveToBack(t);
+			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
+				userListsLayeredPane.moveToFront(t);
+		}		
+	}
+
+	public void windowGainedFocus(WindowEvent e) {
+		inputField.requestFocus();
+	}
+
+	@Override
+	public void windowStateChanged(WindowEvent e) {
+
+	}
+
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		//System.out.println("keyTyped");
+	}
+
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		//System.out.println("keyPressed");
+	}
+
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		//  Auto-generated method stub
+
+	}
+
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		//  Auto-generated method stub
+
+	}
+
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		//  Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowLostFocus(WindowEvent e) {
+		//  Auto-generated method stub
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		//  Auto-generated method stub
+
+	}
 }
