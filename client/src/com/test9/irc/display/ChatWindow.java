@@ -152,7 +152,6 @@ ActionListener {
 	 */
 	public void joinServer(String server)
 	{
-		System.out.println("JOINSERVER IN CHATWINDOW CALLED");
 		connectionTree.newServerNode(server);
 		joinChannel(server);
 		joinedAServer = true;
@@ -217,7 +216,6 @@ ActionListener {
 	 */
 	public void leaveChannel(String server, String channel)
 	{
-		System.out.println("leaving channel");
 		outputPanels.remove(findChannel(server, channel, 0));
 		userListPanels.remove(findChannel(server, channel, 1));
 		connectionTree.removeChannelNode(server, channel);
@@ -279,7 +277,13 @@ ActionListener {
 		{	
 			String m = inputField.getText();
 			if(ircConnections.get(findIRCConnection()).send(oF.formatMessage(m, activeChannel)))
-				newMessage(activeServer, activeChannel, "[me]\t"+m);
+			{
+				if(m.startsWith("/")) {
+					newMessage(activeServer, activeServer, m);
+				} else {
+					newMessage(activeServer, activeChannel, "[me]\t"+m);
+				}
+			}
 			inputField.setText("");
 		}
 	}
@@ -352,12 +356,12 @@ ActionListener {
 		}
 		return -1;
 	}
-	
+
 	private int findIRCConnection()
 	{
 		boolean found = false;
 		int index = 0;
-		
+
 		while(!found && index < ircConnections.size())
 		{
 			if(ircConnections.get(index).getHost().equals(activeServer))
@@ -369,7 +373,7 @@ ActionListener {
 				index++;
 		}
 		return -1;
-		
+
 	}
 
 

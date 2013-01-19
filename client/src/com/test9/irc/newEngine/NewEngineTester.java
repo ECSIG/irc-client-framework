@@ -12,14 +12,14 @@ public class NewEngineTester {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
-		IRCConnection connection = new IRCConnection("irc.ecsig.com", 6667, null, "jared-test", 
-				"jared-test", "jared-test");
+		IRCConnection connection = new IRCConnection("irc.ecsig.com", 6667, null, "jared-bot", 
+				"jared-bot", "jared-bot");
 		ChatWindow chatWindow = new ChatWindow(connection.getHost());
 		ChatWindow.getIrcConnections().add(connection);
 		connection.cw = chatWindow;
 		connection.connect();
 		try {
-			connection.sleep(500);
+			connection.sleep(2000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -27,7 +27,7 @@ public class NewEngineTester {
 		
 		
 		//connection.send("JOIN #ecsig");
-		connection.send("JOIN #help");
+		connection.send("JOIN #jircc");
 	}
 
 }
