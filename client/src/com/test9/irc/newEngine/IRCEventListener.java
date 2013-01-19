@@ -1,5 +1,7 @@
 package com.test9.irc.newEngine;
 
-public class IRCEventListener {
+import java.util.EventListener;
+
+public interface IRCEventListener extends EventListener, IRCConstants {
 
 }

@@ -173,9 +173,10 @@ public class IRCConnection extends Thread {
 
 		} else if (command.equalsIgnoreCase("NOTICE")) { // NOTICE
 
-			//} else if ((reply = IRCUtil.parseInt(command)) >= 1 && reply < 400) { // RPL
-
-			//} else if (reply >= 400 && reply < 600) { // ERROR
+		} else if ((reply = IRCUtil.parseInt(command)) >= 2 && reply < 400) { // RPL
+			System.out.println(reply);
+			cw.newMessage(host, host, line);
+		//} else if (reply >= 400 && reply < 600) { // ERROR
 
 		} else if (command.equalsIgnoreCase("KICK")) { // KICK
 
