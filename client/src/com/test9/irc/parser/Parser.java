@@ -1,5 +1,8 @@
 package com.test9.irc.parser;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Used to parse messages that come from the server.
  *
@@ -20,14 +23,44 @@ public class Parser {
 	private static boolean prefixPresent = false;
 	private static String prefix = "";
 	private static String command = "";
-	private static String params = "";
+	//private static String params = "";
+	private static String[] params;
 	private static String serverName = "";
 	private static String nickname = "";
 	private static String user = "";
 	private static String host = "";
 	private static String content = "";
-//	final private static String DIVIDER = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+	final private static String DIVIDER = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
 
+	public static void main(String[] args)
+	{
+		Parser p = new Parser();
+		p.parse(new StringBuffer(":irc.ecsig.com 005 jared-test CMDS=KNOCK,MAP,DCCALLOW,USERIP " +
+				"UHNAMES NAMESX SAFELIST HCN MAXCHANNELS=50 CHANLIMIT=#:50 MAXLIST=b:60,e:60,I:60 " +
+				"NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported " +
+				"by this server"));
+		System.out.println(DIVIDER);
+
+		p.parse(new StringBuffer(":irc.ecsig.com 255 jared-test :I have 12 clients and 1 servers")).toString();
+		System.out.println(DIVIDER);
+
+		p.parse(new StringBuffer(":jared-test!jared-test@ecsig-A1B219D7.ri.ri.cox.net JOIN :#jared"));
+		System.out.println(DIVIDER);
+
+		p.parse(new StringBuffer(":Jared!Jared@ecsig-A1B219D7.ri.ri.cox.net PRIVMSG #jircc :ermahgard"));
+		System.out.println(DIVIDER);
+
+		p.parse(new StringBuffer(":Jared!Jared@ecsig-A1B219D7.ri.ri.cox.net PRIVMSG #jared ::here is a message: with : some :semicolons:::"));
+		System.out.println(DIVIDER);
+
+		p.parse(new StringBuffer("255 jared-test :I have 12 clients and 1 servers"));
+		System.out.println(DIVIDER);
+
+		p.parse(new StringBuffer(":irc.ecsig.com 333 jared-test #jared Jared 1355349884"));
+
+	}
+
+	
 	/**
 	 * Initializes the parser and set's init to true.
 	 * @param init sets to true
@@ -68,14 +101,14 @@ public class Parser {
 
 		if(message.indexOf(" :") >= 0)
 		{
-			params = message.substring(0, message.indexOf(" :")).trim();
+			params = parseParams(message.substring(0, message.indexOf(" :")).trim());
 			message.delete(0, message.indexOf(" :") + 2);
 			
 			content = message.substring(0, message.length());
 		}
 		else
 		{
-			params = message.substring(0, message.length()).trim();
+			params = parseParams(message.substring(0, message.length()).trim());
 			message.delete(0, message.length());
 			content = "";
 		}
@@ -106,6 +139,16 @@ public class Parser {
 		else
 			serverName = splitPrefix[0];	
 	}
+	
+	/**
+	 * Parses the individual parameters form the 
+	 * params field.
+	 * @return 
+	 */
+	private String[] parseParams(String possibleParams)
+	{
+		return(possibleParams.split(" "));
+	}
 
 	/**
 	 * Resets the parser so it can parse a new message.
@@ -115,7 +158,7 @@ public class Parser {
 		prefixPresent = false;
 		prefix = "";
 		command = "";
-		params = "";
+		params = null;
 		serverName = "";
 		nickname = "";
 		user = "";
@@ -130,12 +173,13 @@ public class Parser {
 	{
 		System.out.println("Prefix: \t'" + prefix + "'");
 		System.out.println("Command: \t'" + command + "'");
-		System.out.println("Params: \t'"+ params + "'");
+		System.out.println("Params: \t'"+ Arrays.toString(params) + "'");
 		System.out.println("Server_name: \t'" + serverName + "'");
 		System.out.println("Nickname: \t'" + nickname + "'");
 		System.out.println("User: \t\t'"+ user + "'");
 		System.out.println("Host: \t\t'"+host + "'");
 		System.out.println("Content: \t'"+content+"'");
+		System.out.println(DIVIDER);
 	}
 
 	/**

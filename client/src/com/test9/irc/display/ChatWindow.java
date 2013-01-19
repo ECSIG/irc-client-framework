@@ -1,7 +1,7 @@
 package com.test9.irc.display;
 
-import com.test9.irc.engine.InputManager;
-import com.test9.irc.parser.Message;
+import com.test9.irc.newEngine.IRCConnection;
+import com.test9.irc.parser.OutputFactory;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -19,7 +19,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
@@ -31,7 +30,7 @@ import javax.swing.JTextField;
 
 public class ChatWindow extends Observable implements ComponentListener,
 KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
-ActionListener, Observer {
+ActionListener {
 
 	private static final JFrame frame = new JFrame();
 	private static final Toolkit KIT = Toolkit.getDefaultToolkit();
@@ -52,6 +51,9 @@ ActionListener, Observer {
 	private static String activeChannel;
 	private static JScrollPane treeScrollPane;
 	private static JMenuBar menuBar;
+	private static boolean joinedAServer = false;
+	private static ArrayList<IRCConnection> ircConnections = new ArrayList<IRCConnection>();
+	private static OutputFactory oF = new OutputFactory();
 
 
 	/**
@@ -89,8 +91,7 @@ ActionListener, Observer {
 		treeScrollPane = new JScrollPane(connectionTree);
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 
-		// Joins the first server.
-		joinServer(initialServerName);
+		//joinServer(initialServerName);
 
 		// Adds the required keylistener to the input field.
 		inputField.addKeyListener(this);
@@ -144,14 +145,6 @@ ActionListener, Observer {
 		frame.setVisible(true);
 	}
 
-	@SuppressWarnings("unused")
-	public void update(Observable o, Object arg) {
-		if (o instanceof InputManager && arg instanceof Message) 
-		{
-			Message m = ((Message) arg);
-		}
-	}
-
 	/**
 	 * Called when a server is joined. 
 	 * Takes in the name of the server that is being joined.
@@ -159,8 +152,10 @@ ActionListener, Observer {
 	 */
 	public void joinServer(String server)
 	{
+		System.out.println("JOINSERVER IN CHATWINDOW CALLED");
 		connectionTree.newServerNode(server);
 		joinChannel(server);
+		joinedAServer = true;
 	}
 
 	/**
@@ -208,7 +203,7 @@ ActionListener, Observer {
 	 * any channels on the server.
 	 * @param server
 	 */
-	public void joinChannel(String server)
+	private void joinChannel(String server)
 	{
 		newOutputPanel(server, server);
 		newUserListPanel(server, server);
@@ -281,13 +276,10 @@ ActionListener, Observer {
 	 */
 	public void keyReleased(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_ENTER)
-		{
+		{	
 			String m = inputField.getText();
-			if(!m.startsWith("/"))
-				newMessage(activeServer, activeChannel, "[ me ] "+m);
-			setChanged();
-			notifyObservers(m);
-
+			if(ircConnections.get(findIRCConnection()).send(oF.formatMessage(m, activeChannel)))
+				newMessage(activeServer, activeChannel, "[me]\t"+m);
 			inputField.setText("");
 		}
 	}
@@ -360,6 +352,25 @@ ActionListener, Observer {
 		}
 		return -1;
 	}
+	
+	private int findIRCConnection()
+	{
+		boolean found = false;
+		int index = 0;
+		
+		while(!found && index < ircConnections.size())
+		{
+			if(ircConnections.get(index).getHost().equals(activeServer))
+			{
+				found = true;
+				return index;
+			}
+			else
+				index++;
+		}
+		return -1;
+		
+	}
 
 
 	@Override
@@ -367,13 +378,13 @@ ActionListener, Observer {
 	{
 		sidePanelSplitPane.setDividerLocation((frame.getHeight()/2)-20);
 		listsAndOutputSplitPane.setDividerLocation(frame.getWidth()-DEFAULTSIDEBARWIDTH);
+		if(joinedAServer) {
+			OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
+					outputFieldLayeredPane.getHeight());
 
-		OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
-				outputFieldLayeredPane.getHeight());
-
-		UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
-				userListsLayeredPane.getHeight());
-
+			UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
+					userListsLayeredPane.getHeight());
+		}
 		treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
 
 		for(OutputPanel t : outputPanels)
@@ -392,40 +403,41 @@ ActionListener, Observer {
 	}
 
 	public void propertyChange(PropertyChangeEvent evt) {
-		if(evt.getSource() == listsAndOutputSplitPane)
-		{
-			OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
-					outputFieldLayeredPane.getHeight());
-
-			UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
-					userListsLayeredPane.getHeight());
-
-			for(OutputPanel t : outputPanels)
+		if(joinedAServer)
+			if(evt.getSource() == listsAndOutputSplitPane)
 			{
-				t.setBounds(OutputPanel.getBoundsRec());
-				t.getScrollPane().getVerticalScrollBar().setValue(
-						t.getScrollPane().getVerticalScrollBar().getMaximum());
-			}
+				OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
+						outputFieldLayeredPane.getHeight());
 
-			for(UserListPanel t: userListPanels)
+				UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
+						userListsLayeredPane.getHeight());
+
+				for(OutputPanel t : outputPanels)
+				{
+					t.setBounds(OutputPanel.getBoundsRec());
+					t.getScrollPane().getVerticalScrollBar().setValue(
+							t.getScrollPane().getVerticalScrollBar().getMaximum());
+				}
+
+				for(UserListPanel t: userListPanels)
+				{
+					t.setBounds(UserListPanel.getBoundsRec());
+				}
+				treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
+
+			}
+			else if(evt.getSource() == sidePanelSplitPane)
 			{
-				t.setBounds(UserListPanel.getBoundsRec());
+				UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
+						userListsLayeredPane.getHeight());
+
+				for(UserListPanel t: userListPanels)
+				{
+					t.setBounds(UserListPanel.getBoundsRec());
+				}
+				treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
+
 			}
-			treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
-
-		}
-		else if(evt.getSource() == sidePanelSplitPane)
-		{
-			UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
-					userListsLayeredPane.getHeight());
-
-			for(UserListPanel t: userListPanels)
-			{
-				t.setBounds(UserListPanel.getBoundsRec());
-			}
-			treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
-
-		}
 		frame.revalidate();
 	}
 
@@ -446,17 +458,18 @@ ActionListener, Observer {
 		for(OutputPanel t : outputPanels)
 		{
 			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
-				outputFieldLayeredPane.moveToBack(t);
+				//outputFieldLayeredPane.moveToBack(t);
+				t.setVisible(false);
 			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
-				outputFieldLayeredPane.moveToFront(t);
+				t.setVisible(true);//outputFieldLayeredPane.moveToFront(t);
 		}
 
 		for(UserListPanel t : userListPanels)
 		{
 			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
-				userListsLayeredPane.moveToBack(t);
+				t.setVisible(false);
 			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
-				userListsLayeredPane.moveToFront(t);
+				t.setVisible(true);
 		}		
 	}
 
@@ -512,5 +525,19 @@ ActionListener, Observer {
 	public void actionPerformed(ActionEvent e) {
 		//  Auto-generated method stub
 
+	}
+
+	/**
+	 * @return the ircConnections
+	 */
+	public static ArrayList<IRCConnection> getIrcConnections() {
+		return ircConnections;
+	}
+
+	/**
+	 * @param ircConnections the ircConnections to set
+	 */
+	public static void setIrcConnections(ArrayList<IRCConnection> ircConnections) {
+		ChatWindow.ircConnections = ircConnections;
 	}
 }

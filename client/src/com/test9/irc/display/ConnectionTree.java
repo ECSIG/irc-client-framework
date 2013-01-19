@@ -70,7 +70,6 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	@SuppressWarnings("unchecked")
 	void removeChannelNode(String server, String channel)
 	{
-		System.out.println("removeChannelNode");
 		for (Object node : Collections.list(root.children()))
 		{
 			DefaultMutableTreeNode serverNode = (DefaultMutableTreeNode) node;
