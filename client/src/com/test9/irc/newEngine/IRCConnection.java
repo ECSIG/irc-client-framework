@@ -5,11 +5,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 
-import com.test9.irc.display.ChatWindow;
 import com.test9.irc.parser.Message;
 import com.test9.irc.parser.Parser;
 
@@ -28,7 +26,7 @@ public class IRCConnection extends Thread {
 	private String realname;
 	private String username;
 	private Parser p;
-	static ChatWindow cw;
+	private IRCEventListener listener;
 
 	public IRCConnection(String host, int port, String pass, String nick, 
 			String username, String realname) {
@@ -41,8 +39,13 @@ public class IRCConnection extends Thread {
 		this.username = username;
 		this.realname = realname;
 	}
+	
+	public synchronized void addIRCEventListener(IRCEventListener listener) {
+		this.listener = listener;
+	}
 
-	public void connect() throws IOException {
+	@SuppressWarnings("unused")
+	public synchronized void connect() throws IOException {
 		if (regLevel != 0) // otherwise disconnected or connect
 			throw new SocketException("Socket closed or already open ("+ regLevel +")");
 		IOException exception = null;
@@ -78,7 +81,7 @@ public class IRCConnection extends Thread {
 	 * @see #connect()
 	 * @see #run()
 	 */
-	protected void prepare(Socket s) throws IOException {
+	protected synchronized void prepare(Socket s) throws IOException {
 		if (s == null)
 			throw new SocketException("Socket s is null, not connected");
 		socket = s;
@@ -90,7 +93,7 @@ public class IRCConnection extends Thread {
 		register();
 	}
 
-	private void register() {
+	private synchronized void register() {
 		System.out.println("register()");
 		if (pass != null)
 			send("PASS "+ pass); 
@@ -124,7 +127,9 @@ public class IRCConnection extends Thread {
 	 * @param line The line which should be send to the server without the 
 	 *             trailing carriage return line feed (<code>\r\n</code>).
 	 */
+	//public synchronized boolean send(String line) {
 	public boolean send(String line) {
+		System.out.println("send called");
 		System.out.println("sending: " + line);
 		try {
 			out.write(line +"\r\n");
@@ -155,16 +160,16 @@ public class IRCConnection extends Thread {
 
 		if (command.equalsIgnoreCase("PRIVMSG")) { // MESSAGE
 			System.out.println("New private message");
-			cw.newMessage(host, m.getParams()[0], "["+m.getNickname()+"]"+"\t"+ m.getContent());
+			listener.onPrivmsg(host, m);
 		} else if (command.equalsIgnoreCase("MODE")) { // MODE
 
 		} else if (command.equalsIgnoreCase("PING")) { // PING
 			if (regLevel == 1) { // not registered
 				regLevel = 2; // first PING received -> connection
 			}
-			send("PONG " + line.substring(5));
+			listener.onPing(line.substring(5));
 		} else if (command.equalsIgnoreCase("JOIN")) { // JOIN
-			cw.joinChannel(host, m.getContent());
+			listener.onJoin(host, m);
 		} else if (command.equalsIgnoreCase("NICK")) { // NICK
 
 		} else if (command.equalsIgnoreCase("QUIT")) { // QUIT
@@ -175,7 +180,7 @@ public class IRCConnection extends Thread {
 
 		} else if ((reply = IRCUtil.parseInt(command)) >= 2 && reply < 400) { // RPL
 			System.out.println(reply);
-			cw.newMessage(host, host, line);
+			listener.onUnknown(host, host, line);
 		//} else if (reply >= 400 && reply < 600) { // ERROR
 
 		} else if (command.equalsIgnoreCase("KICK")) { // KICK
@@ -187,10 +192,9 @@ public class IRCConnection extends Thread {
 		} else if (command.equalsIgnoreCase("ERROR")) { // ERROR
 
 		} else if (command.equalsIgnoreCase("001")) {
-			System.out.println("GOT A 001 MESSAGE");
-			cw.joinServer(m.getServerName());
+			listener.onConnect(m);
 		} else {
-			cw.newMessage(host, host, line);
+			listener.onUnknown(host, host, line);
 
 		}
 	}

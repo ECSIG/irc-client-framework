@@ -40,12 +40,24 @@ public class OutputPanel extends JPanel{
 	
 	
 	/**
-	 * This is used to append a new string to a channels text area.
+	 * This is used to append a new string to a servers output 
+	 * panel.
 	 * @param message
 	 */
 	void newMessage(String message)
 	{
 		textArea.append(message+"\r\n");
+		textArea.setCaretPosition(textArea.getText().length());
+	}
+	
+	/**
+	 * This is used when a new Privmsg is received and append it 
+	 * to a channels output panel.
+	 * @param message
+	 */
+	void newMessage(String nick, String message)
+	{
+		textArea.append("["+nick+"]"+" "+message+"\r\n");
 		textArea.setCaretPosition(textArea.getText().length());
 	}
 	

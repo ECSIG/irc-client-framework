@@ -238,6 +238,24 @@ ActionListener {
 		else
 			System.err.println("Cound not find channel to append message to.");
 	}
+	
+	/**
+	 * Called when a message is received. It takes in the server name, 
+	 * the channel name, and the actual message.
+	 * ChatWindow has a channel for the server connection itself that is of the same
+	 * name as the server. The server channel should receive messages that are command
+	 * responses.
+	 * @param server
+	 * @param channel
+	 * @param message
+	 */
+	public void newMessage(String server, String channel, String nick, String message)
+	{
+		if(findChannel(server, channel,0) != -1)
+			outputPanels.get(findChannel(server, channel, 0)).newMessage(nick, message);
+		else
+			System.err.println("Cound not find channel to append message to.");
+	}
 
 	/**
 	 * Called when a new user joins a channel. Takes in the server name, 
@@ -281,7 +299,7 @@ ActionListener {
 				if(m.startsWith("/")) {
 					newMessage(activeServer, activeServer, m);
 				} else {
-					newMessage(activeServer, activeChannel, "[me]\t"+m);
+					newMessage(activeServer, activeChannel, "me", m);
 				}
 			}
 			inputField.setText("");
@@ -357,7 +375,7 @@ ActionListener {
 		return -1;
 	}
 
-	private int findIRCConnection()
+	private synchronized int findIRCConnection()
 	{
 		boolean found = false;
 		int index = 0;
@@ -366,12 +384,13 @@ ActionListener {
 		{
 			if(ircConnections.get(index).getHost().equals(activeServer))
 			{
-				found = true;
+				found = true;	
 				return index;
 			}
 			else
 				index++;
 		}
+		System.err.println("Error finding channel while sending message");
 		return -1;
 
 	}
