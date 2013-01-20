@@ -69,9 +69,9 @@ public class IRCEventAdapter implements IRCEventListener {
 	}
 
 	@Override
-	public void onNick() {
-		// TODO Auto-generated method stub
+	public void onNick(Message m) {
 		
+		cw.nickChange(m.getNickname(), m.getContent());
 	}
 
 	@Override
@@ -95,6 +95,21 @@ public class IRCEventAdapter implements IRCEventListener {
 	public void onQuit() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void onReply(Message m) {
+		int numCode = Integer.valueOf(m.getCommand());
+	
+		if(numCode == IRCUtil.RPL_NAMREPLY)
+		{
+			System.out.println("RPL_NAMERPKY");
+			String[] nicks = m.getContent().split(" ");
+			for(String n : nicks)
+			{
+				cw.newUser(connection.getHost(), m.getParams()[2], n);
+			}
+		}
 	}
 
 	@Override

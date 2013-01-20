@@ -271,6 +271,14 @@ ActionListener {
 		else
 			System.err.println("[ChatWindowError] Cound not find channel to add new user.");
 	}
+	
+	public void nickChange(String oldNick, String newNick)
+	{
+		for(UserListPanel u : userListPanels)
+		{
+			u.nickChange(oldNick, newNick);
+		}
+	}
 
 	/**
 	 * Called when a user leaves a channel. Takes in the server name, channel 

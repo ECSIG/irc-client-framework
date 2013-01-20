@@ -55,6 +55,12 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 		listModel.removeElement(user);
 	}
 
+	void nickChange(String oldNick, String newNick)
+	{
+		listModel.removeElement(oldNick);
+		newUser(newNick);
+	}
+
 	static void setNewBounds(int width, int height)
 	{
 		boundsRect.setBounds(0, 0, width, height);

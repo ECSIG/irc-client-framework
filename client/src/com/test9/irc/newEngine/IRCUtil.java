@@ -1,6 +1,6 @@
 package com.test9.irc.newEngine;
 
-public class IRCUtil {
+public class IRCUtil implements IRCConstants {
 	
 	public IRCUtil() {
 		

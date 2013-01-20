@@ -171,7 +171,7 @@ public class IRCConnection extends Thread {
 		} else if (command.equalsIgnoreCase("JOIN")) { // JOIN
 			listener.onJoin(host, m);
 		} else if (command.equalsIgnoreCase("NICK")) { // NICK
-
+			listener.onNick(m);
 		} else if (command.equalsIgnoreCase("QUIT")) { // QUIT
 
 		} else if (command.equalsIgnoreCase("PART")) { // PART
@@ -180,6 +180,7 @@ public class IRCConnection extends Thread {
 
 		} else if ((reply = IRCUtil.parseInt(command)) >= 2 && reply < 400) { // RPL
 			System.out.println(reply);
+			listener.onReply(m);
 			listener.onUnknown(host, host, line);
 		//} else if (reply >= 400 && reply < 600) { // ERROR
 
