@@ -159,10 +159,9 @@ public class IRCConnection extends Thread {
 		int reply; // 3-digit reply will be parsed in the later if-condition
 
 		if (command.equalsIgnoreCase("PRIVMSG")) { // MESSAGE
-			System.out.println("New private message");
 			listener.onPrivmsg(host, m);
 		} else if (command.equalsIgnoreCase("MODE")) { // MODE
-
+			listener.onMode(m);
 		} else if (command.equalsIgnoreCase("PING")) { // PING
 			if (regLevel == 1) { // not registered
 				regLevel = 2; // first PING received -> connection
@@ -173,15 +172,15 @@ public class IRCConnection extends Thread {
 		} else if (command.equalsIgnoreCase("NICK")) { // NICK
 			listener.onNick(m);
 		} else if (command.equalsIgnoreCase("QUIT")) { // QUIT
-
+			listener.onQuit(m);
 		} else if (command.equalsIgnoreCase("PART")) { // PART
-
+			listener.onPart(m);
 		} else if (command.equalsIgnoreCase("NOTICE")) { // NOTICE
 
-		} else if ((reply = IRCUtil.parseInt(command)) >= 2 && reply < 400) { // RPL
+		} else if ((reply = IRCUtil.parseInt(command)) >= 1 && reply < 400) { // RPL
 			System.out.println(reply);
 			listener.onReply(m);
-			listener.onUnknown(host, host, line);
+			listener.onUnknown(host, line);
 		//} else if (reply >= 400 && reply < 600) { // ERROR
 
 		} else if (command.equalsIgnoreCase("KICK")) { // KICK
@@ -192,10 +191,8 @@ public class IRCConnection extends Thread {
 
 		} else if (command.equalsIgnoreCase("ERROR")) { // ERROR
 
-		} else if (command.equalsIgnoreCase("001")) {
-			listener.onConnect(m);
 		} else {
-			listener.onUnknown(host, host, line);
+			listener.onUnknown(host, line);
 
 		}
 	}
@@ -247,6 +244,20 @@ public class IRCConnection extends Thread {
 	 */
 	public void setHost(String host) {
 		this.host = host;
+	}
+
+	/**
+	 * @return the nick
+	 */
+	public String getNick() {
+		return nick;
+	}
+
+	/**
+	 * @param nick the nick to set
+	 */
+	public void setNick(String nick) {
+		this.nick = nick;
 	}
 
 }

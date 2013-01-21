@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
@@ -54,6 +55,7 @@ ActionListener {
 	private static boolean joinedAServer = false;
 	private static ArrayList<IRCConnection> ircConnections = new ArrayList<IRCConnection>();
 	private static OutputFactory oF = new OutputFactory();
+	private static ArrayList<Title> titles = new ArrayList<Title>();
 
 
 	/**
@@ -132,6 +134,7 @@ ActionListener {
 		 */
 		sidePanelSplitPane.addPropertyChangeListener(this);
 		listsAndOutputSplitPane.addPropertyChangeListener(this);
+		listsAndOutputSplitPane.setResizeWeight(1);
 
 		/*
 		 * Adds the split pane that contains all the other components
@@ -152,9 +155,11 @@ ActionListener {
 	 */
 	public void joinServer(String server)
 	{
-		connectionTree.newServerNode(server);
 		joinChannel(server);
+		connectionTree.newServerNode(server);
+		//titles.add(new String());
 		joinedAServer = true;
+		activeServer = server;
 	}
 
 	/**
@@ -192,6 +197,8 @@ ActionListener {
 	 */
 	public void joinChannel(String server, String channel)
 	{
+		titles.add(new Title(server, channel));
+		activeChannel = channel;
 		newOutputPanel(server, channel);
 		newUserListPanel(server, channel);
 		connectionTree.newChannelNode(server, channel);
@@ -204,8 +211,11 @@ ActionListener {
 	 */
 	private void joinChannel(String server)
 	{
+		activeChannel = server;
+		titles.add(new Title(server, server));
 		newOutputPanel(server, server);
 		newUserListPanel(server, server);
+		
 	}
 
 	/**
@@ -238,7 +248,7 @@ ActionListener {
 		else
 			System.err.println("Cound not find channel to append message to.");
 	}
-	
+
 	/**
 	 * Called when a message is received. It takes in the server name, 
 	 * the channel name, and the actual message.
@@ -264,20 +274,12 @@ ActionListener {
 	 * @param channel
 	 * @param user
 	 */
-	public void newUser(String server, String channel, String user)
+	public void userJoin(String server, String channel, String user)
 	{
 		if(findChannel(server, channel,1) != -1)
 			userListPanels.get(findChannel(server, channel,1)).newUser(user);
 		else
 			System.err.println("[ChatWindowError] Cound not find channel to add new user.");
-	}
-	
-	public void nickChange(String oldNick, String newNick)
-	{
-		for(UserListPanel u : userListPanels)
-		{
-			u.nickChange(oldNick, newNick);
-		}
 	}
 
 	/**
@@ -287,13 +289,57 @@ ActionListener {
 	 * @param channel
 	 * @param user
 	 */
-	public void deleteUser(String server, String channel, String user)
+	public void userPart(String server, String channel, String user)
 	{
 		if(findChannel(server,channel,1) != -1)
-			userListPanels.get(findChannel(server, channel,1)).deleteUser(user);
+			userListPanels.get(findChannel(server, channel,1)).userPart(user);
 		else
 			System.err.println("Cound not find channel to add new user.");
 	}
+
+	/**
+	 * Called when a user quits on an irc server.
+	 * @param server
+	 * @param nick
+	 */
+	public void userQuit(String server, String nick, String reason)
+	{
+		for(UserListPanel u : userListPanels)
+		{
+			if(u.getServer().equals(server)) {
+
+				if(u.getListModel().contains(nick))
+				{
+					u.userPart(nick);
+					outputPanels.get(findChannel(server, u.getChannel(), 0)).newMessage(
+							nick +" "+ reason);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Called when a user changes their nick.
+	 * @param oldNick
+	 * @param newNick
+	 */
+	public void nickChange(String oldNick, String newNick)
+	{
+		for(UserListPanel u : userListPanels)
+		{
+			u.nickChange(oldNick, newNick);
+		}
+	}
+
+	public void newTopic(String server, String channel, String topic) {
+		titles.get(findTitle(server, channel)).setTopic(topic);
+		frame.setTitle(titles.get(findTitle(activeServer, activeChannel)).getFullTitle());
+	}
+	
+	public void newUserMode(String server, String channel, String mode) {
+		
+	}
+
 
 	/**
 	 * Used to send a message to a particular server and channel.
@@ -400,6 +446,34 @@ ActionListener {
 		}
 		System.err.println("Error finding channel while sending message");
 		return -1;
+	}
+
+	private static synchronized int findTitle(String server, String channel)
+	{
+		boolean found = false;
+		int index = 0;
+		while(!found && index < titles.size())
+		{
+			//System.out.println(titles.get(index).getServer());
+			System.out.println(index);
+			if(titles.get(index).getServer().equals(server))
+			{
+				if(titles.get(index).getChannel().equals(channel))
+				{
+					found = true;	
+					System.out.println(found);
+					System.out.println(index);
+					return index;
+					
+				}
+				else
+					index++;
+			}
+			else
+				index++;
+		}
+		System.err.println("Error finding title you were looking for");
+		return -1;
 
 	}
 
@@ -407,39 +481,45 @@ ActionListener {
 	@Override
 	public void componentResized(ComponentEvent e) 
 	{
-		sidePanelSplitPane.setDividerLocation((frame.getHeight()/2)-20);
+		System.out.println("componentResized");
 		listsAndOutputSplitPane.setDividerLocation(frame.getWidth()-DEFAULTSIDEBARWIDTH);
-		if(joinedAServer) {
-			OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
-					outputFieldLayeredPane.getHeight());
+		sidePanelSplitPane.setDividerLocation((frame.getHeight()/2)-20);
 
-			UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
-					userListsLayeredPane.getHeight());
-		}
-		treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
+		//		if(joinedAServer) {
+		//			OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
+		//					outputFieldLayeredPane.getHeight());
+		//
+		//			UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
+		//					userListsLayeredPane.getHeight());
+		//		}
+		//		
+		//		treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
+		//
+		//		for(OutputPanel t : outputPanels)
+		//		{
+		//			t.setBounds(OutputPanel.getBoundsRec());
+		//			t.getScrollPane().getVerticalScrollBar().setValue(
+		//					t.getScrollPane().getVerticalScrollBar().getMaximum());
+		//		}
+		//
+		//		for(UserListPanel t: userListPanels)
+		//		{
+		//			t.setBounds(UserListPanel.getBoundsRec());
+		//		}
+		listsAndOutputSplitPane.invalidate();
+		sidePanelSplitPane.invalidate();
 
-		for(OutputPanel t : outputPanels)
-		{
-			t.setBounds(OutputPanel.getBoundsRec());
-			t.getScrollPane().getVerticalScrollBar().setValue(
-					t.getScrollPane().getVerticalScrollBar().getMaximum());
-		}
-
-		for(UserListPanel t: userListPanels)
-		{
-			t.setBounds(UserListPanel.getBoundsRec());
-		}
-
-		frame.revalidate();
+		frame.invalidate();
 	}
 
 	public void propertyChange(PropertyChangeEvent evt) {
+		System.out.println(evt.getPropertyName());
 		if(joinedAServer)
+		{
 			if(evt.getSource() == listsAndOutputSplitPane)
 			{
 				OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
 						outputFieldLayeredPane.getHeight());
-
 				UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
 						userListsLayeredPane.getHeight());
 
@@ -448,14 +528,18 @@ ActionListener {
 					t.setBounds(OutputPanel.getBoundsRec());
 					t.getScrollPane().getVerticalScrollBar().setValue(
 							t.getScrollPane().getVerticalScrollBar().getMaximum());
+					t.invalidate();
+
 				}
 
 				for(UserListPanel t: userListPanels)
 				{
 					t.setBounds(UserListPanel.getBoundsRec());
+					t.invalidate();
+
 				}
 				treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
-
+				outputFieldLayeredPane.invalidate();
 			}
 			else if(evt.getSource() == sidePanelSplitPane)
 			{
@@ -465,11 +549,15 @@ ActionListener {
 				for(UserListPanel t: userListPanels)
 				{
 					t.setBounds(UserListPanel.getBoundsRec());
+					t.invalidate();
 				}
 				treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
 
 			}
-		frame.revalidate();
+		}
+
+
+		frame.invalidate();
 	}
 
 	/**
@@ -480,11 +568,11 @@ ActionListener {
 	 * @param activeServer
 	 * @param activeChannel
 	 */
-	static void newPanelSelections(String activeServer, String activeChannel) {
+	static void newActiveChannels(String activeServer, String activeChannel) {
 		ChatWindow.activeServer = activeServer;
 		ChatWindow.activeChannel = activeChannel;
 
-		frame.setTitle(activeServer + " " + activeChannel);
+		//frame.setTitle(activeServer + " " + activeChannel);
 
 		for(OutputPanel t : outputPanels)
 		{
@@ -501,7 +589,8 @@ ActionListener {
 				t.setVisible(false);
 			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
 				t.setVisible(true);
-		}		
+		}	
+		frame.setTitle(titles.get(findTitle(activeServer, activeChannel)).getFullTitle());
 	}
 
 	public void windowGainedFocus(WindowEvent e) {
@@ -571,4 +660,6 @@ ActionListener {
 	public static void setIrcConnections(ArrayList<IRCConnection> ircConnections) {
 		ChatWindow.ircConnections = ircConnections;
 	}
+
+
 }

@@ -17,8 +17,7 @@ public class IRCEventAdapter implements IRCEventListener {
 
 	@Override
 	public void onConnect(Message m) {
-		cw.getIrcConnections().add(connection);
-		cw.joinServer(m.getServerName());
+
 		
 	}
 
@@ -42,7 +41,10 @@ public class IRCEventAdapter implements IRCEventListener {
 
 	@Override
 	public void onJoin(String host, Message m) {
-		cw.joinChannel(host, m.getContent());		
+		if(m.getUser().equals(connection.getNick()))
+			cw.joinChannel(host, m.getContent());	
+		else
+			cw.userJoin(host, m.getContent(), m.getNickname());
 	}
 
 	@Override
@@ -57,8 +59,7 @@ public class IRCEventAdapter implements IRCEventListener {
 	}
 
 	@Override
-	public void onMode() {
-		// TODO Auto-generated method stub
+	public void onMode(Message m) {
 		
 	}
 
@@ -74,16 +75,16 @@ public class IRCEventAdapter implements IRCEventListener {
 		cw.nickChange(m.getNickname(), m.getContent());
 	}
 
-	@Override
+	@Override	
 	public void onNotice() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onPart() {
-		// TODO Auto-generated method stub
-		
+	public void onPart(Message m) {
+		System.out.println("onPart()");
+		cw.userPart(connection.getHost(), m.getParams()[0], m.getNickname());
 	}
 
 	@Override
@@ -92,34 +93,41 @@ public class IRCEventAdapter implements IRCEventListener {
 	}
 
 	@Override
-	public void onQuit() {
-		// TODO Auto-generated method stub
-		
+	public void onQuit(Message m) {
+		cw.userQuit(connection.getHost(), m.getNickname(), m.getContent());
 	}
 
 	@Override
 	public void onReply(Message m) {
 		int numCode = Integer.valueOf(m.getCommand());
 	
-		if(numCode == IRCUtil.RPL_NAMREPLY)
-		{
+		if(numCode == IRCUtil.RPL_WELCOME) {
+			cw.getIrcConnections().add(connection);
+			cw.joinServer(m.getServerName());
+			
+		} else if(numCode == IRCUtil.RPL_NAMREPLY) {
 			System.out.println("RPL_NAMERPKY");
 			String[] nicks = m.getContent().split(" ");
 			for(String n : nicks)
 			{
-				cw.newUser(connection.getHost(), m.getParams()[2], n);
+				cw.userJoin(connection.getHost(), m.getParams()[2], n);
 			}
-		}
-	}
-
-	@Override
-	public void onTopic() {
-		// TODO Auto-generated method stub
+		} else if(numCode == IRCUtil.RPL_TOPIC) {
+			cw.newTopic(m.getPrefix(), m.getParams()[1], m.getContent());
+		}// else if(numCode == IRCUtil.RPL_UMODEIS) {
+			
+		//}
+		
 		
 	}
 
 	@Override
-	public void onUnknown(String host, String host2, String line) {
+	public void onTopic(Message m) {
+		//cw.newTopic(m.getParams()[0], m.getContent());
+	}
+
+	@Override
+	public void onUnknown(String host, String line) {
 		cw.newMessage(host, host, line);		
 	}
  }

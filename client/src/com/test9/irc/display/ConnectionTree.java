@@ -1,6 +1,8 @@
 package com.test9.irc.display;
 
+import java.awt.Font;
 import java.util.Collections;
+import java.util.Enumeration;
 
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
@@ -15,10 +17,12 @@ import javax.swing.tree.TreeSelectionModel;
 public class ConnectionTree extends JTree implements TreeSelectionListener {
 
 	private static final long serialVersionUID = 8988928665652702491L;
-	
+
 	private static final DefaultTreeCellRenderer treeRenderer = new DefaultTreeCellRenderer();
 	private static DefaultTreeModel model;
 	private static DefaultMutableTreeNode root;
+	private static Font font = new Font("Lucida Grande", Font.PLAIN, 10);
+
 
 	/**
 	 * 
@@ -31,6 +35,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		treeRenderer.setClosedIcon(null);
 		treeRenderer.setOpenIcon(null);
 		treeRenderer.setLeafIcon(null);
+		treeRenderer.setFont(font);
 		setModel(model);
 		setRootVisible(false);
 		getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -39,9 +44,9 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		setCellRenderer(treeRenderer);
 		expandTree();
 
-		
+
 	}
-	
+
 	private void expandTree()
 	{
 		for (int i = 0; i < this.getRowCount(); i++) {
@@ -57,7 +62,6 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	void newChannelNode(String server, String channel)
 	{
 		expandTree();
-
 		DefaultMutableTreeNode newChannelNode = new DefaultMutableTreeNode(channel);
 		newChannelNode.setAllowsChildren(false);
 		TreePath path = this.getNextMatch(server, 0, Position.Bias.Forward);
@@ -65,6 +69,21 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		model.insertNodeInto(newChannelNode, parentNode, parentNode.getChildCount());
 		expandPath(path);
 		expandTree();
+		selectNode(newChannelNode.getUserObject().toString());
+
+	}
+
+	private void selectNode(String id) {
+		@SuppressWarnings("rawtypes")
+		Enumeration e = root.breadthFirstEnumeration();
+		while(e.hasMoreElements()) {
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode)e.nextElement();
+			if(node.getUserObject().equals(id)) {
+				TreePath path = new TreePath(node.getPath());
+				this.setSelectionPath(path);
+				break;
+			}
+		}		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -101,6 +120,8 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		root.add(newServerNode);
 		model.reload();
 		expandTree();
+		selectNode(newServerNode.getUserObject().toString());
+
 
 
 	}
@@ -115,19 +136,19 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		model.reload();
 		expandTree();
 	}
-	
+
 	/**
 	 * Used by the tree to listen for when the user 
 	 * changes the channel that is selected.
 	 */
 	public void valueChanged(TreeSelectionEvent e) {
-		
+
 		String activeChannel = this.getSelectionPath().getLastPathComponent().toString();
 		String activeServer = this.getSelectionPath().getParentPath().getLastPathComponent().toString();
-		
+
 		if(activeServer.equals("root"))
 			activeServer = activeChannel;
-		
-		ChatWindow.newPanelSelections(activeServer, activeChannel);
+
+		ChatWindow.newActiveChannels(activeServer, activeChannel);
 	}
 }

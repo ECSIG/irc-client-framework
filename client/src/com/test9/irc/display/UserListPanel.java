@@ -16,7 +16,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 
 	private static final long serialVersionUID = 3331343604631033360L;
 	private static Rectangle boundsRect;
-	private static Font font = new Font("Lucida Grande", Font.PLAIN, 12);
+	private static Font font = new Font("Lucida Grande", Font.PLAIN, 10);
 	private SortedListModel listModel = new SortedListModel();
 	private String channel, server;
 	private JScrollPane scrollPane;
@@ -35,6 +35,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 		jList = new JList<String>();
 		jList.setModel(listModel);
 		jList.setFont(font);
+		
 		scrollPane = new JScrollPane(jList);
 		add(scrollPane, BorderLayout.CENTER);
 
@@ -50,8 +51,9 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	}
 
 
-	void deleteUser(String user)
+	void userPart(String user)
 	{
+		System.out.println("userListPanel.userPart()");
 		listModel.removeElement(user);
 	}
 
@@ -140,5 +142,19 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	 */
 	void setServer(String server) {
 		this.server = server;
+	}
+
+	/**
+	 * @return the listModel
+	 */
+	public SortedListModel getListModel() {
+		return listModel;
+	}
+
+	/**
+	 * @param listModel the listModel to set
+	 */
+	public void setListModel(SortedListModel listModel) {
+		this.listModel = listModel;
 	}
 }

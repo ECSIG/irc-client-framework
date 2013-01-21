@@ -33,6 +33,7 @@ public class OutputPanel extends JPanel{
 		textArea.setMargin(new Insets(5,5,5,5));
 		textArea.setEditable(false);
 		textArea.setLineWrap(true);
+		textArea.setFont(font);
 		scrollPane = new JScrollPane(textArea);
 		add(scrollPane, BorderLayout.CENTER);
 

@@ -33,14 +33,14 @@ public interface IRCEventListener extends EventListener, IRCConstants {
 	public void onJoin(String host, Message m);
 	public void onKick();
 	public void onPrivmsg(String host, Message m);
-	public void onMode();
+	public void onMode(Message m);
 	public void onMode(int two);
 	public void onNick(Message m);
 	public void onNotice();
-	public void onPart();
+	public void onPart(Message m);
 	public void onPing(String string);
-	public void onQuit();
+	public void onQuit(Message m);
 	public void onReply(Message m);
-	public void onTopic();
-	public void onUnknown(String host, String host2, String line);
+	public void onTopic(Message m);
+	public void onUnknown(String host, String line);
 }
