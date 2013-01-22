@@ -9,6 +9,9 @@ import java.awt.Rectangle;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledDocument;
 
 public class OutputPanel extends JPanel{
 
@@ -16,10 +19,10 @@ public class OutputPanel extends JPanel{
 	private static Rectangle boundsRect;
 	private String channel, server;
 	private JScrollPane scrollPane;
-	private JTextArea textArea; 
-	@SuppressWarnings("unused")
+	private JTextPane textArea = new JTextPane(); 
 	private static Font font = new Font("Lucida Grande", Font.PLAIN, 12);
-
+	private StyledDocument doc = textArea.getStyledDocument();
+	
 
 	OutputPanel(String server, String channel, int width, int height)
 	{
@@ -29,10 +32,9 @@ public class OutputPanel extends JPanel{
 		boundsRect = new Rectangle(0,0,width,height);
 		setBounds(boundsRect);
 		setBackground(Color.BLACK);
-		textArea = new JTextArea();
 		textArea.setMargin(new Insets(5,5,5,5));
 		textArea.setEditable(false);
-		textArea.setLineWrap(true);
+		//textArea.setLineWrap(true);
 		textArea.setFont(font);
 		scrollPane = new JScrollPane(textArea);
 		add(scrollPane, BorderLayout.CENTER);
@@ -44,10 +46,17 @@ public class OutputPanel extends JPanel{
 	 * This is used to append a new string to a servers output 
 	 * panel.
 	 * @param message
+	 * @throws BadLocationException 
 	 */
 	void newMessage(String message)
 	{
-		textArea.append(message+"\r\n");
+		try {
+			doc.insertString(doc.getLength(), message+"\r\n", null);
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		textArea.append(message+"\r\n");
 		textArea.setCaretPosition(textArea.getText().length());
 	}
 	
@@ -55,10 +64,16 @@ public class OutputPanel extends JPanel{
 	 * This is used when a new Privmsg is received and append it 
 	 * to a channels output panel.
 	 * @param message
+	 * @throws BadLocationException 
 	 */
 	void newMessage(String nick, String message)
 	{
-		textArea.append("["+nick+"]"+" "+message+"\r\n");
+		try {
+			doc.insertString(doc.getLength(), "["+nick+"]"+" "+message+"\r\n", null);
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		textArea.setCaretPosition(textArea.getText().length());
 	}
 	
@@ -103,7 +118,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @return the textArea
 	 */
-	public JTextArea getTextArea() {
+	public JTextPane getTextArea() {
 		return textArea;
 	}
 
@@ -111,7 +126,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * @param textArea the textArea to set
 	 */
-	void setTextArea(JTextArea textArea) {
+	void setTextArea(JTextPane textArea) {
 		this.textArea = textArea;
 	}
 

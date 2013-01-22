@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
@@ -23,11 +22,11 @@ import java.util.Observable;
 
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.text.BadLocationException;
 
 public class ChatWindow extends Observable implements ComponentListener,
 KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
@@ -51,12 +50,11 @@ ActionListener {
 	private static String activeServer;
 	private static String activeChannel;
 	private static JScrollPane treeScrollPane;
-	private static JMenuBar menuBar;
+	private static MenuBar menuBar;
 	private static boolean joinedAServer = false;
 	private static ArrayList<IRCConnection> ircConnections = new ArrayList<IRCConnection>();
 	private static OutputFactory oF = new OutputFactory();
 	private static ArrayList<Title> titles = new ArrayList<Title>();
-
 
 	/**
 	 * Initializes a new ChatWindow
@@ -70,7 +68,9 @@ ActionListener {
 		 */
 		if(System.getProperty("os.name").equals("Mac OS X"))
 		{
-			//menuBar = initMenuBar();
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "AOSIDHOAISHDOAISHDOIASHD");
+			menuBar = new MenuBar();
 			frame.setJMenuBar(menuBar);
 		}
 
@@ -215,7 +215,7 @@ ActionListener {
 		titles.add(new Title(server, server));
 		newOutputPanel(server, server);
 		newUserListPanel(server, server);
-		
+
 	}
 
 	/**
@@ -240,13 +240,17 @@ ActionListener {
 	 * @param server
 	 * @param channel
 	 * @param message
+	 * @throws BadLocationException 
 	 */
-	public void newMessage(String server, String channel, String message)
+	public void newMessage(String server, String channel, String message) 
 	{
 		if(findChannel(server, channel,0) != -1)
+		{
 			outputPanels.get(findChannel(server, channel, 0)).newMessage(message);
+		}
 		else
 			System.err.println("Cound not find channel to append message to.");
+		
 	}
 
 	/**
@@ -262,7 +266,9 @@ ActionListener {
 	public void newMessage(String server, String channel, String nick, String message)
 	{
 		if(findChannel(server, channel,0) != -1)
+		{
 			outputPanels.get(findChannel(server, channel, 0)).newMessage(nick, message);
+		}
 		else
 			System.err.println("Cound not find channel to append message to.");
 	}
@@ -335,9 +341,9 @@ ActionListener {
 		titles.get(findTitle(server, channel)).setTopic(topic);
 		frame.setTitle(titles.get(findTitle(activeServer, activeChannel)).getFullTitle());
 	}
-	
+
 	public void newUserMode(String server, String channel, String mode) {
-		
+
 	}
 
 
@@ -348,7 +354,7 @@ ActionListener {
 		if(e.getKeyCode() == KeyEvent.VK_ENTER)
 		{	
 			String m = inputField.getText();
-			if(ircConnections.get(findIRCConnection()).send(oF.formatMessage(m, activeChannel)))
+			if(ircConnections.get(findIRCConnection()).send(oF.formatMessage(m, activeChannel))&&!m.equals(""))
 			{
 				if(m.startsWith("/")) {
 					newMessage(activeServer, activeServer, m);
@@ -454,17 +460,13 @@ ActionListener {
 		int index = 0;
 		while(!found && index < titles.size())
 		{
-			//System.out.println(titles.get(index).getServer());
-			System.out.println(index);
 			if(titles.get(index).getServer().equals(server))
 			{
 				if(titles.get(index).getChannel().equals(channel))
 				{
 					found = true;	
-					System.out.println(found);
-					System.out.println(index);
 					return index;
-					
+
 				}
 				else
 					index++;
@@ -481,7 +483,6 @@ ActionListener {
 	@Override
 	public void componentResized(ComponentEvent e) 
 	{
-		System.out.println("componentResized");
 		listsAndOutputSplitPane.setDividerLocation(frame.getWidth()-DEFAULTSIDEBARWIDTH);
 		sidePanelSplitPane.setDividerLocation((frame.getHeight()/2)-20);
 
@@ -513,7 +514,6 @@ ActionListener {
 	}
 
 	public void propertyChange(PropertyChangeEvent evt) {
-		System.out.println(evt.getPropertyName());
 		if(joinedAServer)
 		{
 			if(evt.getSource() == listsAndOutputSplitPane)

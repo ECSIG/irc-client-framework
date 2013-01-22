@@ -102,7 +102,7 @@ public class IRCEventAdapter implements IRCEventListener {
 		int numCode = Integer.valueOf(m.getCommand());
 	
 		if(numCode == IRCUtil.RPL_WELCOME) {
-			cw.getIrcConnections().add(connection);
+			ChatWindow.getIrcConnections().add(connection);
 			cw.joinServer(m.getServerName());
 			
 		} else if(numCode == IRCUtil.RPL_NAMREPLY) {
@@ -114,6 +114,7 @@ public class IRCEventAdapter implements IRCEventListener {
 			}
 		} else if(numCode == IRCUtil.RPL_TOPIC) {
 			cw.newTopic(m.getPrefix(), m.getParams()[1], m.getContent());
+			cw.newMessage(m.getPrefix(), m.getParams()[1], "<Topic> " + m.getContent());
 		}// else if(numCode == IRCUtil.RPL_UMODEIS) {
 			
 		//}

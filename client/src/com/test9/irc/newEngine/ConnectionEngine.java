@@ -11,8 +11,8 @@ public class ConnectionEngine {
 	
 	public ConnectionEngine() throws IOException {
 
-		connection = new IRCConnection("irc.ecsig.com", 6667, null, "jared-bot", 
-				"jared-bot", "jared-bot");
+		connection = new IRCConnection("irc.ecsig.com", 6667, null, "jared2-bot", 
+				"jared2-bot", "jared2-bot");
 		cw = new ChatWindow(connection.getHost());
 		connection.addIRCEventListener(new IRCEventAdapter(this));
 
