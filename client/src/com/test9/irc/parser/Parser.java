@@ -1,6 +1,5 @@
 package com.test9.irc.parser;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -23,7 +22,6 @@ public class Parser {
 	private static boolean prefixPresent = false;
 	private static String prefix = "";
 	private static String command = "";
-	//private static String params = "";
 	private static String[] params;
 	private static String serverName = "";
 	private static String nickname = "";
@@ -79,7 +77,7 @@ public class Parser {
 	 * @param message
 	 * @return
 	 */
-	public Message parse(StringBuffer message)
+	public synchronized Message parse(StringBuffer message)
 	{
 		resetParser();
 

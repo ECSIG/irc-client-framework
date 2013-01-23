@@ -1,7 +1,5 @@
 package com.test9.irc.parser;
 
-import java.util.Arrays;
-
 public class Message {
 	
 	private String prefix = "";

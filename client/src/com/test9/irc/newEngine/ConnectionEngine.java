@@ -11,21 +11,19 @@ public class ConnectionEngine {
 	
 	public ConnectionEngine() throws IOException {
 
-		connection = new IRCConnection("irc.ecsig.com", 6667, null, "jared2-bot", 
-				"jared2-bot", "jared2-bot");
+		connection = new IRCConnection("irc.ecsig.com", 6667, null, "jared7-bot", 
+				"jared7-bot", "jared7-bot", "UTF-8");
 		cw = new ChatWindow(connection.getHost());
 		connection.addIRCEventListener(new IRCEventAdapter(this));
 
 		connection.connect();
 
 		try {
-			connection.sleep(2000);
+			IRCConnection.sleep(2000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-
 		//connection.send("JOIN #ecsig");
 		connection.send("JOIN #jircc");
 	}

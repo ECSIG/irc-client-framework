@@ -15,14 +15,49 @@ import javax.swing.event.ListSelectionListener;
 public class UserListPanel extends JPanel implements ListSelectionListener{
 
 	private static final long serialVersionUID = 3331343604631033360L;
+	/**
+	 * Holds the bounds for the panel.
+	 */
 	private static Rectangle boundsRect;
+
+	/**
+	 * Holds the font for the panel.
+	 */
 	private static Font font = new Font("Lucida Grande", Font.PLAIN, 10);
+
+	/**
+	 * Holds the model of the list that will be used.
+	 */
 	private SortedListModel listModel = new SortedListModel();
-	private String channel, server;
+
+	/**
+	 * Holds the name of the channel that the list is for.
+	 */
+	private String channel;
+
+	/**
+	 * Holds the name of the server the list is on.
+	 */
+	private String server;
+
+	/**
+	 * The scroll pane for hte list.
+	 */
 	private JScrollPane scrollPane;
+
+	/**
+	 * The list that contains all the information.
+	 */
 	private JList<String> jList;
 
 
+	/**
+	 * Constructs a new UserListPanel for a channel.
+	 * @param server Name of the server the list is on.
+	 * @param channel Name of the channel the list is on.
+	 * @param width Width.
+	 * @param height Height.
+	 */
 	@SuppressWarnings("unchecked")
 	UserListPanel(String server, String channel, int width, int height)
 	{
@@ -35,34 +70,46 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 		jList = new JList<String>();
 		jList.setModel(listModel);
 		jList.setFont(font);
-		
+
 		scrollPane = new JScrollPane(jList);
 		add(scrollPane, BorderLayout.CENTER);
 
 	}
 
 	/**
-	 * This is used to append a new string to a channels text area.
-	 * @param message
+	 * Adds a new user.
+	 * @param user User's nick.
 	 */
 	void newUser(String user)
 	{
 		listModel.add(user);
 	}
 
-
+	/**
+	 * Removes a parted user.
+	 * @param user User's nick.
+	 */
 	void userPart(String user)
 	{
-		System.out.println("userListPanel.userPart()");
 		listModel.removeElement(user);
 	}
 
+	/**
+	 * Changes a nick if someone changes their nick on the server.
+	 * @param oldNick The original nick.
+	 * @param newNick The user's new nick.
+	 */
 	void nickChange(String oldNick, String newNick)
 	{
 		listModel.removeElement(oldNick);
 		newUser(newNick);
 	}
 
+	/**
+	 * Used for resizing the UserListPanel.
+	 * @param width Width.
+	 * @param height Height.
+	 */
 	static void setNewBounds(int width, int height)
 	{
 		boundsRect.setBounds(0, 0, width, height);

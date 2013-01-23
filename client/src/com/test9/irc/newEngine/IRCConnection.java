@@ -19,7 +19,7 @@ public class IRCConnection extends Thread {
 	protected int port;
 	private BufferedReader in;
 	private BufferedWriter out;
-	protected String encoding = "ISO-8859-1";
+	protected String encoding;
 	private int timeout = 1000 * 60 * 15;
 	private String pass;
 	private String nick;
@@ -29,7 +29,7 @@ public class IRCConnection extends Thread {
 	private IRCEventListener listener;
 
 	public IRCConnection(String host, int port, String pass, String nick, 
-			String username, String realname) {
+			String username, String realname, String encoding) {
 
 		p = new Parser();
 		this.host = host;
@@ -38,6 +38,7 @@ public class IRCConnection extends Thread {
 		this.nick = nick;
 		this.username = username;
 		this.realname = realname;
+		this.encoding = encoding;
 	}
 	
 	public synchronized void addIRCEventListener(IRCEventListener listener) {
@@ -87,8 +88,8 @@ public class IRCConnection extends Thread {
 		socket = s;
 		regLevel = 1;
 		s.setSoTimeout(timeout);
-		in  = new BufferedReader(new InputStreamReader(s.getInputStream()));
-		out = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
+		in  = new BufferedReader(new InputStreamReader(s.getInputStream(), encoding));
+		out = new BufferedWriter(new OutputStreamWriter(s.getOutputStream(), encoding));
 		start();
 		register();
 	}

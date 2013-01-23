@@ -56,8 +56,8 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 
 	/**
 	 * Used to add the new channel node to the JTree channelTree.
-	 * @param server
-	 * @param channel
+	 * @param server Name of the new server.
+	 * @param channel Name of the new channel.
 	 */
 	void newChannelNode(String server, String channel)
 	{
@@ -73,6 +73,10 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 
 	}
 
+	/**
+	 * Selects a node in the tree.
+	 * @param id
+	 */
 	private void selectNode(String id) {
 		@SuppressWarnings("rawtypes")
 		Enumeration e = root.breadthFirstEnumeration();
@@ -86,6 +90,11 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		}		
 	}
 
+	/**
+	 * Removes a channel from the JTree.
+	 * @param server Name of the server.
+	 * @param channel Name of the channel.
+	 */
 	@SuppressWarnings("unchecked")
 	void removeChannelNode(String server, String channel)
 	{
@@ -111,7 +120,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 
 	/**
 	 * Used to add a new servers parent node.
-	 * @param server
+	 * @param server Name of the server.
 	 */
 	void newServerNode(String server)
 	{
@@ -126,6 +135,10 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 
 	}
 
+	/**
+	 * Removes a server form the JTree.
+	 * @param server Name of the server.
+	 */
 	void removeServerNode(String server)
 	{
 		System.out.println("removeServerNode");
