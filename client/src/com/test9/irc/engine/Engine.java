@@ -10,7 +10,8 @@ public class Engine {
 
     @SuppressWarnings("unused")
     public static void main(String[] args) throws Exception {
-        Server jircc = new Server("irc.ecsig.com", 6667, null, "jared-test", "jared-test", "jared-test");
-       // ChatWindow chatWindow = new ChatWindow(jircc.getHost());
+        Server jircc = new Server("irc.ecsig.com", 6667, null, "fuckers", "fuckers", "fuckers");
+        
+        // ChatWindow chatWindow = new ChatWindow(jircc.getHost());
     }
 }

@@ -11,13 +11,13 @@ public class OutputFactory {
 
 	private static boolean init = false;
 	private static final String RNTAIL= "\r\n";
-	
+
 	final private static String commands[] = 
-		{"/PASS", "/NICK", "/OPER", "/INVITE", "/MOTD", "/LUSERS", "/VERSION", "/STATS", "/LINKS",
-		"/TIME", "/CONNECT", "/TRACE", "/ADMIN", "/INFO", "/WHO", "/WHOIS", "/WHOWAS", "/PING",
-		"/REHASH", "/DIE", "/RESTART", "/SUMMON", "/USERS", "/ISON", "/JOIN", "/PART", "/PONG",
-		"/MODE", "/USER", "/SERVICE", "/SQUIT", "/TOPIC", "/NAMES", "/LIST", "/KICK", "/NOTICE",
-		"/AWAY", "/SQUERY", "/SERVLIST", "/USERHOST", "/ERROR", "/QUIT"};
+		{"PASS", "NICK", "OPER", "INVITE", "MOTD", "LUSERS", "VERSION", "STATS", "LINKS",
+		"TIME", "CONNECT", "TRACE", "ADMIN", "INFO", "WHO", "WHOIS", "WHOWAS", "PING",
+		"REHASH", "DIE", "RESTART", "SUMMON", "USERS", "ISON", "JOIN", "PART", "PONG",
+		"MODE", "USER", "SERVICE", "SQUIT", "TOPIC", "NAMES", "LIST", "KICK", "NOTICE",
+		"AWAY", "SQUERY", "SERVLIST", "USERHOST", "ERROR", "QUIT"};
 
 	public OutputFactory() {
 		init = true;
@@ -66,12 +66,13 @@ public class OutputFactory {
 		String formattedMessage = "";
 		boolean validCommand = false;
 		String command = "";
+		int commandIndex = -1;
 
 		if(message.startsWith("/"))
 		{
 
 			try {
-				command = message.substring(0, message.indexOf(" "));
+				command = message.substring(1, message.indexOf(" "));
 			} catch (StringIndexOutOfBoundsException e) {
 				System.out.println("Probably not a vaild command");
 				command = message;
@@ -81,8 +82,9 @@ public class OutputFactory {
 
 			while (!validCommand && i < commands.length - 1)
 			{
-				if(command.equals(commands[i]))
+				if(command.equalsIgnoreCase(commands[i]))
 				{
+					commandIndex = i;
 					validCommand = true;
 				}
 
@@ -91,10 +93,12 @@ public class OutputFactory {
 
 			if(validCommand)
 			{
-				if(command.equals("/QUIT"))
+				if(command.equals("/QUIT")) {
 					formattedMessage = makeQuit(message);
-				else
-					formattedMessage = message.substring(1, message.length());
+				} else {
+					formattedMessage = commands[commandIndex]+ " " + 
+							message.substring(message.indexOf(" ")+1, message.length());
+				}
 			}
 		} 
 		else 
@@ -103,7 +107,7 @@ public class OutputFactory {
 		}
 		
 		formattedMessage += RNTAIL;
-
+		System.out.println("'"+formattedMessage+"'");
 		//	case "KILL": be included
 		//	The RFC has no syntactical information about this currently.
 
@@ -131,7 +135,7 @@ public class OutputFactory {
 		privmsg += " :";
 		privmsg += message;
 		privmsg += RNTAIL;
-		
+
 		return privmsg;
 
 	}	

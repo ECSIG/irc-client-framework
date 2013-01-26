@@ -4,7 +4,7 @@ public class Message {
 	
 	private String prefix = "";
 	private String command = "";
-	private String params = "";
+	private String[] params;
 	private String serverName = "";
 	private String nickname = "";
 	private String user = "";
@@ -22,7 +22,7 @@ public class Message {
 	 * @param host
 	 * @param content
 	 */
-	public Message(String prefix, String command, String params, 
+	public Message(String prefix, String command, String[] params, 
 			String serverName, String nickname, String user, String  host, String content)
 	{ 
 		this.prefix = prefix;
@@ -66,14 +66,15 @@ public class Message {
 	/**
 	 * @return the params
 	 */
-	public String getParams() {
+	public String[] getParams() {
+		//System.out.println(Arrays.toString(params));
 		return params;
 	}
 
 	/**
 	 * @param params the params to set
 	 */
-	public void setParams(String params) {
+	public void setParams(String[] params) {
 		this.params = params;
 	}
 

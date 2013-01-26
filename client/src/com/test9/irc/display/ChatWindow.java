@@ -1,7 +1,7 @@
 package com.test9.irc.display;
 
-import com.test9.irc.engine.InputManager;
-import com.test9.irc.parser.Message;
+import com.test9.irc.newEngine.IRCConnection;
+import com.test9.irc.parser.OutputFactory;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -19,11 +19,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -31,33 +29,145 @@ import javax.swing.JTextField;
 
 public class ChatWindow extends Observable implements ComponentListener,
 KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
-ActionListener, Observer {
-
-	private static final JFrame frame = new JFrame();
-	private static final Toolkit KIT = Toolkit.getDefaultToolkit();
-	private static final int SPLITPANEWIDTH = 4;
-	private static final int DEFAULTSIDEBARWIDTH = 150;
-	private static Dimension defaultWindowSize = new Dimension(
-			KIT.getScreenSize().width / 2, KIT.getScreenSize().height / 2);
-	private static ConnectionTree connectionTree;
-	private static final JTextField inputField = new JTextField();
-	private static JPanel centerJPanel = new JPanel(new BorderLayout());
-	private static JPanel treePanel = new JPanel(new BorderLayout());
-	private static JSplitPane sidePanelSplitPane, listsAndOutputSplitPane;
-	private static final JLayeredPane userListsLayeredPane = new JLayeredPane();
-	private static final JLayeredPane outputFieldLayeredPane = new JLayeredPane();
-	private static ArrayList<OutputPanel> outputPanels = new ArrayList<OutputPanel>();
-	private static ArrayList<UserListPanel> userListPanels = new ArrayList<UserListPanel>();
-	private static String activeServer;
-	private static String activeChannel;
-	private static JScrollPane treeScrollPane;
-	private static JMenuBar menuBar;
-
+ActionListener {
 
 	/**
-	 * Initializes a new ChatWindow
-	 * @param initialServerName
-	 * @param outputManager
+	 * The ultimate frame of the chat client that holds
+	 * all the components.
+	 */
+	private static final JFrame frame = new JFrame();
+
+	/**
+	 * Tookit that is used to determind the default dimensions
+	 * of the frame.
+	 */
+	private static final Toolkit KIT = Toolkit.getDefaultToolkit();
+
+	/**
+	 * Holds the width of the split pane bar
+	 * that can be dragged.
+	 */
+	private static final int SPLITPANEWIDTH = 4;
+
+	/**
+	 * The default width of the side panel that will hold
+	 * the user list and the connection tree.
+	 */
+	private static final int DEFAULTSIDEBARWIDTH = 150;
+
+	/**
+	 * Default window size of the JFrame calculated from the KIT.
+	 * Makes the window half the side of the screen.
+	 */
+	private static Dimension defaultWindowSize = new Dimension(
+			KIT.getScreenSize().width / 2, KIT.getScreenSize().height / 2);
+
+	/**
+	 * Holds all the channel and server connections used in the 
+	 * JTree.
+	 */
+	private static ConnectionTree connectionTree;
+
+	/**
+	 * Input field to allow the user to input strings and send them to
+	 * IRCConnection send().
+	 */
+	private static final JTextField inputField = new JTextField();
+
+	/**
+	 * Holds the center JLayered pane that will hold all of the 
+	 * output panels.
+	 */
+	private static JPanel centerJPanel = new JPanel(new BorderLayout());
+
+	/**
+	 * Holds the tree that will list all server and channel connections.
+	 */
+	private static JPanel treePanel = new JPanel(new BorderLayout());
+
+	/**
+	 * Splits the connection tree up from the user list.
+	 * User list on top and the connection tree on the 
+	 * bottom.
+	 */
+	private static JSplitPane sidePanelSplitPane;
+
+	/**
+	 * Splits the sidePanelSplitPane from the output panels and the 
+	 * input panel. Output/Input on the left, side bar on the east
+	 * side.
+	 */
+	private static JSplitPane listsAndOutputSplitPane;
+
+	/**
+	 * Holds the user lists for each channel.
+	 */
+	private static final JLayeredPane userListsLayeredPane = new JLayeredPane();
+
+	/**
+	 * Holds the output panels for each channel and server
+	 * connection.
+	 */
+	private static final JLayeredPane outputFieldLayeredPane = new JLayeredPane();
+
+	/**
+	 * Holds references to all of the output panels for the connected servers
+	 * and channels.
+	 */
+	private static ArrayList<OutputPanel> outputPanels = new ArrayList<OutputPanel>();
+
+	/**
+	 * Holds references to all of the user lists for all of the connected 
+	 * channels.
+	 */
+	private static ArrayList<UserListPanel> userListPanels = new ArrayList<UserListPanel>();
+
+	/**
+	 * Holds the name of the currectly active server. This is set by selecting a 
+	 * server or channel node on the connectionTree.
+	 */
+	private static String activeServer;
+
+	/**
+	 * Holds the name of the currectly active server. This is set by selecting a 
+	 * channel node on the connectionTree.
+	 */
+	private static String activeChannel;
+
+	/**
+	 * A scroll pane to contain the connection tree.
+	 */
+	private static JScrollPane treeScrollPane;
+
+	/**
+	 * Holds the main menubar for the client.
+	 */
+	private static MenuBar menuBar;
+
+	/**
+	 * Checks to see if a server has been joined.
+	 */
+	private static boolean joinedAServer = false;
+
+	/**
+	 * Holds references to each of the ircConnections. Is used when the 
+	 * user wishes to send a message to a giver server or channel.
+	 */
+	private static ArrayList<IRCConnection> ircConnections = new ArrayList<IRCConnection>();
+
+	/**
+	 * Used to properly format a message that is sent to an IRCConnection.
+	 */
+	private static OutputFactory oF = new OutputFactory();
+
+	/**
+	 * Holds the possible titles that can be used on the frame.
+	 */
+	private static ArrayList<Title> titles = new ArrayList<Title>();
+
+	/**
+	 * Initializes a new ChatWindow.
+	 * @param initialServerName Name of the server that is initially joined.
 	 */
 	public ChatWindow(String initialServerName)
 	{
@@ -66,7 +176,12 @@ ActionListener, Observer {
 		 */
 		if(System.getProperty("os.name").equals("Mac OS X"))
 		{
-			//menuBar = initMenuBar();
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "AOSIDHOAISHDOAISHDOIASHD");
+
+			// Initializes a new menu bar, ultimately should be constructed regardless
+			// of the operating system.
+			menuBar = new MenuBar();
 			frame.setJMenuBar(menuBar);
 		}
 
@@ -89,8 +204,6 @@ ActionListener, Observer {
 		treeScrollPane = new JScrollPane(connectionTree);
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 
-		// Joins the first server.
-		joinServer(initialServerName);
 
 		// Adds the required keylistener to the input field.
 		inputField.addKeyListener(this);
@@ -131,6 +244,7 @@ ActionListener, Observer {
 		 */
 		sidePanelSplitPane.addPropertyChangeListener(this);
 		listsAndOutputSplitPane.addPropertyChangeListener(this);
+		listsAndOutputSplitPane.setResizeWeight(1);
 
 		/*
 		 * Adds the split pane that contains all the other components
@@ -144,32 +258,35 @@ ActionListener, Observer {
 		frame.setVisible(true);
 	}
 
-	@SuppressWarnings("unused")
-	public void update(Observable o, Object arg) {
-		if (o instanceof InputManager && arg instanceof Message) 
-		{
-			Message m = ((Message) arg);
-		}
-	}
-
 	/**
-	 * Called when a server is joined. 
-	 * Takes in the name of the server that is being joined.
-	 * @param server
+	 * Must be called when a server is joined. It will create the default channel
+	 * for console messages, add a server node to the connection tree and 
+	 * make sure joinedAServer is set to true. Also sets the activeServer as the newly
+	 * joined server.
+	 * @param server The name of the server that is to be joined.
 	 */
 	public void joinServer(String server)
 	{
-		connectionTree.newServerNode(server);
 		joinChannel(server);
+		connectionTree.newServerNode(server);
+		joinedAServer = true;
+		activeServer = server;
 	}
 
 	/**
-	 * Called when the user leaves a server.
-	 * Takes in the name of the server that the user is leaving.
-	 * @param server
+	 * Must be called when a server is left. It removes the appropriate
+	 * outputPanel and userListPanel from the outputPanels and userListPanels
+	 * array lists.
+	 * @param server The name of the server that is to be left.
 	 */
 	public void leaveServer(String server)
 	{
+		/*
+		 * Searches for the output panel in the outputPanels
+		 * and then removes it from the layeredPane
+		 * when the correct one is found. Also removes it from
+		 * the ArrayList of outputPanels.
+		 */
 		for(OutputPanel oPanel: outputPanels)
 		{
 			if(oPanel.getServer().equals(server))
@@ -178,6 +295,13 @@ ActionListener, Observer {
 				outputPanels.remove(oPanel);
 			}
 		}
+
+		/*
+		 * Searches for the userList panel in the userListPanels
+		 * and then removes it from the layeredPane
+		 * when the correct one is found. Also removes it from
+		 * the ArrayList of userListPanels.
+		 */
 		for(UserListPanel uLPanel: userListPanels)
 		{
 			if(uLPanel.getServer().equals(server))
@@ -186,18 +310,24 @@ ActionListener, Observer {
 				userListPanels.remove(uLPanel);
 			}
 		}
+
+		// Calls on the connectionTree to remove the appropriate server node.
 		connectionTree.removeServerNode(server);
 	}
 
 	/**
 	 * Called when a user wishes to join a channel on a server
-	 * that has already been connected to.
-	 * @param server
-	 * @param channel
-	 * @param isServer
+	 * that has already been connected to. Adds the appropriate title
+	 * choice, sets the channel to activeChannel and adds the appropriate
+	 * user list and output panels. Finally adds the channel node to
+	 * the connection tree.
+	 * @param server Name of the server that the channel resides on.
+	 * @param channel Name of the channel that is to be joined.
 	 */
 	public void joinChannel(String server, String channel)
 	{
+		titles.add(new Title(server, channel));
+		activeChannel = channel;
 		newOutputPanel(server, channel);
 		newUserListPanel(server, channel);
 		connectionTree.newChannelNode(server, channel);
@@ -205,27 +335,52 @@ ActionListener, Observer {
 
 	/**
 	 * Constructs a channel for a server connection. Does not join
-	 * any channels on the server.
-	 * @param server
+	 * any channels on the server. This is only called by joinServer()
+	 * locally in the class.
+	 * @param server Name of the server to join.
 	 */
-	public void joinChannel(String server)
+	private void joinChannel(String server)
 	{
+		activeChannel = server;
+		titles.add(new Title(server, server));
 		newOutputPanel(server, server);
 		newUserListPanel(server, server);
+
 	}
 
 	/**
-	 * Called when the user leaves a channel on a particular server.
-	 * Takes in the server the channel is on, and the channel name.
-	 * @param server
-	 * @param channel
+	 * Called when a user leaves a channel. It removes the 
+	 * output panel, user list and the appropriate node from
+	 * the connection tree.
+	 * @param server Name of the server that is being left.
+	 * @param channel Name of the channel that is being parted from.
 	 */
-	public void leaveChannel(String server, String channel)
+	public void partChannel(String server, String channel)
 	{
-		System.out.println("leaving channel");
 		outputPanels.remove(findChannel(server, channel, 0));
 		userListPanels.remove(findChannel(server, channel, 1));
 		connectionTree.removeChannelNode(server, channel);
+	}
+
+	/**
+	 * Called when a message is received. It takes in the server name, 
+	 * the channel name, and the actual message.
+	 * ChatWindow has a channel for the server connection itself that is of the same
+	 * name as the server. The server channel should receive messages that are command
+	 * responses.
+	 * @param server The server that the channel is from.
+	 * @param channel The channel the message is from.
+	 * @param message The message that was received. 
+	 */
+	public void newMessage(String server, String channel, String message) 
+	{
+		if(findChannel(server, channel,0) != -1)
+		{
+			outputPanels.get(findChannel(server, channel, 0)).newMessage(message);
+		}
+		else
+			System.err.println("Cound not find channel to append message to.");
+
 	}
 
 	/**
@@ -238,10 +393,12 @@ ActionListener, Observer {
 	 * @param channel
 	 * @param message
 	 */
-	public void newMessage(String server, String channel, String message)
+	public void newMessage(String server, String channel, String nick, String message)
 	{
 		if(findChannel(server, channel,0) != -1)
-			outputPanels.get(findChannel(server, channel, 0)).newMessage(message);
+		{
+			outputPanels.get(findChannel(server, channel, 0)).newMessage(nick, message);
+		}
 		else
 			System.err.println("Cound not find channel to append message to.");
 	}
@@ -249,14 +406,14 @@ ActionListener, Observer {
 	/**
 	 * Called when a new user joins a channel. Takes in the server name, 
 	 * the channel, and the user's nick.
-	 * @param server
-	 * @param channel
-	 * @param user
+	 * @param server The server the message is from.
+	 * @param channel The channelt that the user joined.
+	 * @param user The nick of the user that joined.
 	 */
-	public void newUser(String server, String channel, String user)
+	public void userJoin(String server, String channel, String nick)
 	{
 		if(findChannel(server, channel,1) != -1)
-			userListPanels.get(findChannel(server, channel,1)).newUser(user);
+			userListPanels.get(findChannel(server, channel,1)).newUser(nick);
 		else
 			System.err.println("[ChatWindowError] Cound not find channel to add new user.");
 	}
@@ -264,39 +421,100 @@ ActionListener, Observer {
 	/**
 	 * Called when a user leaves a channel. Takes in the server name, channel 
 	 * name, and the users nick.
-	 * @param server
-	 * @param channel
-	 * @param user
+	 * @param server Server that the user parted on.
+	 * @param channel Channel that the user parted from.
+	 * @param user The nick of the user.
 	 */
-	public void deleteUser(String server, String channel, String user)
+	public void userPart(String server, String channel, String nick)
 	{
 		if(findChannel(server,channel,1) != -1)
-			userListPanels.get(findChannel(server, channel,1)).deleteUser(user);
+			userListPanels.get(findChannel(server, channel,1)).userPart(nick);
 		else
 			System.err.println("Cound not find channel to add new user.");
 	}
 
 	/**
-	 * Used to send a message to a particular server and channel.
+	 * Called when a user quits on an irc server.
+	 * @param server Server that the user quit from.
+	 * @param nick Nick of the quitting user.
+	 */
+	public void userQuit(String server, String nick, String reason)
+	{
+		for(UserListPanel u : userListPanels)
+		{
+			if(u.getServer().equals(server)) {
+
+				if(u.getListModel().contains(nick))
+				{
+					u.userPart(nick);
+					outputPanels.get(findChannel(server, u.getChannel(), 0)).newMessage(
+							nick +" "+ reason);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Called when a user changes their nick.
+	 * @param oldNick The original nick of the user.
+	 * @param newNick The new nick of a user.
+	 */
+	public void nickChange(String oldNick, String newNick)
+	{
+		for(UserListPanel u : userListPanels)
+		{
+			u.nickChange(oldNick, newNick);
+		}
+	}
+
+	/**
+	 * Adds a new topic to the topics ArrayList.
+	 * @param server The name of the server the topic came from.
+	 * @param channel The channel that the topic is from.
+	 * @param topic The topic of the channel/server.
+	 */
+	public void newTopic(String server, String channel, String topic) {
+		titles.get(findTitle(server, channel)).setTopic(topic);
+		frame.setTitle(titles.get(findTitle(activeServer, activeChannel)).getFullTitle());
+	}
+
+	public void newUserMode(String server, String channel, String mode) {
+
+	}
+
+
+	/**
+	 * Used to send a message to a particular channel or server when the user hits 
+	 * VK_ENTER in the inputfield. Sends the message to the active channel and 
+	 * active server after it sends it to the output factory for formatting.
 	 */
 	public void keyReleased(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_ENTER)
-		{
+		{	
 			String m = inputField.getText();
-			if(!m.startsWith("/"))
-				newMessage(activeServer, activeChannel, "[ me ] "+m);
-			setChanged();
-			notifyObservers(m);
-
+			if(ircConnections.get(findIRCConnection()).send(oF.formatMessage(m, activeChannel))&&!m.equals(""))
+			{
+				if(m.startsWith("/")) {
+					// If a command was sent.
+					newMessage(activeServer, activeServer, m);
+				} else {
+					// If a PRIVMSG was sent
+					newMessage(activeServer, activeChannel, "me", m);
+				}
+			}
+			// Resets the text in the input field.
 			inputField.setText("");
 		}
 	}
 
 	/**
-	 * This method must be called each time a channel or server is joined or connected to.
-	 * @param channel
+	 * Creates a new output panel for a server or channel.
+	 * Server and Channel name is the same if this is
+	 * an output panel for a server.
+	 * @param server Name of the server.
+	 * @param channel Name of the channel.
 	 */
-	public void newOutputPanel(String server, String channel)
+	private void newOutputPanel(String server, String channel)
 	{
 		OutputPanel newOutputPanel = new OutputPanel(server, channel, 
 				(int) outputFieldLayeredPane.getSize().getWidth(),
@@ -307,9 +525,11 @@ ActionListener, Observer {
 	}
 
 	/**
-	 * This needs to be called alone with newOutputPanel
+	 * Creates a new user list for a channel.
+	 * @param server Name of the server.
+	 * @param channel Name of the channel.
 	 */
-	public void newUserListPanel(String server, String channel)
+	private void newUserListPanel(String server, String channel)
 	{
 		UserListPanel newUserListPanel = new UserListPanel(server, channel,
 				(int) userListsLayeredPane.getSize().getWidth(),
@@ -322,10 +542,10 @@ ActionListener, Observer {
 	/**
 	 * Finds the appropriate channel for a given action.
 	 * 
-	 * @param server
-	 * @param channel
+	 * @param server Server to be found.
+	 * @param channel Channel to be found.
 	 * @param type (0 is for outputPanels, 1 for userListPanels)
-	 * @return
+	 * @return Returns the index of the outputPanel or userListPanel
 	 */
 	private int findChannel(String server, String channel, int type)
 	{
@@ -361,72 +581,139 @@ ActionListener, Observer {
 		return -1;
 	}
 
+	/**
+	 * Finds an IRCConnection from the arrayList of IRCConnections.
+	 * @return The index of the IRCConnection in the ArrayList.
+	 */
+	private synchronized int findIRCConnection()
+	{
+		boolean found = false;
+		int index = 0;
+
+		while(!found && index < ircConnections.size())
+		{
+			if(ircConnections.get(index).getHost().equals(activeServer))
+			{
+				found = true;	
+				return index;
+			}
+			else
+				index++;
+		}
+		System.err.println("Error finding channel while sending message");
+		return -1;
+	}
+
+	/**
+	 * Finds the title that is for a given server and channel.
+	 * @param server Name of the server.
+	 * @param channel Name of the channel.
+	 * @return The index of the title in the ArrayList.
+	 */
+	private static synchronized int findTitle(String server, String channel)
+	{
+		boolean found = false;
+		int index = 0;
+		while(!found && index < titles.size())
+		{
+			if(titles.get(index).getServer().equals(server))
+			{
+				if(titles.get(index).getChannel().equals(channel))
+				{
+					found = true;	
+					return index;
+
+				}
+				else
+					index++;
+			}
+			else
+				index++;
+		}
+		System.err.println("Error finding title you were looking for");
+		return -1;
+
+	}
+
 
 	@Override
 	public void componentResized(ComponentEvent e) 
 	{
-		sidePanelSplitPane.setDividerLocation((frame.getHeight()/2)-20);
 		listsAndOutputSplitPane.setDividerLocation(frame.getWidth()-DEFAULTSIDEBARWIDTH);
+		sidePanelSplitPane.setDividerLocation((frame.getHeight()/2)-20);
 
-		OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
-				outputFieldLayeredPane.getHeight());
+		//		if(joinedAServer) {
+		//			OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
+		//					outputFieldLayeredPane.getHeight());
+		//
+		//			UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
+		//					userListsLayeredPane.getHeight());
+		//		}
+		//		
+		//		treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
+		//
+		//		for(OutputPanel t : outputPanels)
+		//		{
+		//			t.setBounds(OutputPanel.getBoundsRec());
+		//			t.getScrollPane().getVerticalScrollBar().setValue(
+		//					t.getScrollPane().getVerticalScrollBar().getMaximum());
+		//		}
+		//
+		//		for(UserListPanel t: userListPanels)
+		//		{
+		//			t.setBounds(UserListPanel.getBoundsRec());
+		//		}
+		listsAndOutputSplitPane.invalidate();
+		sidePanelSplitPane.invalidate();
 
-		UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
-				userListsLayeredPane.getHeight());
-
-		treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
-
-		for(OutputPanel t : outputPanels)
-		{
-			t.setBounds(OutputPanel.getBoundsRec());
-			t.getScrollPane().getVerticalScrollBar().setValue(
-					t.getScrollPane().getVerticalScrollBar().getMaximum());
-		}
-
-		for(UserListPanel t: userListPanels)
-		{
-			t.setBounds(UserListPanel.getBoundsRec());
-		}
-
-		frame.revalidate();
+		frame.invalidate();
 	}
 
 	public void propertyChange(PropertyChangeEvent evt) {
-		if(evt.getSource() == listsAndOutputSplitPane)
+		if(joinedAServer)
 		{
-			OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
-					outputFieldLayeredPane.getHeight());
-
-			UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
-					userListsLayeredPane.getHeight());
-
-			for(OutputPanel t : outputPanels)
+			if(evt.getSource() == listsAndOutputSplitPane)
 			{
-				t.setBounds(OutputPanel.getBoundsRec());
-				t.getScrollPane().getVerticalScrollBar().setValue(
-						t.getScrollPane().getVerticalScrollBar().getMaximum());
-			}
+				OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
+						outputFieldLayeredPane.getHeight());
+				UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
+						userListsLayeredPane.getHeight());
 
-			for(UserListPanel t: userListPanels)
+				for(OutputPanel t : outputPanels)
+				{
+					t.setBounds(OutputPanel.getBoundsRec());
+					t.getScrollPane().getVerticalScrollBar().setValue(
+							t.getScrollPane().getVerticalScrollBar().getMaximum());
+					t.invalidate();
+
+				}
+
+				for(UserListPanel t: userListPanels)
+				{
+					t.setBounds(UserListPanel.getBoundsRec());
+					t.invalidate();
+
+				}
+				treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
+				outputFieldLayeredPane.invalidate();
+			}
+			else if(evt.getSource() == sidePanelSplitPane)
 			{
-				t.setBounds(UserListPanel.getBoundsRec());
-			}
-			treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
+				UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
+						userListsLayeredPane.getHeight());
 
+				for(UserListPanel t: userListPanels)
+				{
+					t.setBounds(UserListPanel.getBoundsRec());
+					t.invalidate();
+				}
+				treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
+
+			}
 		}
-		else if(evt.getSource() == sidePanelSplitPane)
-		{
-			UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
-					userListsLayeredPane.getHeight());
 
-			for(UserListPanel t: userListPanels)
-			{
-				t.setBounds(UserListPanel.getBoundsRec());
-			}
-			treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
 
-		}
-		frame.revalidate();
+		frame.invalidate();
 	}
 
 	/**
@@ -434,30 +721,34 @@ ActionListener, Observer {
 	 * tree is selected.
 	 * Brings the appropriate output field and user lists
 	 * to the front of their JLayeredPanes.
-	 * @param activeServer
-	 * @param activeChannel
+	 * @param activeServer The name of the server that the user has selected
+	 * in the connectionTree.
+	 * @param activeChannel The name of the channel that the user has selected
+	 * in the connection tree.
 	 */
-	static void newPanelSelections(String activeServer, String activeChannel) {
+	static void newActiveChannels(String activeServer, String activeChannel) {
 		ChatWindow.activeServer = activeServer;
 		ChatWindow.activeChannel = activeChannel;
 
-		frame.setTitle(activeServer + " " + activeChannel);
+		//frame.setTitle(activeServer + " " + activeChannel);
 
 		for(OutputPanel t : outputPanels)
 		{
 			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
-				outputFieldLayeredPane.moveToBack(t);
+				//outputFieldLayeredPane.moveToBack(t);
+				t.setVisible(false);
 			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
-				outputFieldLayeredPane.moveToFront(t);
+				t.setVisible(true);//outputFieldLayeredPane.moveToFront(t);
 		}
 
 		for(UserListPanel t : userListPanels)
 		{
 			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
-				userListsLayeredPane.moveToBack(t);
+				t.setVisible(false);
 			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
-				userListsLayeredPane.moveToFront(t);
-		}		
+				t.setVisible(true);
+		}	
+		frame.setTitle(titles.get(findTitle(activeServer, activeChannel)).getFullTitle());
 	}
 
 	public void windowGainedFocus(WindowEvent e) {
@@ -513,4 +804,20 @@ ActionListener, Observer {
 		//  Auto-generated method stub
 
 	}
+
+	/**
+	 * @return the ircConnections
+	 */
+	public static ArrayList<IRCConnection> getIrcConnections() {
+		return ircConnections;
+	}
+
+	/**
+	 * @param ircConnections the ircConnections to set
+	 */
+	public static void setIrcConnections(ArrayList<IRCConnection> ircConnections) {
+		ChatWindow.ircConnections = ircConnections;
+	}
+
+
 }

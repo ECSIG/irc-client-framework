@@ -60,7 +60,7 @@ public class Server {
             
             System.out.println("========ADDDING OBSERVERS=======");
             inputManager.addObserver(outputManager);
-           	inputManager.addObserver(cw);
+           //	inputManager.addObserver(cw);
             
             cw.addObserver(outputManager);
             
