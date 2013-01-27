@@ -11,6 +11,7 @@ import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,10 +28,10 @@ public class NewServerWindow extends JFrame implements ActionListener{
 	private static final Toolkit KIT = Toolkit.getDefaultToolkit();	
 	private static double screenHeight = KIT.getScreenSize().getHeight();
 	private static double screenWidth = KIT.getScreenSize().getWidth();
+	
+	// ** General Tab ** //
 	private static JPanel generalPanel = new JPanel();
-	private static JPanel detailsPanel = new JPanel();
-	private static JPanel onLoginPanel = new JPanel();
-	private static JPanel ignorePanel = new JPanel();
+
 	private static JTabbedPane tabbedPane = new JTabbedPane();
 	private static JTextField networkName = new JTextField();
 	private static JTextField server = new JTextField();
@@ -42,16 +43,43 @@ public class NewServerWindow extends JFrame implements ActionListener{
 	private static JPasswordField nickservPassword = new JPasswordField();
 	private static JTextField altNicks = new JTextField();
 	private static JPanel buttonPanel = new JPanel();
-	private static JButton cancel = new JButton("Cancel");
-	private static JButton ok = new JButton("OK");
 	private static JCheckBox onStartupCheck = new JCheckBox("Connect on start up");
 	private static JCheckBox sslCheck = new JCheckBox("Use SSL");
+	// ** End General Tab ** //
+	
+	// ** Details Tab ** //
+	private static JPanel detailsPanel = new JPanel();
+	private static String[] encodingOptions = new String[]{
+		"UTF-8", "ISO-8859-1", "ISO-8859-15", "ISO-8859-2", "ISO-8859-7 (Greek)",
+		"ISO-8859-8 (Hebrew)", "ISO-8859-9 (Turkish)", "ISO-8859-11 (Thai)",
+		"ISO-2022-JP (Japanese)", "CP949 (Korean)", "EUC-KR (Korean)", "GBK (Chinese)",
+		"GB18030 (Chinese)", "BIG5 (Chinese)", "KOI8-U (Ukrainian)", "KOI8-R (Cyrillic)",
+		"CP1251 (Cyrillic)", "CP1256 (Arabic)", "CP1257 (Baltic)"
+	};
+	private static JTextField leavingComment = new JTextField();
+	private static JTextField ctcpUserInfo = new JTextField();
+	private static JComboBox<String> encoding = new JComboBox<String>();
+	private static JComboBox<String> fallbackEncoding = new JComboBox<String>();
+	// ** End Details Tab ** //
+	
+	private static JPanel onLoginPanel = new JPanel();
+	private static JPanel ignorePanel = new JPanel();
+	private static JButton cancel = new JButton("Cancel");
+	private static JButton ok = new JButton("OK");
+
 
 	
 	
+	public static void main(String args[])
+	{
+		NewServerWindow w = new NewServerWindow();
+	}
 	public NewServerWindow()
 	{
 		initGeneralPanel();
+		initDetailsPanel();
+		initOnLoginPanel();
+		initIgnorePanel();
 		
 		tabbedPane.add("General", generalPanel);
 		tabbedPane.add("Details", detailsPanel);
@@ -103,6 +131,20 @@ public class NewServerWindow extends JFrame implements ActionListener{
 	
 	private void initDetailsPanel() {
 		
+		detailsPanel.setLayout(new GridLayout(4,2));
+		detailsPanel.add(new JLabel("Leaving Comment:", JLabel.RIGHT));
+		detailsPanel.add(leavingComment);
+		detailsPanel.add(new JLabel("CTCP User Info:", JLabel.RIGHT));
+		detailsPanel.add(ctcpUserInfo);
+		for(String e : encodingOptions)
+		{
+			encoding.addItem(e);
+			fallbackEncoding.addItem(e);
+		}
+		detailsPanel.add(new JLabel("Encoding:", JLabel.RIGHT));
+		detailsPanel.add(encoding);
+		detailsPanel.add(new JLabel("Fallback Encoding:", JLabel.RIGHT));
+		detailsPanel.add(fallbackEncoding);
 	}
 	
 	private void initOnLoginPanel() {
@@ -112,30 +154,14 @@ public class NewServerWindow extends JFrame implements ActionListener{
 	private void initIgnorePanel() {
 		
 	}
-	
-	public static void main(String[] args) {
-		NewServerWindow nsw = new NewServerWindow();
-	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ReadServerConfig rsc = new ReadServerConfig(networkName.getText()+".txt");
-		if(e.getSource() == ok);
-		try {
-			rsc.write("networkName = ", networkName.getText());
-			rsc.write("server = ",server.getText());
-			rsc.write("port = ", port.getText());
-			rsc.write("serverPassword = ", serverPassword.getText());
-			rsc.write("nickName = ", nickName.getText());
-			rsc.write("loginName = ", loginName.getText());
-			rsc.write("realName = ", realName.getText());
-			rsc.write("nickservPassword = ", nickservPassword.getText());
-			rsc.write("altNicks = ", altNicks.getText());
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		if(e.getSource() == ok) {
+			
+		} else if (e.getSource() == cancel) {
+			
 		}
-		
 	}
-
 }
