@@ -10,7 +10,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.Position;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -19,7 +18,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 
 	private static final long serialVersionUID = 8988928665652702491L;
 
-	private final DefaultTreeCellRenderer treeRenderer = new DefaultTreeCellRenderer();
+	private final CustomDTCR treeRenderer = new CustomDTCR();
 	private DefaultTreeModel model;
 	private DefaultMutableTreeNode root;
 	private Font font = new Font("Lucida Grande", Font.BOLD, 12);

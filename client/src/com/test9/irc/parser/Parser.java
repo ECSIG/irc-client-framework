@@ -148,6 +148,7 @@ public class Parser {
 		return(possibleParams.split(" "));
 	}
 	
+	@SuppressWarnings("unused")
 	private char[] modeParse(String mode)
 	{
 		

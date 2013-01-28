@@ -83,6 +83,7 @@ public class OutputPanel extends JPanel{
 		textPane.setFont(font);
 		scrollPane = new JScrollPane(textPane);
 		scrollPane.getVerticalScrollBar().setPreferredSize (new Dimension(5,0));
+		scrollPane.setBackground(Color.BLACK);
 		add(scrollPane, BorderLayout.CENTER);
 
 	}

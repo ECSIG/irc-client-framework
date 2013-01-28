@@ -32,8 +32,6 @@ public class User {
 
 	private static SimpleAttributeSet[] attributes = new SimpleAttributeSet[colors.length];
 
-
-
 	User(String nick, boolean yourself) {
 		char prefix = nick.charAt(0);
 
@@ -45,7 +43,6 @@ public class User {
 		else
 			this.nick = nick.substring(2, nick.length());
 
-		this.nick = nick;
 		setUserAttributeSet(userID, yourself);
 		userID++;
 	}

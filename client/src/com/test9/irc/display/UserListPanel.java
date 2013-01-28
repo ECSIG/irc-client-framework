@@ -73,6 +73,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 		jList.setFont(font);
 
 		scrollPane = new JScrollPane(jList);
+		scrollPane.setBackground(Color.BLACK);
 		add(scrollPane, BorderLayout.CENTER);
 
 	}

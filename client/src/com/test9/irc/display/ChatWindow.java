@@ -201,7 +201,7 @@ ActionListener {
 		frame.setPreferredSize(defaultWindowSize);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(true);
-		//frame.setBackground(Color.BLACK);
+
 
 		/*
 		 * Sets up the connection tree that will list all server
@@ -210,20 +210,18 @@ ActionListener {
 		connectionTree = new ConnectionTree(initialServerName, this);
 		treeScrollPane = new JScrollPane(connectionTree);
 		treeScrollPane.getVerticalScrollBar().setPreferredSize (new Dimension(5,0));
-
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 
 
 		// Adds the required keylistener to the input field.
 		inputField.addKeyListener(this);
-		inputField.setBackground(Color.BLACK);
-		inputField.setForeground(Color.WHITE);
-		inputField.setCaretColor(Color.WHITE);
+
 
 		/*
 		 * Adds the outputLayeredPane and the input field to the 
 		 * center panel.
 		 */
+
 		centerJPanel.add(outputFieldLayeredPane);
 		centerJPanel.add(inputField, BorderLayout.SOUTH);
 
@@ -232,9 +230,9 @@ ActionListener {
 		 * top of the other) and adds the userListLayeredPane and the 
 		 * connection tree.
 		 */
+
 		sidePanelSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
 				userListsLayeredPane, treePanel);
-		//sidePanelSplitPane.setBackground(Color.BLACK);
 		sidePanelSplitPane.setDividerSize(SPLITPANEWIDTH);
 		sidePanelSplitPane.setDividerLocation((frame.getPreferredSize().height/2)-20);
 		sidePanelSplitPane.setContinuousLayout(true);
@@ -249,6 +247,7 @@ ActionListener {
 		listsAndOutputSplitPane.setDividerSize(SPLITPANEWIDTH);
 		listsAndOutputSplitPane.setDividerLocation(
 				frame.getPreferredSize().width-DEFAULTSIDEBARWIDTH);
+		
 
 
 		/*
@@ -258,6 +257,7 @@ ActionListener {
 		sidePanelSplitPane.addPropertyChangeListener(this);
 		listsAndOutputSplitPane.addPropertyChangeListener(this);
 		listsAndOutputSplitPane.setResizeWeight(1);
+		loadColors();
 
 		/*
 		 * Adds the split pane that contains all the other components
@@ -269,6 +269,22 @@ ActionListener {
 		frame.pack();
 		inputField.requestFocus();
 		frame.setVisible(true);
+	}
+	
+	public void loadColors() {
+		//frame.setBackground(Color.BLACK);
+		treePanel.setBackground(Color.BLACK);
+		inputField.setBackground(Color.BLACK);
+		inputField.setForeground(Color.WHITE);
+		inputField.setCaretColor(Color.WHITE);
+		treeScrollPane.setBackground(Color.BLACK);
+		//listsAndOutputSplitPane.setBackground(Color.BLACK);
+		userListsLayeredPane.setBackground(Color.BLACK);
+		//sidePanelSplitPane.setBackground(Color.BLACK);
+		//centerJPanel.setBackground(Color.BLACK);
+		outputFieldLayeredPane.setBackground(Color.BLACK);
+		
+
 	}
 	
 	public void addChatWindowListener(Listener listener) {
@@ -287,7 +303,6 @@ ActionListener {
 		titles.add(new Title(server, server));
 		newOutputPanel(server, server);
 		newUserListPanel(server, server);
-
 	}
 
 	/**
@@ -424,8 +439,6 @@ ActionListener {
 
 			}
 		}
-
-
 		frame.invalidate();
 	}
 
