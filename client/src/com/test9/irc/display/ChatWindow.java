@@ -1,9 +1,11 @@
 package com.test9.irc.display;
 
 import com.test9.irc.newEngine.IRCConnection;
+import com.test9.irc.newEngine.User;
 import com.test9.irc.parser.OutputFactory;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -195,6 +197,7 @@ ActionListener {
 		frame.setPreferredSize(defaultWindowSize);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(true);
+		//frame.setBackground(Color.BLACK);
 
 		/*
 		 * Sets up the connection tree that will list all server
@@ -202,11 +205,15 @@ ActionListener {
 		 */
 		connectionTree = new ConnectionTree(initialServerName, this);
 		treeScrollPane = new JScrollPane(connectionTree);
+		treeScrollPane.getVerticalScrollBar().setPreferredSize (new Dimension(5,0));
+
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 
 
 		// Adds the required keylistener to the input field.
 		inputField.addKeyListener(this);
+		inputField.setBackground(Color.BLACK);
+		inputField.setForeground(Color.WHITE);
 
 		/*
 		 * Adds the outputLayeredPane and the input field to the 
@@ -222,6 +229,7 @@ ActionListener {
 		 */
 		sidePanelSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
 				userListsLayeredPane, treePanel);
+		//sidePanelSplitPane.setBackground(Color.BLACK);
 		sidePanelSplitPane.setDividerSize(SPLITPANEWIDTH);
 		sidePanelSplitPane.setDividerLocation((frame.getPreferredSize().height/2)-20);
 		sidePanelSplitPane.setContinuousLayout(true);
@@ -393,11 +401,11 @@ ActionListener {
 	 * @param channel
 	 * @param message
 	 */
-	public void newMessage(String server, String channel, String nick, String message)
+	public void newPRIVMessage(User user, String server, String channel, String nick, String message)
 	{
 		if(findChannel(server, channel,0) != -1)
 		{
-			outputPanels.get(findChannel(server, channel, 0)).newMessage(nick, message);
+			outputPanels.get(findChannel(server, channel, 0)).newMessage(user, nick, message);
 		}
 		else
 			System.err.println("Cound not find channel to append message to.");
@@ -498,8 +506,13 @@ ActionListener {
 					// If a command was sent.
 					newMessage(activeServer, activeServer, m);
 				} else {
+					ircConnections.get(findIRCConnection());
 					// If a PRIVMSG was sent
-					newMessage(activeServer, activeChannel, "me", m);
+					newPRIVMessage(
+							IRCConnection.getUser(
+									ircConnections.get(findIRCConnection()).getNick()),
+									activeServer, activeChannel, ircConnections.get(
+											findIRCConnection()).getNick(), m);
 				}
 			}
 			// Resets the text in the input field.
@@ -817,6 +830,16 @@ ActionListener {
 	 */
 	public static void setIrcConnections(ArrayList<IRCConnection> ircConnections) {
 		ChatWindow.ircConnections = ircConnections;
+	}
+
+	public void newMessageHighlight(String server, String channel, String nickname, String content) {
+		if(findChannel(server, channel,0) != -1)
+		{
+			outputPanels.get(findChannel(server, channel, 0)).newMessageHighlight(nickname, content);
+		}
+		else
+			System.err.println("Cound not find channel to append message to.");
+
 	}
 
 

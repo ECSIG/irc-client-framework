@@ -1,5 +1,6 @@
 package com.test9.irc.display;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -21,7 +22,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	private static final DefaultTreeCellRenderer treeRenderer = new DefaultTreeCellRenderer();
 	private static DefaultTreeModel model;
 	private static DefaultMutableTreeNode root;
-	private static Font font = new Font("Lucida Grande", Font.PLAIN, 10);
+	private static Font font = new Font("Lucida Grande", Font.BOLD, 12);
 
 
 	/**
@@ -36,6 +37,10 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		treeRenderer.setOpenIcon(null);
 		treeRenderer.setLeafIcon(null);
 		treeRenderer.setFont(font);
+		treeRenderer.setBackgroundNonSelectionColor(Color.BLACK);
+		treeRenderer.setTextNonSelectionColor(Color.LIGHT_GRAY);
+		treeRenderer.setTextSelectionColor(Color.WHITE);
+		setBackground(Color.BLACK);
 		setModel(model);
 		setRootVisible(false);
 		getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);

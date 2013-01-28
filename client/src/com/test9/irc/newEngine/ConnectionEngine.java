@@ -13,11 +13,13 @@ public class ConnectionEngine {
 
 		connection = new IRCConnection("irc.ecsig.com", 6667, null, "jared7-bot", 
 				"jared7-bot", "jared7-bot", "UTF-8");
+		
+		//((SSLIRCConnection)connection).addTrustManager(new SSLTrustManager());
 		cw = new ChatWindow(connection.getHost());
+		
 		connection.addIRCEventListener(new IRCEventAdapter(this));
-
 		connection.connect();
-
+		
 		try {
 			IRCConnection.sleep(2000);
 		} catch (InterruptedException e) {

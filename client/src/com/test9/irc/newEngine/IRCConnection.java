@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 
 import com.test9.irc.parser.Message;
 import com.test9.irc.parser.Parser;
@@ -15,7 +16,7 @@ public class IRCConnection extends Thread {
 
 	private Socket socket;
 	protected byte regLevel = 0;
-	private String host;
+	protected String host;
 	protected int port;
 	private BufferedReader in;
 	private BufferedWriter out;
@@ -27,6 +28,7 @@ public class IRCConnection extends Thread {
 	private String username;
 	private Parser p;
 	private IRCEventListener listener;
+	private static ArrayList<User> users = new ArrayList<User>();
 
 	public IRCConnection(String host, int port, String pass, String nick, 
 			String username, String realname, String encoding) {
@@ -40,7 +42,7 @@ public class IRCConnection extends Thread {
 		this.realname = realname;
 		this.encoding = encoding;
 	}
-	
+
 	public synchronized void addIRCEventListener(IRCEventListener listener) {
 		this.listener = listener;
 	}
@@ -182,14 +184,14 @@ public class IRCConnection extends Thread {
 			System.out.println(reply);
 			listener.onReply(m);
 			listener.onUnknown(host, line);
-		//} else if (reply >= 400 && reply < 600) { // ERROR
+			//} else if (reply >= 400 && reply < 600) { // ERROR
 
 		} else if (command.equalsIgnoreCase("KICK")) { // KICK
 
 		} else if (command.equalsIgnoreCase("INVITE")) { // INVITE
 
 		} else if (command.equalsIgnoreCase("TOPIC")) { // TOPIC
-
+			listener.onTopic(host, m);
 		} else if (command.equalsIgnoreCase("ERROR")) { // ERROR
 
 		} else {
@@ -259,6 +261,30 @@ public class IRCConnection extends Thread {
 	 */
 	public void setNick(String nick) {
 		this.nick = nick;
+	}
+
+	/**
+	 * @return the users
+	 */
+	public static ArrayList<User> getUsers() {
+		return users;
+	}
+
+	/**
+	 * @param users the users to set
+	 */
+	public static void setUsers(ArrayList<User> users) {
+		IRCConnection.users = users;
+	}
+
+	public static User getUser(String nick) {
+		User user = null;
+
+		for(User u : users)
+			if(u.getNick().equals(nick))
+				return(u);
+		
+		return user;
 	}
 
 }
