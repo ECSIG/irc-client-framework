@@ -28,7 +28,7 @@ public class IRCConnection extends Thread {
 	private String username;
 	private Parser p;
 	private IRCEventListener listener;
-	private static ArrayList<User> users = new ArrayList<User>();
+	private ArrayList<User> users = new ArrayList<User>();
 
 	public IRCConnection(String host, int port, String pass, String nick, 
 			String username, String realname, String encoding) {
@@ -266,18 +266,18 @@ public class IRCConnection extends Thread {
 	/**
 	 * @return the users
 	 */
-	public static ArrayList<User> getUsers() {
+	public ArrayList<User> getUsers() {
 		return users;
 	}
 
 	/**
 	 * @param users the users to set
 	 */
-	public static void setUsers(ArrayList<User> users) {
-		IRCConnection.users = users;
+	public void setUsers(ArrayList<User> users) {
+		this.users = users;
 	}
 
-	public static User getUser(String nick) {
+	public User getUser(String nick) {
 		User user = null;
 
 		for(User u : users)

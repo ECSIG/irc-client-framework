@@ -19,10 +19,11 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 
 	private static final long serialVersionUID = 8988928665652702491L;
 
-	private static final DefaultTreeCellRenderer treeRenderer = new DefaultTreeCellRenderer();
-	private static DefaultTreeModel model;
-	private static DefaultMutableTreeNode root;
-	private static Font font = new Font("Lucida Grande", Font.BOLD, 12);
+	private final DefaultTreeCellRenderer treeRenderer = new DefaultTreeCellRenderer();
+	private DefaultTreeModel model;
+	private DefaultMutableTreeNode root;
+	private Font font = new Font("Lucida Grande", Font.BOLD, 12);
+	private ChatWindow owner;
 
 
 	/**
@@ -31,6 +32,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	 */
 	ConnectionTree(String initialServerName, ChatWindow chatWindow)
 	{
+		owner = chatWindow;
 		root = new DefaultMutableTreeNode("root");
 		model = new DefaultTreeModel(root);
 		treeRenderer.setClosedIcon(null);
@@ -167,6 +169,6 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		if(activeServer.equals("root"))
 			activeServer = activeChannel;
 
-		ChatWindow.newActiveChannels(activeServer, activeChannel);
+		owner.newActiveChannels(activeServer, activeChannel);
 	}
 }

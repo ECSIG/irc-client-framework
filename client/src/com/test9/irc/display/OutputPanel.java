@@ -60,7 +60,6 @@ public class OutputPanel extends JPanel{
 
 	private SimpleAttributeSet highlight = new SimpleAttributeSet();
 	
-
 	/**
 	 * Creates a new OutputPanel for a server or channel that
 	 * can be added to the JFrame.

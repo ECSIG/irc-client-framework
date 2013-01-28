@@ -94,6 +94,10 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	{
 		listModel.removeElement(user);
 	}
+	
+	void userAway(String nick) {
+		
+	}
 
 	/**
 	 * Changes a nick if someone changes their nick on the server.
