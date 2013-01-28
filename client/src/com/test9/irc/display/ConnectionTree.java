@@ -1,5 +1,6 @@
 package com.test9.irc.display;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -9,7 +10,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.Position;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -18,10 +18,11 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 
 	private static final long serialVersionUID = 8988928665652702491L;
 
-	private static final DefaultTreeCellRenderer treeRenderer = new DefaultTreeCellRenderer();
-	private static DefaultTreeModel model;
-	private static DefaultMutableTreeNode root;
-	private static Font font = new Font("Lucida Grande", Font.PLAIN, 10);
+	private final CustomDTCR treeRenderer = new CustomDTCR();
+	private DefaultTreeModel model;
+	private DefaultMutableTreeNode root;
+	private Font font = new Font("Lucida Grande", Font.BOLD, 12);
+	private ChatWindow owner;
 
 
 	/**
@@ -30,12 +31,17 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	 */
 	ConnectionTree(String initialServerName, ChatWindow chatWindow)
 	{
+		owner = chatWindow;
 		root = new DefaultMutableTreeNode("root");
 		model = new DefaultTreeModel(root);
 		treeRenderer.setClosedIcon(null);
 		treeRenderer.setOpenIcon(null);
 		treeRenderer.setLeafIcon(null);
 		treeRenderer.setFont(font);
+		treeRenderer.setBackgroundNonSelectionColor(Color.BLACK);
+		treeRenderer.setTextNonSelectionColor(Color.LIGHT_GRAY);
+		treeRenderer.setTextSelectionColor(Color.WHITE);
+		setBackground(Color.BLACK);
 		setModel(model);
 		setRootVisible(false);
 		getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -162,6 +168,6 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		if(activeServer.equals("root"))
 			activeServer = activeChannel;
 
-		ChatWindow.newActiveChannels(activeServer, activeChannel);
+		owner.newActiveChannels(activeServer, activeChannel);
 	}
 }

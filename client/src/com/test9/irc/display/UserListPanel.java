@@ -23,7 +23,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	/**
 	 * Holds the font for the panel.
 	 */
-	private static Font font = new Font("Lucida Grande", Font.PLAIN, 10);
+	private static Font font = new Font("Lucida Grande", Font.BOLD, 12);
 
 	/**
 	 * Holds the model of the list that will be used.
@@ -48,7 +48,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	/**
 	 * The list that contains all the information.
 	 */
-	private JList<String> jList;
+	private JList<String> jList = new JList<String>();
 
 
 	/**
@@ -61,17 +61,19 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	@SuppressWarnings("unchecked")
 	UserListPanel(String server, String channel, int width, int height)
 	{
+		jList.setBackground(Color.BLACK);
+		jList.setForeground(Color.WHITE);
 		this.server = server;
 		this.channel = channel;
 		setLayout(new BorderLayout());
 		boundsRect = new Rectangle(0,0,width,height);
 		setBounds(boundsRect);
 		setBackground(Color.BLACK);
-		jList = new JList<String>();
 		jList.setModel(listModel);
 		jList.setFont(font);
 
 		scrollPane = new JScrollPane(jList);
+		scrollPane.setBackground(Color.BLACK);
 		add(scrollPane, BorderLayout.CENTER);
 
 	}
@@ -92,6 +94,10 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	void userPart(String user)
 	{
 		listModel.removeElement(user);
+	}
+	
+	void userAway(String nick) {
+		
 	}
 
 	/**

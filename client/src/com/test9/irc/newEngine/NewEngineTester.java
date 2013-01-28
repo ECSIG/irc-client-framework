@@ -11,7 +11,6 @@ public class NewEngineTester {
 	 */
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws IOException {
-
 		ConnectionEngine CE = new ConnectionEngine();
 
 	}

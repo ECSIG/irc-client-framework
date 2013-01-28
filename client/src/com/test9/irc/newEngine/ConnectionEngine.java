@@ -3,6 +3,7 @@ package com.test9.irc.newEngine;
 import java.io.IOException;
 
 import com.test9.irc.display.ChatWindow;
+import com.test9.irc.display.EventAdapter;
 
 public class ConnectionEngine {
 	
@@ -13,11 +14,14 @@ public class ConnectionEngine {
 
 		connection = new IRCConnection("irc.ecsig.com", 6667, null, "jared7-bot", 
 				"jared7-bot", "jared7-bot", "UTF-8");
+		
+		//((SSLIRCConnection)connection).addTrustManager(new SSLTrustManager());
 		cw = new ChatWindow(connection.getHost());
+		cw.addChatWindowListener(new EventAdapter(cw, cw.getUtil()));
+		
 		connection.addIRCEventListener(new IRCEventAdapter(this));
-
 		connection.connect();
-
+		
 		try {
 			IRCConnection.sleep(2000);
 		} catch (InterruptedException e) {

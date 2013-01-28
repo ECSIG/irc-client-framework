@@ -41,6 +41,6 @@ public interface IRCEventListener extends EventListener, IRCConstants {
 	public void onPing(String string);
 	public void onQuit(Message m);
 	public void onReply(Message m);
-	public void onTopic(Message m);
+	public void onTopic(String host, Message m);
 	public void onUnknown(String host, String line);
 }
