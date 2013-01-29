@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import com.test9.irc.parser.Message;
 import com.test9.irc.parser.Parser;
@@ -29,10 +30,12 @@ public class IRCConnection extends Thread {
 	private Parser p;
 	private IRCEventListener listener;
 	private ArrayList<User> users = new ArrayList<User>();
+	private ArrayBlockingQueue<String> queue = new ArrayBlockingQueue<String>(100);
+	private QueueProcessing qp= new QueueProcessing(this);
 
 	public IRCConnection(String host, int port, String pass, String nick, 
 			String username, String realname, String encoding) {
-
+		
 		p = new Parser();
 		this.host = host;
 		this.port = port;
@@ -43,12 +46,12 @@ public class IRCConnection extends Thread {
 		this.encoding = encoding;
 	}
 
-	public synchronized void addIRCEventListener(IRCEventListener listener) {
+	public void addIRCEventListener(IRCEventListener listener) {
 		this.listener = listener;
 	}
 
 	@SuppressWarnings("unused")
-	public synchronized void connect() throws IOException {
+	public void connect() throws IOException {
 		if (regLevel != 0) // otherwise disconnected or connect
 			throw new SocketException("Socket closed or already open ("+ regLevel +")");
 		IOException exception = null;
@@ -84,7 +87,7 @@ public class IRCConnection extends Thread {
 	 * @see #connect()
 	 * @see #run()
 	 */
-	protected synchronized void prepare(Socket s) throws IOException {
+	protected void prepare(Socket s) throws IOException {
 		if (s == null)
 			throw new SocketException("Socket s is null, not connected");
 		socket = s;
@@ -96,7 +99,7 @@ public class IRCConnection extends Thread {
 		register();
 	}
 
-	private synchronized void register() {
+	private void register() {
 		System.out.println("register()");
 		if (pass != null)
 			send("PASS "+ pass); 
@@ -105,13 +108,17 @@ public class IRCConnection extends Thread {
 				+" :"+ realname); 
 	}
 
-	public synchronized void run() {
+	public void run() {
 		try {
 			String line;
 			while (!isInterrupted()) {
 				line = in.readLine();
 				if (line != null)
-					get(line);
+					try {
+						queue.offer(line);
+					} catch (NullPointerException npe) {
+						System.out.println("failed message offer");
+					}
 				else
 					close();
 			}
@@ -119,6 +126,7 @@ public class IRCConnection extends Thread {
 			close();
 		}
 	}
+	
 
 	// ------------------------------
 
@@ -155,7 +163,7 @@ public class IRCConnection extends Thread {
 	 * through the <code>IRCEventListener</code>.<br />
 	 * @param line The line which is sent from the server.
 	 */
-	private synchronized void get(String line) {
+	void get(String line) {
 		Message m = p.parse(new StringBuffer(line));
 		String command = m.getCommand();
 
@@ -285,6 +293,20 @@ public class IRCConnection extends Thread {
 				return(u);
 		
 		return user;
+	}
+
+	/**
+	 * @return the queue
+	 */
+	public ArrayBlockingQueue<String> getQueue() {
+		return queue;
+	}
+
+	/**
+	 * @param queue the queue to set
+	 */
+	public void setQueue(ArrayBlockingQueue<String> queue) {
+		this.queue = queue;
 	}
 
 }
