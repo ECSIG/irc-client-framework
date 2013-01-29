@@ -38,7 +38,7 @@ public class User {
 		if(!init )
 			initAttributes();
 
-		if((prefix > 'A' && prefix < 'Z') || (prefix > 'a' && prefix < 'z'))
+		if((prefix >= 'A' && prefix <= 'Z') || (prefix >= 'a' && prefix <= 'z'))
 			this.nick = nick;
 		else
 			this.nick = nick.substring(2, nick.length());
