@@ -12,8 +12,8 @@ public class ConnectionEngine {
 	
 	public ConnectionEngine() throws IOException {
 
-		connection = new IRCConnection("irc.ecsig.com", 6667, null, "jared7-bot", 
-				"jared7-bot", "jared7-bot", "UTF-8");
+		connection = new IRCConnection("irc.ecsig.com", 6667, null, "jar77-bot", 
+				"jar77-bot", "jar77-bot", "UTF-8");
 		
 		//((SSLIRCConnection)connection).addTrustManager(new SSLTrustManager());
 		cw = new ChatWindow(connection.getHost());
@@ -22,14 +22,14 @@ public class ConnectionEngine {
 		connection.addIRCEventListener(new IRCEventAdapter(this));
 		connection.connect();
 		
-		try {
-			IRCConnection.sleep(2000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			IRCConnection.sleep(2000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		//connection.send("JOIN #ecsig");
-		connection.send("JOIN #jircc");
+		//connection.send("JOIN #jircc");
 	}
 
 	/**
