@@ -1,4 +1,4 @@
-package com.test9.irc.newEngine;
+package com.test9.irc.engine;
 
 import java.io.IOException;
 

@@ -1,6 +1,6 @@
 package com.test9.irc.display;
 
-import com.test9.irc.newEngine.IRCConnection;
+import com.test9.irc.engine.IRCConnection;
 import com.test9.irc.parser.OutputFactory;
 
 import java.awt.BorderLayout;

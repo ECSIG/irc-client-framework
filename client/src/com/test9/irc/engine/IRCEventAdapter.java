@@ -1,4 +1,4 @@
-package com.test9.irc.newEngine;
+package com.test9.irc.engine;
 
 import com.test9.irc.display.ChatWindow;
 import com.test9.irc.parser.Message;

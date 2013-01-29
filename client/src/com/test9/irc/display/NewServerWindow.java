@@ -19,7 +19,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-import com.test9.irc.newEngine.ReadServerConfig;
+import com.test9.irc.engine.ReadServerConfig;
 
 @SuppressWarnings("unused")
 public class NewServerWindow extends JFrame implements ActionListener{

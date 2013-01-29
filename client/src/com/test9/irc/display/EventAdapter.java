@@ -1,6 +1,6 @@
 package com.test9.irc.display;
 
-import com.test9.irc.newEngine.User;
+import com.test9.irc.engine.User;
 
 public class EventAdapter implements Listener {
 	private ChatWindow owner;

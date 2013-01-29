@@ -1,4 +1,4 @@
-package com.test9.irc.newEngine;
+package com.test9.irc.engine;
 
 public class IRCUtil implements IRCConstants {
 	
