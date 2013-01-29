@@ -110,7 +110,7 @@ public class OutputPanel extends JPanel{
 			e.printStackTrace();
 		}
 		//		textArea.append(message+"\r\n");
-		textPane.setCaretPosition(textPane.getText().length());
+		textPane.setCaretPosition(textPane.getDocument().getLength());
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class OutputPanel extends JPanel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		textPane.setCaretPosition(textPane.getText().length());
+		textPane.setCaretPosition(textPane.getDocument().getLength());
 	}
 
 	/**
@@ -238,7 +238,7 @@ public class OutputPanel extends JPanel{
 			e.printStackTrace();
 		}
 		//		textArea.append(message+"\r\n");
-		textPane.setCaretPosition(textPane.getText().length());
+		textPane.setCaretPosition(textPane.getDocument().getLength());
 
 	}
 }
