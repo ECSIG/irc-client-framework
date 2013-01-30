@@ -166,9 +166,9 @@ ActionListener {
 	 * Holds the possible titles that can be used on the frame.
 	 */
 	private ArrayList<Title> titles = new ArrayList<Title>();
-	
+
 	private Listener listener;
-	
+
 	private Util util;
 
 	/**
@@ -248,7 +248,7 @@ ActionListener {
 		listsAndOutputSplitPane.setDividerSize(SPLITPANEWIDTH);
 		listsAndOutputSplitPane.setDividerLocation(
 				frame.getPreferredSize().width-DEFAULTSIDEBARWIDTH);
-		
+
 
 
 		/*
@@ -271,7 +271,7 @@ ActionListener {
 		inputField.requestFocus();
 		frame.setVisible(true);
 	}
-	
+
 	public void loadColors() {
 		//frame.setBackground(Color.BLACK);
 		treePanel.setBackground(Color.BLACK);
@@ -285,10 +285,10 @@ ActionListener {
 		//sidePanelSplitPane.setBackground(Color.BLACK);
 		//centerJPanel.setBackground(Color.BLACK);
 		outputFieldLayeredPane.setBackground(Color.BLACK);
-		
+
 
 	}
-	
+
 	public void addChatWindowListener(Listener listener) {
 		this.listener = listener;
 	}
@@ -326,8 +326,8 @@ ActionListener {
 					// If a PRIVMSG was sent
 					listener.onNewPrivMessage(
 							temp.getUser(temp.getNick()),
-									activeServer, activeChannel, ircConnections.get(
-											util.findIRCConnection()).getNick(), m);
+							activeServer, activeChannel, ircConnections.get(
+									util.findIRCConnection()).getNick(), m);
 				}
 			}
 			// Resets the text in the input field.

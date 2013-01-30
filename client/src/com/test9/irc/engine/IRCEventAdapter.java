@@ -78,7 +78,10 @@ public class IRCEventAdapter implements IRCEventListener {
 	@Override
 	public void onNick(Message m) {
 		cw.getListener().onNickChange(m.getNickname(), m.getContent());
-
+		// If it is me
+		if(m.getNickname().equals(connection.getNick()))
+			connection.setNick(m.getContent());
+		
 		connection.getUser(m.getNickname()).setNick(m.getContent());
 	}
 
