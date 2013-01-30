@@ -1,18 +1,20 @@
 package com.test9.irc.engine;
 
-public class QueueProcessing extends Thread{
+import java.util.concurrent.ArrayBlockingQueue;
+
+public class QueueProcessing implements Runnable {
 	
 	private IRCConnection owner;
 	
 	QueueProcessing(IRCConnection owner) {
 		this.owner = owner;
-		start();
 	}
 	
 	public void run() {
-		while(!isInterrupted()) {
+		ArrayBlockingQueue<String> queue = owner.getQueue();
+		while(true) {
 			try {
-				owner.get(owner.getQueue().take());
+				owner.get(queue.take());
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

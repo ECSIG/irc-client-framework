@@ -30,12 +30,12 @@ public class IRCConnection extends Thread {
 	private Parser p;
 	private IRCEventListener listener;
 	private ArrayList<User> users = new ArrayList<User>();
-	private ArrayBlockingQueue<String> queue = new ArrayBlockingQueue<String>(100);
-	private QueueProcessing qp= new QueueProcessing(this);
+	private ArrayBlockingQueue<String> queue = new ArrayBlockingQueue<String>(1000);
+	private QueueProcessing qp = new QueueProcessing(this);
 
 	public IRCConnection(String host, int port, String pass, String nick, 
 			String username, String realname, String encoding) {
-		
+		new Thread(qp).start();
 		p = new Parser();
 		this.host = host;
 		this.port = port;
@@ -138,7 +138,6 @@ public class IRCConnection extends Thread {
 	 * @param line The line which should be send to the server without the 
 	 *             trailing carriage return line feed (<code>\r\n</code>).
 	 */
-	//public synchronized boolean send(String line) {
 	public boolean send(String line) {
 		System.out.println("send called");
 		System.out.println("sending: " + line);
