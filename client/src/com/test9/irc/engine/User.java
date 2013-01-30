@@ -62,7 +62,7 @@ public class User {
 		if(yourself)
 		{
 			userSimpleAttributeSet = new SimpleAttributeSet();
-			userSimpleAttributeSet.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.BLUE);
+			userSimpleAttributeSet.addAttribute(StyleConstants.CharacterConstants.Foreground, new Color(0x89bdff));
 			userSimpleAttributeSet.addAttribute(StyleConstants.CharacterConstants.Bold, true);
 		} else {
 			try {

@@ -6,6 +6,7 @@ import com.test9.irc.parser.OutputFactory;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -274,6 +275,7 @@ ActionListener {
 	public void loadColors() {
 		//frame.setBackground(Color.BLACK);
 		treePanel.setBackground(Color.BLACK);
+		inputField.setFont(new Font("Lucida Grande", Font.BOLD, 12));
 		inputField.setBackground(Color.BLACK);
 		inputField.setForeground(Color.WHITE);
 		inputField.setCaretColor(Color.WHITE);

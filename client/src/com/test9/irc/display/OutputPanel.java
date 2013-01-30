@@ -49,7 +49,7 @@ public class OutputPanel extends JPanel{
 	/**
 	 * Font for the text area.
 	 */
-	private static Font font = new Font("Lucida Grande", Font.BOLD, 14);
+	private static Font font = new Font("Lucida Grande", Font.BOLD, 12);
 
 	/**
 	 * Something fancy, I forget what.
