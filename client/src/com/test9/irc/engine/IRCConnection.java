@@ -100,7 +100,6 @@ public class IRCConnection extends Thread {
 	}
 
 	private void register() {
-		System.out.println("register()");
 		if (pass != null)
 			send("PASS "+ pass); 
 		send("NICK "+ nick); 

@@ -145,6 +145,10 @@ public class IRCEventAdapter implements IRCEventListener {
 			cw.getListener().onNewMessage(m.getPrefix(), m.getParams()[1], "<Topic> " + m.getContent());
 		} else if(numCode == IRCUtil.RPL_NOWAWAY) {
 
+		} else if(numCode == IRCUtil.ERR_NICKNAMEINUSE) {
+			System.out.println("ERR_NICKNAMEINUSE");
+			connection.setNick(connection.getNick()+"_");
+			connection.send("NICK "+ connection.getNick());
 		}
 
 		//}
@@ -159,6 +163,8 @@ public class IRCEventAdapter implements IRCEventListener {
 
 	@Override
 	public void onUnknown(String host, String line) {
-		cw.getListener().onNewMessage(host, host, line);		
+		try{
+		cw.getListener().onNewMessage(host, host, line);	
+		}catch(Exception e){}
 	}
 }

@@ -2,6 +2,7 @@ package com.test9.irc.display;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 
@@ -70,9 +71,10 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 		setBackground(Color.BLACK);
 		jList.setModel(listModel);
 		jList.setFont(font);
-
 		scrollPane = new JScrollPane(jList);
 		scrollPane.setBackground(Color.BLACK);
+		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(2,0));
+		scrollPane.setBorder(null);
 		add(scrollPane, BorderLayout.CENTER);
 
 	}

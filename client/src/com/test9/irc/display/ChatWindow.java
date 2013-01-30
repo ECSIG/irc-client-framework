@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 
 public class ChatWindow extends Observable implements ComponentListener,
 KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
@@ -49,7 +50,7 @@ ActionListener {
 	 * Holds the width of the split pane bar
 	 * that can be dragged.
 	 */
-	private static final int SPLITPANEWIDTH = 4;
+	private static final int SPLITPANEWIDTH = 2;
 
 	/**
 	 * The default width of the side panel that will hold
@@ -80,7 +81,7 @@ ActionListener {
 	 * Holds the center JLayered pane that will hold all of the 
 	 * output panels.
 	 */
-	private JPanel centerJPanel = new JPanel(new BorderLayout());
+	private JPanel centerPanel = new JPanel(new BorderLayout());
 
 	/**
 	 * Holds the tree that will list all server and channel connections.
@@ -171,12 +172,20 @@ ActionListener {
 
 	private Util util;
 
+
+	private JTextPane terminalTextPane = new JTextPane();
+	private JScrollPane terminalScrollPane = new JScrollPane(terminalTextPane);
+	private JPanel terminalPanel = new JPanel();
+	private JSplitPane outputSplitPane;
+	
+
 	/**
 	 * Initializes a new ChatWindow.
 	 * @param initialServerName Name of the server that is initially joined.
 	 */
 	public ChatWindow(String initialServerName)
 	{
+		
 		util = new Util(this);
 		/*
 		 * Checks to see if the global OS X menu bar should be used.
@@ -203,28 +212,44 @@ ActionListener {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(true);
 
-
 		/*
 		 * Sets up the connection tree that will list all server
 		 * and channel connections.
 		 */
 		connectionTree = new ConnectionTree(initialServerName, this);
 		treeScrollPane = new JScrollPane(connectionTree);
+		
 		treeScrollPane.getVerticalScrollBar().setPreferredSize (new Dimension(5,0));
+		
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
-
+		treePanel.setMinimumSize(new Dimension(0,0));
 
 		// Adds the required keylistener to the input field.
 		inputField.addKeyListener(this);
-
+		inputField.setMinimumSize(new Dimension(0,0));
+		
+		
 
 		/*
 		 * Adds the outputLayeredPane and the input field to the 
 		 * center panel.
 		 */
 
-		centerJPanel.add(outputFieldLayeredPane);
-		centerJPanel.add(inputField, BorderLayout.SOUTH);
+		centerPanel.add(outputFieldLayeredPane);
+		centerPanel.add(inputField, BorderLayout.SOUTH);
+		centerPanel.setBorder(null);
+		terminalPanel.setMinimumSize(new Dimension(0,0));
+		terminalPanel.setLayout(new BorderLayout());
+		terminalTextPane.setBackground(Color.BLACK);
+		terminalPanel.add(terminalScrollPane, BorderLayout.CENTER);
+		terminalPanel.setBackground(Color.BLACK);
+		
+		outputSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, centerPanel, terminalPanel);
+		outputSplitPane.setDividerSize(SPLITPANEWIDTH);
+		outputSplitPane.setContinuousLayout(true);
+		outputSplitPane.setResizeWeight(1);
+		outputSplitPane.setDividerSize(5);
+		outputSplitPane.setDividerLocation(frame.getPreferredSize().height);
 
 		/*
 		 * Sets up the side panel with a vertial split (one item on
@@ -243,7 +268,7 @@ ActionListener {
 		 * and the main output/input area.
 		 */
 		listsAndOutputSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				centerJPanel, sidePanelSplitPane);
+				outputSplitPane, sidePanelSplitPane);
 		listsAndOutputSplitPane.setContinuousLayout(true);
 		listsAndOutputSplitPane.setDividerSize(SPLITPANEWIDTH);
 		listsAndOutputSplitPane.setDividerLocation(
@@ -257,6 +282,7 @@ ActionListener {
 		 */
 		sidePanelSplitPane.addPropertyChangeListener(this);
 		listsAndOutputSplitPane.addPropertyChangeListener(this);
+		outputSplitPane.addPropertyChangeListener(this);
 		listsAndOutputSplitPane.setResizeWeight(1);
 		loadColors();
 
@@ -274,6 +300,8 @@ ActionListener {
 
 	public void loadColors() {
 		//frame.setBackground(Color.BLACK);
+		//centerPanel.setBackground(Color.BLACK);
+		terminalPanel.setBackground(Color.BLACK);
 		treePanel.setBackground(Color.BLACK);
 		inputField.setFont(new Font("Lucida Grande", Font.BOLD, 12));
 		inputField.setBackground(Color.BLACK);

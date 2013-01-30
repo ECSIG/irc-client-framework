@@ -95,15 +95,9 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 			}
 		}		
 	}
-
-	/**
-	 * Removes a channel from the JTree.
-	 * @param server Name of the server.
-	 * @param channel Name of the channel.
-	 */
+	
 	@SuppressWarnings("unchecked")
-	void removeChannelNode(String server, String channel)
-	{
+	DefaultMutableTreeNode findChannelNode(String server, String channel) {
 		for (Object node : Collections.list(root.children()))
 		{
 			DefaultMutableTreeNode serverNode = (DefaultMutableTreeNode) node;
@@ -115,13 +109,50 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 
 					if(checkChannelNode.getUserObject().toString().trim().equals(channel.trim()))
 					{
-						checkChannelNode.removeFromParent();
+						return checkChannelNode;
 					}
 				}
 			}
 		}
+		return null;
+	}
+
+	/**
+	 * Removes a channel from the JTree.
+	 * @param server Name of the server.
+	 * @param channel Name of the channel.
+	 */
+	void removeChannelNode(String server, String channel)
+	{
+		try {
+			findChannelNode(server, channel).removeFromParent();
+		} catch (NullPointerException e) {
+			System.err.println("Cound not find the node to remove from the connection tree.");
+		}
 		model.reload();
 		expandTree();
+	}
+	
+	void hightlightNode(String server, String channel)
+	{
+//		for (Object node : Collections.list(root.children()))
+//		{
+//			DefaultMutableTreeNode serverNode = (DefaultMutableTreeNode) node;
+//
+//			if(serverNode.getUserObject().toString().trim().equals(server.trim())) {
+//				for (Object channelNode : Collections.list(serverNode.children()))
+//				{
+//					DefaultMutableTreeNode checkChannelNode = (DefaultMutableTreeNode) channelNode;
+//
+//					if(checkChannelNode.getUserObject().toString().trim().equals(channel.trim()))
+//					{
+//						checkChannelNode.removeFromParent();
+//					}
+//				}
+//			}
+//		}
+//		model.reload();
+//		expandTree();
 	}
 
 	/**
