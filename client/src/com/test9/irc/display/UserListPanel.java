@@ -61,6 +61,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	 */
 	UserListPanel(String server, String channel, int width, int height)
 	{
+		System.out.println(server + " " + channel);
 		jList.setBackground(Color.BLACK);
 		jList.setForeground(Color.WHITE);
 		this.server = server;

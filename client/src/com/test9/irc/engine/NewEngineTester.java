@@ -2,6 +2,8 @@ package com.test9.irc.engine;
 
 import java.io.IOException;
 
+import javax.swing.UIManager;
+
 public class NewEngineTester {
 
 
@@ -11,6 +13,12 @@ public class NewEngineTester {
 	 */
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws IOException {
+		try
+		{
+		        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch(Exception e){
+		        System.out.println("Shit gone down");
+		}
 		ConnectionEngine CE = new ConnectionEngine();
 
 	}

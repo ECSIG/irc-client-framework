@@ -300,8 +300,10 @@ ActionListener {
 
 	public void loadColors() {
 		//frame.setBackground(Color.BLACK);
-		//centerPanel.setBackground(Color.BLACK);
+		centerPanel.setBackground(Color.BLACK);
 		terminalPanel.setBackground(Color.BLACK);
+		terminalTextPane.setBackground(Color.BLACK);
+		terminalTextPane.setForeground(Color.WHITE);
 		treePanel.setBackground(Color.BLACK);
 		inputField.setFont(new Font("Lucida Grande", Font.BOLD, 12));
 		inputField.setBackground(Color.BLACK);
@@ -310,7 +312,7 @@ ActionListener {
 		treeScrollPane.setBackground(Color.BLACK);
 		//listsAndOutputSplitPane.setBackground(Color.BLACK);
 		userListsLayeredPane.setBackground(Color.BLACK);
-		//sidePanelSplitPane.setBackground(Color.BLACK);
+		sidePanelSplitPane.setBackground(Color.BLACK);
 		//centerJPanel.setBackground(Color.BLACK);
 		outputFieldLayeredPane.setBackground(Color.BLACK);
 

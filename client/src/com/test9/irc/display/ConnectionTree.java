@@ -41,6 +41,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		treeRenderer.setBackgroundNonSelectionColor(Color.BLACK);
 		treeRenderer.setTextNonSelectionColor(Color.LIGHT_GRAY);
 		treeRenderer.setTextSelectionColor(Color.WHITE);
+		putClientProperty("JTree.lineStyle", "None");
 		setBackground(Color.BLACK);
 		setModel(model);
 		setRootVisible(false);
