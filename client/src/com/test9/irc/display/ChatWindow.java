@@ -301,7 +301,7 @@ ActionListener {
 
 	public void loadColors() {
 		//frame.setBackground(Color.BLACK);
-		centerPanel.setBackground(Color.BLACK);
+		//centerPanel.setBackground(Color.BLACK);
 		terminalPanel.setBackground(Color.BLACK);
 		terminalTextPane.setBackground(Color.BLACK);
 		terminalTextPane.setForeground(Color.WHITE);
@@ -311,9 +311,11 @@ ActionListener {
 		inputField.setForeground(Color.WHITE);
 		inputField.setCaretColor(Color.WHITE);
 		treeScrollPane.setBackground(Color.BLACK);
+		//sidePanelSplitPane.setOpaque(true);
+		listsAndOutputSplitPane.setOpaque(true);
 		//listsAndOutputSplitPane.setBackground(Color.BLACK);
 		userListsLayeredPane.setBackground(Color.BLACK);
-		sidePanelSplitPane.setBackground(Color.BLACK);
+		//sidePanelSplitPane.setBackground(Color.BLACK);
 		//centerJPanel.setBackground(Color.BLACK);
 		outputFieldLayeredPane.setBackground(Color.BLACK);
 

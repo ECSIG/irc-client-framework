@@ -114,7 +114,11 @@ public class EventAdapter implements Listener {
 			owner.getOutputPanels().get(
 					util.findChannel(server, channel, 0)).newMessage(user, nick, message);
 		} else {
-			System.err.println("Cound not find channel to append message to.");
+			onJoinChannel(server, channel);
+			onUserJoin(server, channel, nick);
+			onUserJoin(server, channel, channel);
+			onNewPrivMessage(user, server, channel, nick, message);
+			//System.err.println("Cound not find channel to append message to.");
 		}
 
 	}
