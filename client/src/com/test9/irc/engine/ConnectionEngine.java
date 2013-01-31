@@ -12,7 +12,7 @@ public class ConnectionEngine {
 	
 	public ConnectionEngine() throws IOException {
 
-		connection = new IRCConnection("irc.ecsig.com", 6667, null, "jared7-bot", 
+		connection = new IRCConnection("irc.ecsig.com", 6667, null, "jared", 
 				"jared7-bot", "jared7-bot", "UTF-8");
 
 		//((SSLIRCConnection)connection).addTrustManager(new SSLTrustManager());

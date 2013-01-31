@@ -33,8 +33,13 @@ public class IRCEventAdapter implements IRCEventListener {
 	}
 
 	@Override
-	public void onError() {
-		// TODO Auto-generated method stub
+	public void onError(Message m) {
+		int numCode = Integer.valueOf(m.getCommand());
+		if(numCode == IRCUtil.ERR_NICKNAMEINUSE) {
+			System.out.println("ERR_NICKNAMEINUSE");
+			connection.setNick(connection.getNick()+"_");
+			connection.send("NICK "+ connection.getNick());
+		}
 
 	}
 
@@ -145,15 +150,7 @@ public class IRCEventAdapter implements IRCEventListener {
 			cw.getListener().onNewMessage(m.getPrefix(), m.getParams()[1], "<Topic> " + m.getContent());
 		} else if(numCode == IRCUtil.RPL_NOWAWAY) {
 
-		} else if(numCode == IRCUtil.ERR_NICKNAMEINUSE) {
-			System.out.println("ERR_NICKNAMEINUSE");
-			connection.setNick(connection.getNick()+"_");
-			connection.send("NICK "+ connection.getNick());
-		}
-
-		//}
-
-
+		} 
 	}
 
 	@Override

@@ -28,7 +28,7 @@ import com.test9.irc.parser.Message;
 public interface IRCEventListener extends EventListener, IRCConstants {
 	public void onConnect(Message m);
 	public void onDisconnect();
-	public void onError();
+	public void onError(Message m);
 	public void onInvite();
 	public void onJoin(String host, Message m);
 	public void onKick();

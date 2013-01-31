@@ -125,7 +125,7 @@ public class IRCConnection extends Thread {
 			close();
 		}
 	}
-	
+
 
 	// ------------------------------
 
@@ -190,7 +190,8 @@ public class IRCConnection extends Thread {
 			System.out.println(reply);
 			listener.onReply(m);
 			listener.onUnknown(host, line);
-			//} else if (reply >= 400 && reply < 600) { // ERROR
+		} else if (reply >= 400 && reply < 600) { // ERROR
+			listener.onError(m);
 
 		} else if (command.equalsIgnoreCase("KICK")) { // KICK
 
@@ -289,7 +290,7 @@ public class IRCConnection extends Thread {
 		for(User u : users)
 			if(u.getNick().equals(nick))
 				return(u);
-		
+
 		return user;
 	}
 
