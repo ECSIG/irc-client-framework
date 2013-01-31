@@ -12,7 +12,7 @@ public class ConnectionEngine {
 	
 	public ConnectionEngine() throws IOException {
 
-		connection = new IRCConnection("irc.ecsig.com", 6667, null, "jared", 
+		connection = new IRCConnection("irc.ecsig.com", 6667, null, "jar-bot", 
 				"jared7-bot", "jared7-bot", "UTF-8");
 
 		//((SSLIRCConnection)connection).addTrustManager(new SSLTrustManager());
@@ -26,7 +26,6 @@ public class ConnectionEngine {
 //		try {
 //			IRCConnection.sleep(2000);
 //		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
 		//connection.send("JOIN #ecsig");
