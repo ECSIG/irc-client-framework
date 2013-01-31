@@ -41,8 +41,9 @@ public class User {
 		if((prefix >= 'A' && prefix <= 'Z') || (prefix >= 'a' && prefix <= 'z'))
 			this.nick = nick;
 		else
-			this.nick = nick.substring(2, nick.length());
+			this.nick = nick.substring(1, nick.length());
 
+		System.out.println(this.nick);
 		setUserAttributeSet(userID, yourself);
 		userID++;
 	}
