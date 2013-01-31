@@ -183,7 +183,7 @@ ActionListener {
 	 * Initializes a new ChatWindow.
 	 * @param initialServerName Name of the server that is initially joined.
 	 */
-	public ChatWindow(String initialServerName)
+	public ChatWindow()
 	{
 		
 		util = new Util(this);
@@ -205,7 +205,7 @@ ActionListener {
 		 * Adds some general features to the frame.
 		 */
 		frame.addKeyListener(this);
-		frame.setTitle(initialServerName);
+		//frame.setTitle(initialServerName);
 		frame.addComponentListener(this);
 		frame.addWindowFocusListener(this);
 		frame.setPreferredSize(defaultWindowSize);
@@ -216,7 +216,8 @@ ActionListener {
 		 * Sets up the connection tree that will list all server
 		 * and channel connections.
 		 */
-		connectionTree = new ConnectionTree(initialServerName, this);
+		//connectionTree = new ConnectionTree(initialServerName, this);
+		connectionTree = new ConnectionTree(this);
 		treeScrollPane = new JScrollPane(connectionTree);
 		
 		treeScrollPane.getVerticalScrollBar().setPreferredSize (new Dimension(5,0));

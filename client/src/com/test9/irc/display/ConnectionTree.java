@@ -29,7 +29,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	 * 
 	 * @param initialServerName
 	 */
-	ConnectionTree(String initialServerName, ChatWindow chatWindow)
+	ConnectionTree(ChatWindow chatWindow)
 	{
 		owner = chatWindow;
 		root = new DefaultMutableTreeNode("root");

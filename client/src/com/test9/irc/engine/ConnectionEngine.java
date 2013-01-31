@@ -16,7 +16,7 @@ public class ConnectionEngine {
 				"jared7-bot", "jared7-bot", "UTF-8");
 
 		//((SSLIRCConnection)connection).addTrustManager(new SSLTrustManager());
-		cw = new ChatWindow(connection.getHost());
+		cw = new ChatWindow();
 		cw.addChatWindowListener(new EventAdapter(cw, cw.getUtil()));
 		connection.addIRCEventListener(new IRCEventAdapter(this));
 
