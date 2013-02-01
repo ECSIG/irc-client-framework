@@ -5,12 +5,12 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import javax.swing.JComponent;
-
 /**
  * This class abuses generic types and reflection to allow any method with less than
  * 6 parameters to be called on any Swing Component asynchronously using the
- * SwingUtilities.invokeLater(..) method.
+ * SwingUtilities.invokeLater(..) or synchronously without concern about threading
+ * issues using the SwingUtilities.invokeAndWait method. invokeAndWait should be used
+ * any time multiple dependent calls are made to handle an update.
  * 
  * If it is desired that a method with more than 5 parameters be called all that
  * is required to add support is the addition of case labels to support higher
