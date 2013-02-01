@@ -18,8 +18,6 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import org.omg.Dynamic.Parameter;
-
 import com.test9.irc.engine.User;
 
 public class OutputPanel extends JPanel{
