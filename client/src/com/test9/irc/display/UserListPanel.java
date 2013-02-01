@@ -49,7 +49,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	/**
 	 * The list that contains all the information.
 	 */
-	private JList<String> jList = new JList<String>();
+	private JList jList = new JList();
 
 
 	/**
@@ -59,7 +59,6 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	 * @param width Width.
 	 * @param height Height.
 	 */
-	@SuppressWarnings("unchecked")
 	UserListPanel(String server, String channel, int width, int height)
 	{
 		System.out.println(server + " " + channel);
