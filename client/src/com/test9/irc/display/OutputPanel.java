@@ -246,7 +246,7 @@ public class OutputPanel extends JPanel{
 		SwingMethodInvoker invoker;
 		try {
 			parameters = new SwingMethodInvoker.Parameter[3];
-			parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),Integer.class);
+			parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
 			parameters[1] = new SwingMethodInvoker.Parameter<String>("["+nick+"] "+message+"\r\n",String.class);
 			parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(highlight,AttributeSet.class);
 			invoker = new SwingMethodInvoker(doc, "insertString", parameters);
