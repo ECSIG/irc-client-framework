@@ -29,7 +29,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	/**
 	 * Holds the model of the list that will be used.
 	 */
-	private SortedListModel listModel = new SortedListModel();
+	private SortedListModel<String> listModel = new SortedListModel<String>();
 
 	/**
 	 * Holds the name of the channel that the list is for.
@@ -49,7 +49,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	/**
 	 * The list that contains all the information.
 	 */
-	private JList jList = new JList();
+	private JList<String> jList = new JList<String>();
 
 
 	/**
@@ -59,6 +59,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	 * @param width Width.
 	 * @param height Height.
 	 */
+	@SuppressWarnings("unchecked")
 	UserListPanel(String server, String channel, int width, int height)
 	{
 		System.out.println(server + " " + channel);
@@ -202,14 +203,14 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	/**
 	 * @return the listModel
 	 */
-	public SortedListModel getListModel() {
+	public SortedListModel<String> getListModel() {
 		return listModel;
 	}
 
 	/**
 	 * @param listModel the listModel to set
 	 */
-	public void setListModel(SortedListModel listModel) {
+	public void setListModel(SortedListModel<String> listModel) {
 		this.listModel = listModel;
 	}
 }

@@ -58,8 +58,8 @@ public class NewServerWindow extends JFrame implements ActionListener{
 	};
 	private static JTextField leavingComment = new JTextField();
 	private static JTextField ctcpUserInfo = new JTextField();
-	private static JComboBox encoding = new JComboBox();
-	private static JComboBox fallbackEncoding = new JComboBox();
+	private static JComboBox<String> encoding = new JComboBox<String>();
+	private static JComboBox<String> fallbackEncoding = new JComboBox<String>();
 	// ** End Details Tab ** //
 	
 	private static JPanel onLoginPanel = new JPanel();
