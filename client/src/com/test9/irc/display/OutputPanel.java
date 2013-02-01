@@ -6,14 +6,19 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+import org.omg.Dynamic.Parameter;
 
 import com.test9.irc.engine.User;
 
@@ -231,15 +236,38 @@ public class OutputPanel extends JPanel{
 	}
 
 
+	//TODO: This is an example of how to use the SwingMethodInvoker class and SwingUtilities
+	//      to manipulate Swing classes without worrying about concurrency issues.
+	//      Note: invokeAndWait will block execution of the calling thread until it completes.
+	//			  in this case this is a requirement to ensure the correct caret position is set. 
+	// 		Note: Also notice that the SwingMethodInvoker instance is reused.                      --Mumbles
+	
 	public void newMessageHighlight(String nick, String message) {
+		@SuppressWarnings("rawtypes")
+		SwingMethodInvoker.Parameter[] parameters;
+		SwingMethodInvoker invoker;
 		try {
-			doc.insertString(doc.getLength(), "["+nick+"] "+message+"\r\n", highlight);
-		} catch (BadLocationException e) {
+			parameters = new SwingMethodInvoker.Parameter[3];
+			parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),Integer.class);
+			parameters[1] = new SwingMethodInvoker.Parameter<String>("["+nick+"] "+message+"\r\n",String.class);
+			parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(highlight,AttributeSet.class);
+			invoker = new SwingMethodInvoker(doc, "insertString", parameters);
+			SwingUtilities.invokeAndWait(invoker);
+			if(invoker.hasBeenExecuted()){
+				parameters = new SwingMethodInvoker.Parameter[]{new SwingMethodInvoker.Parameter<Integer>(textPane.getDocument().getLength(), int.class)};
+				invoker.reconfigure(textPane, "setCaretPosition", parameters);
+				SwingUtilities.invokeAndWait(invoker);
+			}
+		} catch (RuntimeException e) {
+			// TODO There are cleaner ways to handle the many things this exception could be, but unfortunately it could be anything.
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//		textArea.append(message+"\r\n");
-		textPane.setCaretPosition(textPane.getDocument().getLength());
 
 	}
 }
