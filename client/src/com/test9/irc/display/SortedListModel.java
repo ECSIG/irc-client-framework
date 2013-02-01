@@ -4,17 +4,17 @@ import javax.swing.*;
 import java.util.*;
 
 @SuppressWarnings("rawtypes")
-class SortedListModel extends AbstractListModel {
+class SortedListModel<T> extends AbstractListModel {
 
 	private static final long serialVersionUID = 9025111200654282953L;
 
-	SortedSet<Object> model;
+	SortedSet<T> model;
 	Comparator comparator;
 
 	@SuppressWarnings("unchecked")
 	SortedListModel() {
 		comparator = new MyComparator();
-		model = new TreeSet<Object>(comparator);
+		model = new TreeSet<T>(comparator);
 		
 	}
 
@@ -26,13 +26,13 @@ class SortedListModel extends AbstractListModel {
 		return model.toArray()[index];
 	}
 
-	public void add(Object element) {
+	public void add(T element) {
 		if (model.add(element)) {
 			fireContentsChanged(this, 0, getSize());
 		}
 	}
-	public void addAll(Object elements[]) {
-		Collection<Object> c = Arrays.asList(elements);
+	public void addAll(T elements[]) {
+		Collection<T> c = Arrays.asList(elements);
 		model.addAll(c);
 		fireContentsChanged(this, 0, getSize());
 	}
@@ -50,7 +50,7 @@ class SortedListModel extends AbstractListModel {
 		return model.first();
 	}
 
-	public Iterator<Object> iterator() {
+	public Iterator<T> iterator() {
 		return model.iterator();
 	}
 
