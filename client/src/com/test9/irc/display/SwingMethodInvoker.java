@@ -81,19 +81,19 @@ public class SwingMethodInvoker implements Runnable{
 		try {
 			switch (parameters.length){
 			case 1:
-				verb.invoke(subject, parameters[0]);
+				verb.invoke(subject, parameters[0].getValue());
 				break;
 			case 2:
-				verb.invoke(subject, parameters[0], parameters[1]);
+				verb.invoke(subject, parameters[0].getValue(), parameters[1].getValue());
 				break;
 			case 3:
-				verb.invoke(subject, parameters[0], parameters[1], parameters[2]);
+				verb.invoke(subject, parameters[0].getValue(), parameters[1].getValue(), parameters[2].getValue());
 				break;
 			case 4:
-				verb.invoke(subject, parameters[0], parameters[1], parameters[2], parameters[3]);
+				verb.invoke(subject, parameters[0].getValue(), parameters[1].getValue(), parameters[2].getValue(), parameters[3].getValue());
 				break;
 			case 5:
-				verb.invoke(subject, parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
+				verb.invoke(subject, parameters[0].getValue(), parameters[1].getValue(), parameters[2].getValue(), parameters[3].getValue(), parameters[4].getValue());
 				break;
 			}
 		} catch (IllegalArgumentException e) {
@@ -158,7 +158,7 @@ public class SwingMethodInvoker implements Runnable{
 		private P value;
 
 		public Parameter(P value, Class type){
-			type = value.getClass();
+			this.type = type;
 			this.setValue(value);
 		}
 
