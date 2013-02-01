@@ -17,16 +17,18 @@ public class Util {
 	 */
 	int findChannel(String server, String channel, int type)
 	{
-		boolean found = false;
+		//boolean found = false; After closer examination, found is never actually used, see comment below
 		int i = 0;
 		if(type==0)
 		{
-			while(!found && i < owner.getOutputPanels().size())
+			while(
+					//!found && This cannot happen, in every case which found==true the method returns which breaks the loop 
+					i < owner.getOutputPanels().size())
 			{
 				if(owner.getOutputPanels().get(i).getServer().equals(server) && 
 						owner.getOutputPanels().get(i).getChannel().equals(channel))
 				{
-					found = true;
+					//found = true;
 					return i;
 				}
 				else 
@@ -35,12 +37,14 @@ public class Util {
 		}
 		else if (type==1)
 		{
-			while(!found && i < owner.getUserListPanels().size())
+			while(
+					//!found && This cannot happen, in every case which found==true the method returns which breaks the loop 
+					i < owner.getUserListPanels().size())
 			{
 				if(owner.getUserListPanels().get(i).getServer().equals(server) && 
 						owner.getUserListPanels().get(i).getChannel().equals(channel))
 				{
-					found = true;
+					//found = true;
 					return i;
 				}	
 				else i++;
@@ -56,14 +60,16 @@ public class Util {
 	 */
 	int findIRCConnection()
 	{
-		boolean found = false;
+		//boolean found = false; After closer examination, found is never actually used, see comment below
 		int index = 0;
 
-		while(!found && index < owner.getIrcConnections().size())
+		while(
+				//!found && This cannot happen, in every case which found==true the method returns which breaks the loop 
+				index < owner.getIrcConnections().size())
 		{
 			if(owner.getIrcConnections().get(index).getHost().equals(owner.getActiveServer()))
 			{
-				found = true;	
+				//found = true;	
 				return index;
 			}
 			else
@@ -82,15 +88,17 @@ public class Util {
 	 */
 	int findTitle(String server, String channel)
 	{
-		boolean found = false;
+		//boolean found = false; After closer examination, found is never actually used, see comment below
 		int index = 0;
-		while(!found && index < owner.getTitles().size())
+		while(
+				//!found && This cannot happen, in every case which found==true the method returns which breaks the loop 
+				index < owner.getTitles().size())
 		{
 			if(owner.getTitles().get(index).getServer().equals(server))
 			{
 				if(owner.getTitles().get(index).getChannel().equals(channel))
 				{
-					found = true;	
+					//found = true;	
 					return index;
 
 				}
