@@ -126,7 +126,7 @@ public class SwingMethodInvoker implements Runnable{
 	private String listParameterTypes() {
 		String listOfParameterTypes = "";
 		for(Parameter p : parameters){
-			listOfParameterTypes+=p;
+			listOfParameterTypes+=p.getType().getName();
 			listOfParameterTypes+=" ";
 		}
 		return listOfParameterTypes;
