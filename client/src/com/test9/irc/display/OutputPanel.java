@@ -62,7 +62,7 @@ public class OutputPanel extends JPanel{
 	private SimpleAttributeSet privMsg = new SimpleAttributeSet();
 
 	private SimpleAttributeSet highlight = new SimpleAttributeSet();
-	
+
 	/**
 	 * Creates a new OutputPanel for a server or channel that
 	 * can be added to the JFrame.
@@ -85,7 +85,7 @@ public class OutputPanel extends JPanel{
 		textPane.setEditable(false);
 		textPane.setFont(font);
 		scrollPane = new JScrollPane(textPane);
-		scrollPane.getVerticalScrollBar().setPreferredSize (new Dimension(5,0));
+		scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
 		scrollPane.setBackground(Color.BLACK);
 		scrollPane.setBorder(null);
 		add(scrollPane, BorderLayout.CENTER);
@@ -124,15 +124,74 @@ public class OutputPanel extends JPanel{
 	 */
 	void newMessage(User user, String nick, String message)
 	{
+		@SuppressWarnings("rawtypes")
+		SwingMethodInvoker.Parameter[] parameters;
+		SwingMethodInvoker invoker;
 		try {
-			if(user != null)
-				doc.insertString(doc.getLength(),"["+nick+"] ", user.getUserSimpleAttributeSet());
-			doc.insertString(doc.getLength(), message+"\r\n", privMsg);
-		} catch (BadLocationException e) {
+			if(user != null) {
+				System.out.println(user.getNick());
+				parameters = new SwingMethodInvoker.Parameter[3];
+				parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
+				parameters[1] = new SwingMethodInvoker.Parameter<String>("["+nick+"] ", String.class);
+				parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(user.getUserSimpleAttributeSet(),AttributeSet.class);
+
+				invoker = new SwingMethodInvoker(doc, "insertString", parameters);
+				SwingUtilities.invokeAndWait(invoker);
+			}
+
+			parameters = new SwingMethodInvoker.Parameter[3];
+			parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
+			parameters[1] = new SwingMethodInvoker.Parameter<String>(message+"\r\n",String.class);
+			parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(privMsg, AttributeSet.class);
+			invoker = new SwingMethodInvoker(doc, "insertString", parameters);
+			SwingUtilities.invokeAndWait(invoker);
+
+			if(invoker.hasBeenExecuted()){
+				parameters = new SwingMethodInvoker.Parameter[]{new SwingMethodInvoker.Parameter<Integer>(textPane.getDocument().getLength(), int.class)};
+				invoker.reconfigure(textPane, "setCaretPosition", parameters);
+				SwingUtilities.invokeAndWait(invoker);
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		textPane.setCaretPosition(textPane.getDocument().getLength());
+	}
+
+	//TODO: This is an example of how to use the SwingMethodInvoker class and SwingUtilities
+	//      to manipulate Swing classes without worrying about concurrency issues.
+	//      Note: invokeAndWait will block execution of the calling thread until it completes.
+	//			  in this case this is a requirement to ensure the correct caret position is set. 
+	// 		Note: Also notice that the SwingMethodInvoker instance is reused.                      --Mumbles
+
+	void newMessageHighlight(String nick, String message) {
+		@SuppressWarnings("rawtypes")
+		SwingMethodInvoker.Parameter[] parameters;
+		SwingMethodInvoker invoker;
+		try {
+			parameters = new SwingMethodInvoker.Parameter[3];
+			parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
+			parameters[1] = new SwingMethodInvoker.Parameter<String>("["+nick+"] "+message+"\r\n",String.class);
+			parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(highlight,AttributeSet.class);
+			invoker = new SwingMethodInvoker(doc, "insertString", parameters);
+			SwingUtilities.invokeAndWait(invoker);
+			if(invoker.hasBeenExecuted()){
+				parameters = new SwingMethodInvoker.Parameter[]{new SwingMethodInvoker.Parameter<Integer>(textPane.getDocument().getLength(), int.class)};
+				invoker.reconfigure(textPane, "setCaretPosition", parameters);
+				SwingUtilities.invokeAndWait(invoker);
+			}
+		} catch (RuntimeException e) {
+			// TODO There are cleaner ways to handle the many things this exception could be, but unfortunately it could be anything.
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -231,41 +290,5 @@ public class OutputPanel extends JPanel{
 	 */
 	void setServer(String server) {
 		this.server = server;
-	}
-
-
-	//TODO: This is an example of how to use the SwingMethodInvoker class and SwingUtilities
-	//      to manipulate Swing classes without worrying about concurrency issues.
-	//      Note: invokeAndWait will block execution of the calling thread until it completes.
-	//			  in this case this is a requirement to ensure the correct caret position is set. 
-	// 		Note: Also notice that the SwingMethodInvoker instance is reused.                      --Mumbles
-	
-	public void newMessageHighlight(String nick, String message) {
-		@SuppressWarnings("rawtypes")
-		SwingMethodInvoker.Parameter[] parameters;
-		SwingMethodInvoker invoker;
-		try {
-			parameters = new SwingMethodInvoker.Parameter[3];
-			parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
-			parameters[1] = new SwingMethodInvoker.Parameter<String>("["+nick+"] "+message+"\r\n",String.class);
-			parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(highlight,AttributeSet.class);
-			invoker = new SwingMethodInvoker(doc, "insertString", parameters);
-			SwingUtilities.invokeAndWait(invoker);
-			if(invoker.hasBeenExecuted()){
-				parameters = new SwingMethodInvoker.Parameter[]{new SwingMethodInvoker.Parameter<Integer>(textPane.getDocument().getLength(), int.class)};
-				invoker.reconfigure(textPane, "setCaretPosition", parameters);
-				SwingUtilities.invokeAndWait(invoker);
-			}
-		} catch (RuntimeException e) {
-			// TODO There are cleaner ways to handle the many things this exception could be, but unfortunately it could be anything.
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 	}
 }

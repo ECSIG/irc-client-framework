@@ -28,8 +28,7 @@ public class IRCEventAdapter implements IRCEventListener {
 
 	@Override
 	public void onDisconnect() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -45,8 +44,7 @@ public class IRCEventAdapter implements IRCEventListener {
 
 	@Override
 	public void onInvite() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override

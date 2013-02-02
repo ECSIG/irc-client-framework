@@ -57,6 +57,11 @@ ActionListener {
 	 * the user list and the connection tree.
 	 */
 	private static final int DEFAULTSIDEBARWIDTH = 150;
+	
+	/**
+	 * The default width of a scroll bar.
+	 */
+	private static final Dimension scrollBarDim = new Dimension(7,0);
 
 	/**
 	 * Default window size of the JFrame calculated from the KIT.
@@ -686,6 +691,13 @@ ActionListener {
 	 */
 	public Listener getListener() {
 		return listener;
+	}
+
+	/**
+	 * @return the scrollbar
+	 */
+	public static Dimension getScrollBarDim() {
+		return scrollBarDim;
 	}
 
 }
