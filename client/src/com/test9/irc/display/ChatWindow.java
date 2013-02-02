@@ -58,7 +58,7 @@ ActionListener {
 	 * the user list and the connection tree.
 	 */
 	private static final int DEFAULTSIDEBARWIDTH = 150;
-	
+
 	/**
 	 * The default width of a scroll bar.
 	 */
@@ -185,7 +185,7 @@ ActionListener {
 	private JSplitPane outputSplitPane;
 
 	private static HilightNotificationFrame hnf = new HilightNotificationFrame();
-	
+
 
 	/**
 	 * Initializes a new ChatWindow.
@@ -193,7 +193,7 @@ ActionListener {
 	 */
 	public ChatWindow()
 	{
-		
+
 		util = new Util(this);
 		/*
 		 * Checks to see if the global OS X menu bar should be used.
@@ -227,17 +227,17 @@ ActionListener {
 		//connectionTree = new ConnectionTree(initialServerName, this);
 		connectionTree = new ConnectionTree(this);
 		treeScrollPane = new JScrollPane(connectionTree);
-		
+
 		treeScrollPane.getVerticalScrollBar().setPreferredSize (new Dimension(5,0));
-		
+
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 		treePanel.setMinimumSize(new Dimension(0,0));
 
 		// Adds the required keylistener to the input field.
 		inputField.addKeyListener(this);
 		inputField.setMinimumSize(new Dimension(0,0));
-		
-		
+
+
 
 		/*
 		 * Adds the outputLayeredPane and the input field to the 
@@ -252,7 +252,7 @@ ActionListener {
 		terminalTextPane.setBackground(Color.BLACK);
 		terminalPanel.add(terminalScrollPane, BorderLayout.CENTER);
 		terminalPanel.setBackground(Color.BLACK);
-		
+
 		outputSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, centerPanel, terminalPanel);
 		outputSplitPane.setDividerSize(SPLITPANEWIDTH);
 		outputSplitPane.setContinuousLayout(true);
@@ -517,7 +517,12 @@ ActionListener {
 			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
 				t.setVisible(true);
 		}	
-		frame.setTitle(titles.get(util.findTitle(activeServer, activeChannel)).getFullTitle());
+		int titleID = util
+				.findTitle(activeServer, activeChannel);
+		if(titleID!=-1) frame.setTitle(titles.get(titleID).getFullTitle());
+		else {
+			frame.setTitle(titles.get(0).getFullTitle());
+		}
 	}
 
 	public void windowGainedFocus(WindowEvent e) {
@@ -594,7 +599,7 @@ ActionListener {
 			outputPanels.get(util.findChannel(server, channel, 0)).newMessageHighlight(nickname, content);
 
 			IRCConnection temp = ircConnections.get(util.findIRCConnection());
-			
+
 			if(hnf !=null){
 				hnf.newHighlightNotification(channel,temp.getUser(nickname) , content);
 			}
@@ -711,6 +716,10 @@ ActionListener {
 
 	public static HilightNotificationFrame getHighlightNotificationFrame() {
 		return null;
+	}
+
+	public String getRootConnection() {
+		return ircConnections.get(util.findIRCConnection()).getHost();
 	}
 
 }

@@ -96,7 +96,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 			}
 		}		
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	DefaultMutableTreeNode findChannelNode(String server, String channel) {
 		for (Object node : Collections.list(root.children()))
@@ -133,27 +133,27 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		model.reload();
 		expandTree();
 	}
-	
+
 	void hightlightNode(String server, String channel)
 	{
-//		for (Object node : Collections.list(root.children()))
-//		{
-//			DefaultMutableTreeNode serverNode = (DefaultMutableTreeNode) node;
-//
-//			if(serverNode.getUserObject().toString().trim().equals(server.trim())) {
-//				for (Object channelNode : Collections.list(serverNode.children()))
-//				{
-//					DefaultMutableTreeNode checkChannelNode = (DefaultMutableTreeNode) channelNode;
-//
-//					if(checkChannelNode.getUserObject().toString().trim().equals(channel.trim()))
-//					{
-//						checkChannelNode.removeFromParent();
-//					}
-//				}
-//			}
-//		}
-//		model.reload();
-//		expandTree();
+		//		for (Object node : Collections.list(root.children()))
+		//		{
+		//			DefaultMutableTreeNode serverNode = (DefaultMutableTreeNode) node;
+		//
+		//			if(serverNode.getUserObject().toString().trim().equals(server.trim())) {
+		//				for (Object channelNode : Collections.list(serverNode.children()))
+		//				{
+		//					DefaultMutableTreeNode checkChannelNode = (DefaultMutableTreeNode) channelNode;
+		//
+		//					if(checkChannelNode.getUserObject().toString().trim().equals(channel.trim()))
+		//					{
+		//						checkChannelNode.removeFromParent();
+		//					}
+		//				}
+		//			}
+		//		}
+		//		model.reload();
+		//		expandTree();
 	}
 
 	/**
@@ -193,13 +193,21 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	 * changes the channel that is selected.
 	 */
 	public void valueChanged(TreeSelectionEvent e) {
-//
-//		String activeChannel = this.getSelectionPath().getLastPathComponent().toString();
-//		String activeServer = this.getSelectionPath().getParentPath().getLastPathComponent().toString();
-//
-//		if(activeServer.equals("root"))
-//			activeServer = activeChannel;
-//
-//		owner.newActiveChannels(activeServer, activeChannel);
+
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+				this.getLastSelectedPathComponent();
+
+		if(node==null){
+			String root = owner.getRootConnection();
+			owner.newActiveChannels(root, root);
+		}else{
+			String activeServer = node.getParent().toString();
+			String activeChannel = node.toString();
+
+			if(activeServer.equals("root"))
+				activeServer = activeChannel;
+
+			owner.newActiveChannels(activeServer, activeChannel);
+		}
 	}
 }
