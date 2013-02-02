@@ -741,11 +741,6 @@ ActionListener, MouseMotionListener {
 		}else{
 			outputPanel.getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 		}
-		if(e.getY()>outputPanel.getTextArea().getHeight()-30){
-			outputPanel.getScrollPane().setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		}else{
-			outputPanel.getScrollPane().setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		}
 		outputPanel.invalidate();
 	}
 
