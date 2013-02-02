@@ -15,6 +15,9 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowStateListener;
@@ -26,6 +29,7 @@ import java.util.Observable;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -33,7 +37,7 @@ import javax.swing.JTextPane;
 
 public class ChatWindow extends Observable implements ComponentListener,
 KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
-ActionListener {
+ActionListener, MouseMotionListener {
 
 	/**
 	 * The ultimate frame of the chat client that holds
@@ -62,7 +66,7 @@ ActionListener {
 	/**
 	 * The default width of a scroll bar.
 	 */
-	private static final Dimension scrollBarDim = new Dimension(7,0);
+	private static final Dimension scrollBarDim = new Dimension(15,0);
 
 	/**
 	 * Default window size of the JFrame calculated from the KIT.
@@ -388,7 +392,7 @@ ActionListener {
 		OutputPanel newOutputPanel = new OutputPanel(server, channel, 
 				(int) outputFieldLayeredPane.getSize().getWidth(),
 				(int) outputFieldLayeredPane.getSize().getHeight());
-
+		newOutputPanel.getTextArea().addMouseMotionListener(this);
 		outputPanels.add(newOutputPanel);
 		outputFieldLayeredPane.add(newOutputPanel);
 	}
@@ -720,6 +724,29 @@ ActionListener {
 
 	public String getRootConnection() {
 		return ircConnections.get(util.findIRCConnection()).getHost();
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		OutputPanel outputPanel = outputPanels.get(util.findChannel(activeServer, activeChannel, 0));
+		int dividerLocation = listsAndOutputSplitPane.getDividerLocation();
+		if(e.getX()>dividerLocation-30){
+			outputPanel.getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		}else{
+			outputPanel.getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+		}
+		if(e.getY()>outputPanel.getTextArea().getHeight()-30){
+			outputPanel.getScrollPane().setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		}else{
+			outputPanel.getScrollPane().setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		}
+		outputPanel.invalidate();
 	}
 
 }
