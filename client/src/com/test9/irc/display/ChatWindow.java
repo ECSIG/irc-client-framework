@@ -1,5 +1,6 @@
 package com.test9.irc.display;
 
+import com.test9.irc.display.notifications.HilightNotificationFrame;
 import com.test9.irc.engine.IRCConnection;
 import com.test9.irc.parser.OutputFactory;
 
@@ -182,6 +183,8 @@ ActionListener {
 	private JScrollPane terminalScrollPane = new JScrollPane(terminalTextPane);
 	private JPanel terminalPanel = new JPanel();
 	private JSplitPane outputSplitPane;
+
+	private static HilightNotificationFrame hnf = new HilightNotificationFrame();
 	
 
 	/**
@@ -589,6 +592,12 @@ ActionListener {
 		if(util.findChannel(server, channel,0) != -1)
 		{
 			outputPanels.get(util.findChannel(server, channel, 0)).newMessageHighlight(nickname, content);
+
+			IRCConnection temp = ircConnections.get(util.findIRCConnection());
+			
+			if(hnf !=null){
+				hnf.newHighlightNotification(channel,temp.getUser(nickname) , content);
+			}
 		}
 		else
 			System.err.println("Cound not find channel to append message to.");
@@ -698,6 +707,10 @@ ActionListener {
 	 */
 	public static Dimension getScrollBarDim() {
 		return scrollBarDim;
+	}
+
+	public static HilightNotificationFrame getHighlightNotificationFrame() {
+		return null;
 	}
 
 }
