@@ -193,13 +193,13 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	 * changes the channel that is selected.
 	 */
 	public void valueChanged(TreeSelectionEvent e) {
-
-		String activeChannel = this.getSelectionPath().getLastPathComponent().toString();
-		String activeServer = this.getSelectionPath().getParentPath().getLastPathComponent().toString();
-
-		if(activeServer.equals("root"))
-			activeServer = activeChannel;
-
-		owner.newActiveChannels(activeServer, activeChannel);
+//
+//		String activeChannel = this.getSelectionPath().getLastPathComponent().toString();
+//		String activeServer = this.getSelectionPath().getParentPath().getLastPathComponent().toString();
+//
+//		if(activeServer.equals("root"))
+//			activeServer = activeChannel;
+//
+//		owner.newActiveChannels(activeServer, activeChannel);
 	}
 }
