@@ -109,15 +109,15 @@ public class EventAdapter implements Listener {
 
 	@Override
 	public void onNewPrivMessage(User user, String server, String channel,
-			String nick, String message) {
+			String nick, String message, boolean isLocal) {
 		if(util.findChannel(server, channel,0) != -1) {
 			owner.getOutputPanels().get(
-					util.findChannel(server, channel, 0)).newMessage(user, nick, message);
+					util.findChannel(server, channel, 0)).newMessage(user, nick, message, isLocal);
 		} else {
 			onJoinChannel(server, channel);
 			onUserJoin(server, channel, nick);
 			onUserJoin(server, channel, channel);
-			onNewPrivMessage(user, server, channel, nick, message);
+			onNewPrivMessage(user, server, channel, nick, message, isLocal);
 			//System.err.println("Cound not find channel to append message to.");
 		}
 

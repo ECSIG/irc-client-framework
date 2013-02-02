@@ -116,7 +116,7 @@ public class IRCEventAdapter implements IRCEventListener {
 		else
 			cw.getListener().onNewPrivMessage(
 					connection.getUser(m.getNickname()), host, m.getParams()[0], 
-					m.getNickname(), m.getContent());		
+					m.getNickname(), m.getContent(), false);		
 	}
 
 	@Override

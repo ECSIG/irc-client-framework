@@ -365,7 +365,7 @@ ActionListener {
 					listener.onNewPrivMessage(
 							temp.getUser(temp.getNick()),
 							activeServer, activeChannel, ircConnections.get(
-									util.findIRCConnection()).getNick(), m);
+									util.findIRCConnection()).getNick(), m, true);
 				}
 			}
 			// Resets the text in the input field.

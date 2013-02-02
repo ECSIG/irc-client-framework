@@ -122,41 +122,52 @@ public class OutputPanel extends JPanel{
 	 * @param nick The nick of the sender.
 	 * @param message The message string.
 	 */
-	void newMessage(User user, String nick, String message)
+	void newMessage(User user, String nick, String message, boolean isLocal)
 	{
-		@SuppressWarnings("rawtypes")
-		SwingMethodInvoker.Parameter[] parameters;
-		SwingMethodInvoker invoker;
-		try {
-			if(user != null) {
-				System.out.println(user.getNick());
+		if(isLocal){
+			try {
+				doc.insertString(doc.getLength(), (user!=null?"["+nick+"] ":"")+message+"\r\n", user.getUserSimpleAttributeSet());
+
+				textPane.setCaretPosition(textPane.getDocument().getLength());
+			} catch (BadLocationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else{
+			@SuppressWarnings("rawtypes")
+			SwingMethodInvoker.Parameter[] parameters;
+			SwingMethodInvoker invoker;
+			try {
+				if(user != null) {
+					System.out.println(user.getNick());
+					parameters = new SwingMethodInvoker.Parameter[3];
+					parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
+					parameters[1] = new SwingMethodInvoker.Parameter<String>("["+nick+"] ", String.class);
+					parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(user.getUserSimpleAttributeSet(),AttributeSet.class);
+
+					invoker = new SwingMethodInvoker(doc, "insertString", parameters);
+					SwingUtilities.invokeAndWait(invoker);
+				}
+
 				parameters = new SwingMethodInvoker.Parameter[3];
 				parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
-				parameters[1] = new SwingMethodInvoker.Parameter<String>("["+nick+"] ", String.class);
-				parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(user.getUserSimpleAttributeSet(),AttributeSet.class);
-
+				parameters[1] = new SwingMethodInvoker.Parameter<String>(message+"\r\n",String.class);
+				parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(privMsg, AttributeSet.class);
 				invoker = new SwingMethodInvoker(doc, "insertString", parameters);
 				SwingUtilities.invokeAndWait(invoker);
-			}
 
-			parameters = new SwingMethodInvoker.Parameter[3];
-			parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
-			parameters[1] = new SwingMethodInvoker.Parameter<String>(message+"\r\n",String.class);
-			parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(privMsg, AttributeSet.class);
-			invoker = new SwingMethodInvoker(doc, "insertString", parameters);
-			SwingUtilities.invokeAndWait(invoker);
-
-			if(invoker.hasBeenExecuted()){
-				parameters = new SwingMethodInvoker.Parameter[]{new SwingMethodInvoker.Parameter<Integer>(textPane.getDocument().getLength(), int.class)};
-				invoker.reconfigure(textPane, "setCaretPosition", parameters);
-				SwingUtilities.invokeAndWait(invoker);
+				if(invoker.hasBeenExecuted()){
+					parameters = new SwingMethodInvoker.Parameter[]{new SwingMethodInvoker.Parameter<Integer>(textPane.getDocument().getLength(), int.class)};
+					invoker.reconfigure(textPane, "setCaretPosition", parameters);
+					SwingUtilities.invokeAndWait(invoker);
+				}
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
