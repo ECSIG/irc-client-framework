@@ -18,6 +18,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import com.test9.irc.display.notifications.HilightNotificationFrame;
 import com.test9.irc.engine.User;
 
 public class OutputPanel extends JPanel{
@@ -181,6 +182,7 @@ public class OutputPanel extends JPanel{
 		@SuppressWarnings("rawtypes")
 		SwingMethodInvoker.Parameter[] parameters;
 		SwingMethodInvoker invoker;
+		
 		try {
 			parameters = new SwingMethodInvoker.Parameter[3];
 			parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
