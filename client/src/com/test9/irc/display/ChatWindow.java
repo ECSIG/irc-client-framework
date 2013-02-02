@@ -361,11 +361,11 @@ ActionListener {
 					listener.onNewMessage(activeServer, activeServer, m);
 				} else {
 					IRCConnection temp = ircConnections.get(util.findIRCConnection());
+					String nick = ircConnections.get(util.findIRCConnection()).getNick();
 					// If a PRIVMSG was sent
 					listener.onNewPrivMessage(
 							temp.getUser(temp.getNick()),
-							activeServer, activeChannel, ircConnections.get(
-									util.findIRCConnection()).getNick(), m, true);
+							activeServer, activeChannel, nick, m, true);
 				}
 			}
 			// Resets the text in the input field.

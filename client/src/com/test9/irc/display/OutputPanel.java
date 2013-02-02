@@ -126,7 +126,9 @@ public class OutputPanel extends JPanel{
 	{
 		if(isLocal){
 			try {
-				doc.insertString(doc.getLength(), (user!=null?"["+nick+"] ":"")+message+"\r\n", user.getUserSimpleAttributeSet());
+				if(user != null)
+					doc.insertString(doc.getLength(),"["+nick+"] ", user.getUserSimpleAttributeSet());
+				doc.insertString(doc.getLength(), message+"\r\n", privMsg);
 
 				textPane.setCaretPosition(textPane.getDocument().getLength());
 			} catch (BadLocationException e) {
