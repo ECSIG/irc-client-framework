@@ -392,7 +392,10 @@ ActionListener, MouseMotionListener {
 		OutputPanel newOutputPanel = new OutputPanel(server, channel, 
 				(int) outputFieldLayeredPane.getSize().getWidth(),
 				(int) outputFieldLayeredPane.getSize().getHeight());
-		newOutputPanel.getTextArea().addMouseMotionListener(this);
+		
+		//TODO : Reenable this after mousewheels scroll properly
+		//newOutputPanel.getTextArea().addMouseMotionListener(this);
+
 		outputPanels.add(newOutputPanel);
 		outputFieldLayeredPane.add(newOutputPanel);
 	}
