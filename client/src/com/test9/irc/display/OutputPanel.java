@@ -7,6 +7,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -14,6 +16,7 @@ import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BoundedRangeModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -33,7 +36,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import com.test9.irc.display.notifications.HilightNotificationFrame;
 import com.test9.irc.engine.User;
 
-public class OutputPanel extends JPanel implements HyperlinkListener{
+public class OutputPanel extends JPanel implements HyperlinkListener, MouseWheelListener{
 
 	private static final long serialVersionUID = 3331343604631033360L;
 
@@ -102,6 +105,8 @@ public class OutputPanel extends JPanel implements HyperlinkListener{
 		textPane.addHyperlinkListener(this);
 		textPane.setEditorKit(new HTMLEditorKit());
 		textPane.setEditable(false);
+		textPane.addMouseWheelListener(this);
+		
 		editorKit = (HTMLEditorKit) textPane.getEditorKit();
 		doc = (HTMLDocument) editorKit.createDefaultDocument();
 		textPane.setDocument(doc);
@@ -147,7 +152,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener{
 		textPane.setCaretPosition(textPane.getDocument().getLength());
 	}
 
-	Pattern urlPattern = Pattern.compile("(.*)(http.?://[\\p{Alnum}\\.]*)([\\s\\p{Punct}]*)",Pattern.CASE_INSENSITIVE);
+	Pattern urlPattern = Pattern.compile("(.*)(http.?://[\\p{Alnum}\\./]*)([\\s\\p{Punct}]*.*)",Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Appends a new PRIVMSG to the text area.
@@ -161,7 +166,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener{
 				if(user != null)
 					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag("["+nick+"] ", user.getUserSimpleAttributeSet())+wrapInSpanTag(message, privMsg),0,0,null);
 				else editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(message, privMsg),0,0,null);
-						
+
 				textPane.setCaretPosition(textPane.getDocument().getLength());
 			} catch (BadLocationException e) {
 				// TODO Auto-generated catch block
@@ -208,21 +213,21 @@ public class OutputPanel extends JPanel implements HyperlinkListener{
 	}
 
 	private String wrapInSpanTag(String message, SimpleAttributeSet attrs) {
+		String messageWithLiveLinks = wrapLinks(message);
+		String styleString = getStyleStringFromSimpleAttributeSet(attrs);
+		return "<span style='"+styleString+"'>"+messageWithLiveLinks+"</span>";
+	}
+
+	private String wrapLinks(String message){
 		Matcher matcher = urlPattern.matcher(message);
 		String messageWithLiveLinks = "";
 		boolean matches = matcher.matches();
 		if(!matches) messageWithLiveLinks = message;
-		while(matches){
-			System.out.println(matcher.groupCount() + " " + message);
-			messageWithLiveLinks += matcher.group(1) + "<a href=\""+matcher.group(2)+"\">"+matcher.group(2)+"</a>" + matcher.group(3);
-			System.out.println(" Message with links : " +messageWithLiveLinks);
-			message = matcher.replaceFirst("");
-			System.out.println(" Message : " + message);
-			matcher = urlPattern.matcher(message);
-			matches = matcher.matches();
-		}
-		String styleString = getStyleStringFromSimpleAttributeSet(attrs);
-		return "<span style='"+styleString+"'>"+messageWithLiveLinks+"</span>";
+		else messageWithLiveLinks += wrapLinks(matcher.group(1)) + "<a href=\""+matcher.group(2)+"\">"+matcher.group(2)+"</a>" + matcher.group(3);
+		System.out.println("   ");
+		System.out.println(message);
+		System.out.println(messageWithLiveLinks);
+		return messageWithLiveLinks;
 	}
 
 	private String getStyleStringFromSimpleAttributeSet(SimpleAttributeSet attrs) {
@@ -392,5 +397,12 @@ public class OutputPanel extends JPanel implements HyperlinkListener{
 					e.printStackTrace();
 				}
 			}
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent arg0) {
+		BoundedRangeModel model = getScrollPane().getVerticalScrollBar().getModel();
+		int scrollAmount = (arg0.getWheelRotation()*30);
+		model.setValue(model.getValue()+scrollAmount);
 	}
 }
