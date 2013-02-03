@@ -87,6 +87,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	void newUser(String user)
 	{
 		listModel.add(user);
+		invalidate();
 	}
 
 	/**
@@ -96,6 +97,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	void userPart(String user)
 	{
 		listModel.removeElement(user);
+		invalidate();
 	}
 	
 	void userAway(String nick) {
@@ -111,6 +113,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	{
 		listModel.removeElement(oldNick);
 		newUser(newNick);
+		invalidate();
 	}
 
 	/**
@@ -125,7 +128,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 
 
 	public void valueChanged(ListSelectionEvent e) {
-
+		invalidate();
 	}
 
 
@@ -142,6 +145,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	 */
 	void setChannel(String channel) {
 		this.channel = channel;
+		invalidate();
 	}
 
 
@@ -197,6 +201,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	 */
 	void setServer(String server) {
 		this.server = server;
+		invalidate();
 	}
 
 	/**
@@ -211,5 +216,6 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	 */
 	public void setListModel(SortedListModel<String> listModel) {
 		this.listModel = listModel;
+		invalidate();
 	}
 }
