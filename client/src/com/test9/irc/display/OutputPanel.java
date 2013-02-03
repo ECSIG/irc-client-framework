@@ -2,26 +2,37 @@ package com.test9.irc.display;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 
 import com.test9.irc.display.notifications.HilightNotificationFrame;
 import com.test9.irc.engine.User;
 
-public class OutputPanel extends JPanel{
+public class OutputPanel extends JPanel implements HyperlinkListener{
 
 	private static final long serialVersionUID = 3331343604631033360L;
 
@@ -58,11 +69,14 @@ public class OutputPanel extends JPanel{
 	/**
 	 * Something fancy, I forget what.
 	 */
-	private StyledDocument doc = textPane.getStyledDocument();
+	private HTMLDocument doc;
 
 	private SimpleAttributeSet privMsg = new SimpleAttributeSet();
 
+	private SimpleAttributeSet hyperlink = new SimpleAttributeSet();
+
 	private SimpleAttributeSet highlight = new SimpleAttributeSet();
+	private HTMLEditorKit editorKit;
 
 	/**
 	 * Creates a new OutputPanel for a server or channel that
@@ -83,8 +97,13 @@ public class OutputPanel extends JPanel{
 		setBackground(Color.BLACK);
 		textPane.setBackground(Color.BLACK);
 		textPane.setMargin(new Insets(5,5,5,5));
-		textPane.setEditable(false);
 		textPane.setFont(font);
+		textPane.addHyperlinkListener(this);
+		textPane.setEditorKit(new HTMLEditorKit());
+		textPane.setEditable(false);
+		editorKit = (HTMLEditorKit) textPane.getEditorKit();
+		doc = (HTMLDocument) editorKit.createDefaultDocument();
+		textPane.setDocument(doc);
 		scrollPane = new JScrollPane(textPane);
 		scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
 		scrollPane.setBackground(Color.BLACK);
@@ -98,6 +117,9 @@ public class OutputPanel extends JPanel{
 		highlight.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.FALSE);
 		highlight.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.RED);
 		privMsg.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.WHITE);
+		privMsg.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		hyperlink.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.BLUE);
+		hyperlink.addAttribute(StyleConstants.CharacterConstants.Underline, Boolean.TRUE);
 	}
 
 
@@ -119,6 +141,8 @@ public class OutputPanel extends JPanel{
 		textPane.setCaretPosition(textPane.getDocument().getLength());
 	}
 
+	Pattern urlPattern = Pattern.compile("(.*)(http.?://[\\p{Alnum}\\.]*)([\\s\\p{Punct}]*)",Pattern.CASE_INSENSITIVE);
+
 	/**
 	 * Appends a new PRIVMSG to the text area.
 	 * @param nick The nick of the sender.
@@ -129,11 +153,14 @@ public class OutputPanel extends JPanel{
 		if(isLocal){
 			try {
 				if(user != null)
-					doc.insertString(doc.getLength(),"["+nick+"] ", user.getUserSimpleAttributeSet());
-				doc.insertString(doc.getLength(), message+"\r\n", privMsg);
-
+					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag("["+nick+"] ", user.getUserSimpleAttributeSet())+wrapInSpanTag(message, privMsg),0,0,null);
+				else editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(message, privMsg),0,0,null);
+						
 				textPane.setCaretPosition(textPane.getDocument().getLength());
 			} catch (BadLocationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -175,6 +202,28 @@ public class OutputPanel extends JPanel{
 		}
 	}
 
+	private String wrapInSpanTag(String message, SimpleAttributeSet attrs) {
+		Matcher matcher = urlPattern.matcher(message);
+		String messageWithLiveLinks = "";
+		boolean matches = matcher.matches();
+		if(!matches) messageWithLiveLinks = message;
+		while(matches){
+			System.out.println(matcher.groupCount() + " " + message);
+			messageWithLiveLinks += matcher.group(1) + "<a href=\""+matcher.group(2)+"\">"+matcher.group(2)+"</a>" + matcher.group(3);
+			System.out.println(" Message with links : " +messageWithLiveLinks);
+			message = matcher.replaceFirst("");
+			System.out.println(" Message : " + message);
+			matcher = urlPattern.matcher(message);
+			matches = matcher.matches();
+		}
+		return "<span style='color:"+getHtmlColor((Color)attrs.getAttribute(StyleConstants.CharacterConstants.Foreground))+"'>"+messageWithLiveLinks+"</span>";
+	}
+
+	private String getHtmlColor(Color color) {
+		String hexString = Integer.toHexString(color.getRGB());
+		return hexString.substring(2, hexString.length());
+	}
+
 	//TODO: This is an example of how to use the SwingMethodInvoker class and SwingUtilities
 	//      to manipulate Swing classes without worrying about concurrency issues.
 	//      Note: invokeAndWait will block execution of the calling thread until it completes.
@@ -185,7 +234,7 @@ public class OutputPanel extends JPanel{
 		@SuppressWarnings("rawtypes")
 		SwingMethodInvoker.Parameter[] parameters;
 		SwingMethodInvoker invoker;
-		
+
 		try {
 			parameters = new SwingMethodInvoker.Parameter[3];
 			parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
@@ -306,5 +355,22 @@ public class OutputPanel extends JPanel{
 	 */
 	void setServer(String server) {
 		this.server = server;
+	}
+
+	@Override
+	public void hyperlinkUpdate(HyperlinkEvent arg0) {
+		if(arg0.getEventType()==HyperlinkEvent.EventType.ACTIVATED)
+			if(Desktop.isDesktopSupported()){
+				try {
+					System.out.println("Link clicked on, browsing to : " + arg0.getDescription());
+					Desktop.getDesktop().browse(new URI(arg0.getDescription()));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (URISyntaxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 	}
 }
