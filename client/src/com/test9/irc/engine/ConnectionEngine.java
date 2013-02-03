@@ -23,13 +23,13 @@ public class ConnectionEngine {
 		connection.connect();
 
 		
-//		try {
-//			IRCConnection.sleep(2000);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			IRCConnection.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		//connection.send("JOIN #ecsig");
-		//connection.send("JOIN #jircc");
+		connection.send("JOIN #jircc");
 	}
 
 	/**

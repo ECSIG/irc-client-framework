@@ -16,7 +16,6 @@ import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
@@ -29,7 +28,6 @@ import java.util.Observable;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -197,7 +195,8 @@ ActionListener, MouseMotionListener {
 	 */
 	public ChatWindow()
 	{
-
+		TextFormat.loadColors();
+		
 		util = new Util(this);
 		/*
 		 * Checks to see if the global OS X menu bar should be used.
@@ -365,7 +364,7 @@ ActionListener, MouseMotionListener {
 			{
 				if(m.startsWith("/")) {
 					// If a command was sent.
-					listener.onNewMessage(activeServer, activeServer, m);
+					listener.onNewMessage(activeServer, activeServer, m, "REPLY");
 				} else {
 					IRCConnection temp = ircConnections.get(util.findIRCConnection());
 					String nick = ircConnections.get(util.findIRCConnection()).getNick();
