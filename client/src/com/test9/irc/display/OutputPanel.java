@@ -26,6 +26,7 @@ import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
@@ -117,8 +118,10 @@ public class OutputPanel extends JPanel implements HyperlinkListener{
 		highlight.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.FALSE);
 		highlight.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.RED);
 		privMsg.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.WHITE);
+		privMsg.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 		privMsg.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
 		hyperlink.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.BLUE);
+		hyperlink.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 		hyperlink.addAttribute(StyleConstants.CharacterConstants.Underline, Boolean.TRUE);
 	}
 
@@ -169,22 +172,21 @@ public class OutputPanel extends JPanel implements HyperlinkListener{
 			SwingMethodInvoker.Parameter[] parameters;
 			SwingMethodInvoker invoker;
 			try {
+				String line = "";
 				if(user != null) {
-					System.out.println(user.getNick());
-					parameters = new SwingMethodInvoker.Parameter[3];
-					parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
-					parameters[1] = new SwingMethodInvoker.Parameter<String>("["+nick+"] ", String.class);
-					parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(user.getUserSimpleAttributeSet(),AttributeSet.class);
-
-					invoker = new SwingMethodInvoker(doc, "insertString", parameters);
-					SwingUtilities.invokeAndWait(invoker);
+					line += wrapInSpanTag("["+nick+"] ",user.getUserSimpleAttributeSet()) + " ";
 				}
+				line+=wrapInSpanTag(message+"\r\n",privMsg);
 
-				parameters = new SwingMethodInvoker.Parameter[3];
-				parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
-				parameters[1] = new SwingMethodInvoker.Parameter<String>(message+"\r\n",String.class);
-				parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(privMsg, AttributeSet.class);
-				invoker = new SwingMethodInvoker(doc, "insertString", parameters);
+				parameters = new SwingMethodInvoker.Parameter[6];
+				parameters[0] = new SwingMethodInvoker.Parameter<HTMLDocument>(doc, HTMLEditorKit.class);
+				parameters[1] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
+				parameters[2] = new SwingMethodInvoker.Parameter<String>(line, String.class);
+				parameters[3] = new SwingMethodInvoker.Parameter<Integer>(0,int.class);
+				parameters[4] = new SwingMethodInvoker.Parameter<Integer>(0,int.class);
+				parameters[5] = new SwingMethodInvoker.Parameter<Tag>(null,Tag.class);
+
+				invoker = new SwingMethodInvoker(editorKit, "insertHTML", parameters);
 				SwingUtilities.invokeAndWait(invoker);
 
 				if(invoker.hasBeenExecuted()){
@@ -216,7 +218,22 @@ public class OutputPanel extends JPanel implements HyperlinkListener{
 			matcher = urlPattern.matcher(message);
 			matches = matcher.matches();
 		}
-		return "<span style='color:"+getHtmlColor((Color)attrs.getAttribute(StyleConstants.CharacterConstants.Foreground))+"'>"+messageWithLiveLinks+"</span>";
+		String styleString = getStyleStringFromSimpleAttributeSet(attrs);
+		return "<span style='"+styleString+"'>"+messageWithLiveLinks+"</span>";
+	}
+
+	private String getStyleStringFromSimpleAttributeSet(SimpleAttributeSet attrs) {
+		String styleString = "";
+		Color foregroundAttribute = (Color)attrs.getAttribute(StyleConstants.CharacterConstants.Foreground);
+		styleString += "color:"+getHtmlColor((Color)foregroundAttribute)+";";
+		Boolean bold = (Boolean)attrs.getAttribute(StyleConstants.CharacterConstants.Bold);
+		if(bold!=null && bold){
+			styleString+="font-weight:bold;";
+		}else{
+			styleString+="font-weight:normal;";	
+		}
+		System.out.println(styleString);
+		return styleString;
 	}
 
 	private String getHtmlColor(Color color) {

@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 /**
  * This class abuses generic types and reflection to allow any method with less than
@@ -95,6 +96,9 @@ public class SwingMethodInvoker implements Runnable{
 			case 5:
 				verb.invoke(subject, parameters[0].getValue(), parameters[1].getValue(), parameters[2].getValue(), parameters[3].getValue(), parameters[4].getValue());
 				break;
+			case 6:
+				verb.invoke(subject, parameters[0].getValue(), parameters[1].getValue(), parameters[2].getValue(), parameters[3].getValue(), parameters[4].getValue(), parameters[5].getValue());
+				break;
 			}
 		} catch (IllegalArgumentException e) {
 			throw new RuntimeException("These are not the parameters you are looking for.");
@@ -119,7 +123,20 @@ public class SwingMethodInvoker implements Runnable{
 		} catch (SecurityException e) {
 			throw new RuntimeException("Ah Ah Ah! You didn't say the magic word!");
 		} catch (NoSuchMethodException e) {
-			throw new RuntimeException("No such method exists in type : "+subject.getClass().getName()+ " with parameter types : " + listParameterTypes());
+			ArrayList<Method> candidates = new ArrayList<Method>();
+			for(Method m :subject.getClass().getMethods()){
+				if(m.getName().equals(verb)){
+					if(m.getParameterTypes().length==parameters.length){
+						candidates.add(m);
+					}
+				}
+			}
+			if(candidates.size()==1){
+				this.verb = candidates.get(0);
+			}else{
+				System.out.println("Found " + candidates.size()+" method candidates.");
+				throw new RuntimeException("No such method "+verb+" exists in type : "+subject.getClass().getName()+ " with parameter types : " + listParameterTypes());
+			}
 		}
 	}
 
