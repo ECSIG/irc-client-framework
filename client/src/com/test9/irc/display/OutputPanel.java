@@ -240,6 +240,8 @@ public class OutputPanel extends JPanel implements HyperlinkListener, MouseWheel
 		}else{
 			styleString+="font-weight:normal;";	
 		}
+		styleString+="font-family:\""+font.getFamily()+"\";";
+		styleString+="font-size:\""+font.getSize()+"pt\";";
 		System.out.println(styleString);
 		return styleString;
 	}
