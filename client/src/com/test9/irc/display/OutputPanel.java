@@ -152,7 +152,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener, MouseWheel
 		textPane.setCaretPosition(textPane.getDocument().getLength());
 	}
 
-	Pattern urlPattern = Pattern.compile("(.*)(http.?://[\\p{Alnum}\\./]*)([\\s\\p{Punct}]*.*)",Pattern.CASE_INSENSITIVE);
+	Pattern urlPattern = Pattern.compile("(.*)(http.?://[\\p{Alnum}\\./?\\-_&=]*)([\\s\\p{Punct}]*.*)",Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Appends a new PRIVMSG to the text area.
@@ -403,8 +403,10 @@ public class OutputPanel extends JPanel implements HyperlinkListener, MouseWheel
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent arg0) {
+		getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		BoundedRangeModel model = getScrollPane().getVerticalScrollBar().getModel();
 		int scrollAmount = (arg0.getWheelRotation()*30);
 		model.setValue(model.getValue()+scrollAmount);
+		getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 	}
 }
