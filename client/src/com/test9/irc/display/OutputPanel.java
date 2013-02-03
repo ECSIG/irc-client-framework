@@ -115,6 +115,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener, MouseWheel
 		scrollPane.setBackground(Color.BLACK);
 		scrollPane.setBorder(null);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		delayThread.start();
 		add(scrollPane, BorderLayout.CENTER);
 
 	}
@@ -407,6 +408,35 @@ public class OutputPanel extends JPanel implements HyperlinkListener, MouseWheel
 		BoundedRangeModel model = getScrollPane().getVerticalScrollBar().getModel();
 		int scrollAmount = (arg0.getWheelRotation()*30);
 		model.setValue(model.getValue()+scrollAmount);
-		getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+		delayThread.count=0;
+	}
+	
+	public void resetDelayThreadCount() {
+		delayThread.count = 0;
+	}
+
+	private DelayThread delayThread = new DelayThread();
+	
+	private class DelayThread extends Thread{
+		public boolean running = false;
+		private int delayTime = 3;
+		private int count = 1;
+		public void run(){
+			running = true;
+			while (running){
+				if(count<delayTime){
+					count++;
+				}else{
+					getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+					invalidate();
+				}
+				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }

@@ -394,7 +394,7 @@ ActionListener, MouseMotionListener {
 				(int) outputFieldLayeredPane.getSize().getHeight());
 		
 		newOutputPanel.getTextArea().addMouseMotionListener(this);
-
+		
 		outputPanels.add(newOutputPanel);
 		outputFieldLayeredPane.add(newOutputPanel);
 	}
@@ -730,18 +730,18 @@ ActionListener, MouseMotionListener {
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-
+		OutputPanel outputPanel = outputPanels.get(util.findChannel(activeServer, activeChannel, 0));
+		outputPanel.resetDelayThreadCount();
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		OutputPanel outputPanel = outputPanels.get(util.findChannel(activeServer, activeChannel, 0));
 		int dividerLocation = listsAndOutputSplitPane.getDividerLocation();
-		if(e.getX()>dividerLocation-30){
+		if(e.getX()>dividerLocation-30&&e.getX()<dividerLocation-3){
 			outputPanel.getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		}else{
-			outputPanel.getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+			outputPanel.resetDelayThreadCount();
 		}
 		outputPanel.invalidate();
 	}
