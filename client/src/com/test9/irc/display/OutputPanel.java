@@ -406,6 +406,10 @@ public class OutputPanel extends JPanel implements HyperlinkListener, MouseWheel
 		delayThread.count = 0;
 	}
 
+	public void stopDelayThread(){
+		delayThread.running=false;
+	}
+	
 	private DelayThread delayThread = new DelayThread();
 	
 	private class DelayThread extends Thread{

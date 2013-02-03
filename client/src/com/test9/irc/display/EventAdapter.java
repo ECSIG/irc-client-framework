@@ -179,7 +179,9 @@ public class EventAdapter implements Listener {
 	 * @param channel Name of the channel that is being parted from.
 	 */
 	public void onPartChannel(String server, String channel) {
-		owner.getOutputPanels().remove(util.findChannel(server, channel, 0));
+		int outputPanelId = util.findChannel(server, channel, 0);
+		owner.getOutputPanels().get(outputPanelId).stopDelayThread();
+		owner.getOutputPanels().remove(outputPanelId);
 		owner.getUserListPanels().remove(util.findChannel(server, channel, 1));
 		owner.getConnectionTree().removeChannelNode(server, channel);
 	}
