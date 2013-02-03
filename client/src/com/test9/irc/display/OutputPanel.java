@@ -135,8 +135,11 @@ public class OutputPanel extends JPanel implements HyperlinkListener{
 	void newMessage(String message)
 	{
 		try {
-			doc.insertString(doc.getLength(), message+"\r\n", privMsg);
+			editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(message+"\r\n", privMsg),0,0,null);
 		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
