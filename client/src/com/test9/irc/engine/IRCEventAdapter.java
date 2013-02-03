@@ -53,7 +53,6 @@ public class IRCEventAdapter implements IRCEventListener {
 			cw.getListener().onJoinChannel(host, m.getContent());
 		} else {
 			cw.getListener().onUserJoin(host, m.getContent(), m.getNickname(), false);
-			System.out.println(!(connection.getUsers().contains(m.getNickname())));
 			if(!(connection.getUsers().contains(m.getNickname())))
 			{
 				connection.getUsers().add(new User(m.getNickname(), false));
@@ -80,12 +79,13 @@ public class IRCEventAdapter implements IRCEventListener {
 
 	@Override
 	public void onNick(Message m) {
+		connection.getUser(m.getNickname()).setNick(m.getContent());
+
 		cw.getListener().onNickChange(m.getNickname(), m.getContent());
 		// If it is me
 		if(m.getNickname().equals(connection.getNick()))
 			connection.setNick(m.getContent());
 		
-		connection.getUser(m.getNickname()).setNick(m.getContent());
 	}
 
 	@Override	
