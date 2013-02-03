@@ -97,10 +97,18 @@ public class EventAdapter implements Listener {
 	 * @param channel The channel the message is from.
 	 * @param message The message that was received. 
 	 */
-	public void onNewMessage(String server, String channel, String message) {
+	public void onNewMessage(String server, String channel, String message, String command) {
 		if(util.findChannel(server, channel,0) != -1)
 		{
-			owner.getOutputPanels().get(util.findChannel(server, channel, 0)).newMessage(message);
+			if(command.equals("TOPIC")) {
+				owner.getOutputPanels().get(
+						util.findChannel(server, channel, 0)).newMessage(
+								message, TextFormat.topic);
+			} else if(command.equals("REPLY")) {
+				owner.getOutputPanels().get(
+						util.findChannel(server, channel, 0)).newMessage(
+								message, TextFormat.reply);
+			}
 		}
 		else
 			System.err.println("Cound not find channel to append message to.");
@@ -115,10 +123,9 @@ public class EventAdapter implements Listener {
 					util.findChannel(server, channel, 0)).newMessage(user, nick, message, isLocal);
 		} else {
 			onJoinChannel(server, channel);
-			onUserJoin(server, channel, nick);
-			onUserJoin(server, channel, channel);
+			onUserJoin(server, channel, nick, false);
+			onUserJoin(server, channel, channel, false);
 			onNewPrivMessage(user, server, channel, nick, message, isLocal);
-			//System.err.println("Cound not find channel to append message to.");
 		}
 
 	}
@@ -142,6 +149,13 @@ public class EventAdapter implements Listener {
 	public void onNewUserMode(String server, String channel, String mode) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void onNotice(String server, String params, String content) {
+		System.out.println("ONNOTICE");
+		owner.getOutputPanels().get(util.findChannel(server, server, 0)).newMessage(content, TextFormat.notice);
+		
 	}
 
 	/**
@@ -170,19 +184,27 @@ public class EventAdapter implements Listener {
 		owner.getConnectionTree().removeChannelNode(server, channel);
 	}
 
-	public void onUserJoin(String server, String channel, String nick) {
-		if(util.findChannel(server, channel,1) != -1)
+	public void onUserJoin(String server, String channel, String nick, boolean isUserRply) {
+		if(util.findChannel(server, channel,1) != -1) {
 			owner.getUserListPanels().get(util.findChannel(server, channel,1)).newUser(nick);
-		else
-			System.err.println("[ChatWindowError] Cound not find channel to add new user.");
+			if(!isUserRply)
+				owner.getOutputPanels().get(util.findChannel(server, channel, 0)).newMessage(
+						nick + " has joined.", TextFormat.join);
 
+		} else {
+			System.err.println("[ChatWindowError] Cound not find channel to add new user.");
+		}
 	}
 
 	public void onUserPart(String server, String channel, String nick) {
-		if(util.findChannel(server,channel,1) != -1)
+		if(util.findChannel(server,channel,1) != -1) {
 			owner.getUserListPanels().get(util.findChannel(server, channel,1)).userPart(nick);
-		else
+			owner.getOutputPanels().get(
+					util.findChannel(server, channel, 0)).newMessage(
+							nick+" has parted.", TextFormat.part);
+		} else {
 			System.err.println("Cound not find channel to add new user.");
+		}
 
 	}
 
@@ -190,15 +212,14 @@ public class EventAdapter implements Listener {
 		for(UserListPanel u : owner.getUserListPanels())
 		{
 			if(u.getServer().equals(server)) {
-				
+
 				if(u.getListModel().contains(nick)) {
 					u.userPart(nick);
 					owner.getOutputPanels().get(util.findChannel(
 							server, u.getChannel(), 0)).newMessage(
-									nick +" "+ reason);
+									nick +" "+ reason, TextFormat.quit);
 				} // endif
 			} // endif
 		} // endfor
 	}
-
 }

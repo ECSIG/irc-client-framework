@@ -3,7 +3,6 @@ package com.test9.irc.display;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Desktop;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -25,15 +24,12 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
-import com.test9.irc.display.notifications.HilightNotificationFrame;
 import com.test9.irc.engine.User;
 
 public class OutputPanel extends JPanel implements HyperlinkListener, MouseWheelListener{
@@ -120,8 +116,8 @@ public class OutputPanel extends JPanel implements HyperlinkListener, MouseWheel
 	}
 
 	private void initAttributes() {
-		highlight.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.FALSE);
-		highlight.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.RED);
+		highlight.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+		highlight.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GREEN);
 		privMsg.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.WHITE);
 		privMsg.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 		privMsg.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
@@ -137,10 +133,10 @@ public class OutputPanel extends JPanel implements HyperlinkListener, MouseWheel
 	 * @param message The new message.
 	 * @throws BadLocationException 
 	 */
-	void newMessage(String message)
+	void newMessage(String message, SimpleAttributeSet sas)
 	{
 		try {
-			editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(message+"\r\n", privMsg),0,0,null);
+			editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(message+"\r\n", sas),0,0,null);
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -159,7 +155,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener, MouseWheel
 	 * @param nick The nick of the sender.
 	 * @param message The message string.
 	 */
-	void newMessage(User user, String nick, String message, boolean isLocal)
+	void newMessage(User user, String nick, String message, boolean isLocal)//, SimpleAttributeSet sas)
 	{
 		if(isLocal){
 			try {
@@ -224,9 +220,6 @@ public class OutputPanel extends JPanel implements HyperlinkListener, MouseWheel
 		boolean matches = matcher.matches();
 		if(!matches) messageWithLiveLinks = message;
 		else messageWithLiveLinks += wrapLinks(matcher.group(1)) + "<a href=\""+matcher.group(2)+"\">"+matcher.group(2)+"</a>" + matcher.group(3);
-		System.out.println("   ");
-		System.out.println(message);
-		System.out.println(messageWithLiveLinks);
 		return messageWithLiveLinks;
 	}
 
@@ -242,7 +235,6 @@ public class OutputPanel extends JPanel implements HyperlinkListener, MouseWheel
 		}
 		styleString+="font-family:\""+font.getFamily()+"\";";
 		styleString+="font-size:\""+font.getSize()+"pt\";";
-		System.out.println(styleString);
 		return styleString;
 	}
 
@@ -389,7 +381,6 @@ public class OutputPanel extends JPanel implements HyperlinkListener, MouseWheel
 		if(arg0.getEventType()==HyperlinkEvent.EventType.ACTIVATED)
 			if(Desktop.isDesktopSupported()){
 				try {
-					System.out.println("Link clicked on, browsing to : " + arg0.getDescription());
 					Desktop.getDesktop().browse(new URI(arg0.getDescription()));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

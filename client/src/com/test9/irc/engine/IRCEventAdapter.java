@@ -52,7 +52,7 @@ public class IRCEventAdapter implements IRCEventListener {
 		if(m.getNickname().equals(connection.getNick())) {
 			cw.getListener().onJoinChannel(host, m.getContent());
 		} else {
-			cw.getListener().onUserJoin(host, m.getContent(), m.getNickname());
+			cw.getListener().onUserJoin(host, m.getContent(), m.getNickname(), false);
 			System.out.println(!(connection.getUsers().contains(m.getNickname())));
 			if(!(connection.getUsers().contains(m.getNickname())))
 			{
@@ -89,8 +89,8 @@ public class IRCEventAdapter implements IRCEventListener {
 	}
 
 	@Override	
-	public void onNotice() {
-		// TODO Auto-generated method stub
+	public void onNotice(Message m) {
+		cw.getListener().onNotice(m.getServerName(), m.getParams().toString(), m.getContent());
 
 	}
 
@@ -137,7 +137,7 @@ public class IRCEventAdapter implements IRCEventListener {
 			String[] nicks = m.getContent().split(" ");
 			for(String n : nicks)
 			{
-				cw.getListener().onUserJoin(connection.getHost(), m.getParams()[2], n);
+				cw.getListener().onUserJoin(connection.getHost(), m.getParams()[2], n, true);
 				if(!n.equals(connection.getNick()))
 					connection.getUsers().add(new User(n,false));
 				else
@@ -145,7 +145,7 @@ public class IRCEventAdapter implements IRCEventListener {
 			}
 		} else if(numCode == IRCUtil.RPL_TOPIC) {
 			cw.getListener().onNewTopic(m.getPrefix(), m.getParams()[1], m.getContent());
-			cw.getListener().onNewMessage(m.getPrefix(), m.getParams()[1], "<Topic> " + m.getContent());
+			cw.getListener().onNewMessage(m.getPrefix(), m.getParams()[1], "<Topic> " + m.getContent(), "TOPIC");
 		} else if(numCode == IRCUtil.RPL_NOWAWAY) {
 
 		} 
@@ -159,7 +159,7 @@ public class IRCEventAdapter implements IRCEventListener {
 	@Override
 	public void onUnknown(String host, String line) {
 		try{
-		cw.getListener().onNewMessage(host, host, line);	
+		cw.getListener().onNewMessage(host, host, line, "REPLY");	
 		}catch(Exception e){}
 	}
 }
