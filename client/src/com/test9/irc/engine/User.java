@@ -43,7 +43,6 @@ public class User {
 		else
 			this.nick = nick.substring(1, nick.length());
 
-		System.out.println(this.nick);
 		setUserAttributeSet(userID, yourself);
 		userID++;
 	}

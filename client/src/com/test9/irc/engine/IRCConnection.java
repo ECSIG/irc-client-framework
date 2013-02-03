@@ -191,7 +191,6 @@ public class IRCConnection extends Thread {
 				
 			}
 		} else if ((reply = IRCUtil.parseInt(command)) >= 1 && reply < 400) { // RPL
-			System.out.println(reply);
 			listener.onReply(m);
 			listener.onUnknown(host, line);
 		} else if (reply >= 400 && reply < 600) { // ERROR
