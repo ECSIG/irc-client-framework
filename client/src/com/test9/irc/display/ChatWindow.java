@@ -196,7 +196,7 @@ ActionListener{//, MouseMotionListener {
 	public ChatWindow()
 	{
 		TextFormat.loadColors();
-		
+
 		util = new Util(this);
 		/*
 		 * Checks to see if the global OS X menu bar should be used.
@@ -227,7 +227,6 @@ ActionListener{//, MouseMotionListener {
 		 * Sets up the connection tree that will list all server
 		 * and channel connections.
 		 */
-		//connectionTree = new ConnectionTree(initialServerName, this);
 		connectionTree = new ConnectionTree(this);
 		treeScrollPane = new JScrollPane(connectionTree);
 
@@ -274,6 +273,7 @@ ActionListener{//, MouseMotionListener {
 		sidePanelSplitPane.setDividerSize(SPLITPANEWIDTH);
 		sidePanelSplitPane.setDividerLocation((frame.getPreferredSize().height/2)-20);
 		sidePanelSplitPane.setContinuousLayout(true);
+		sidePanelSplitPane.setResizeWeight(0);
 
 		/*
 		 * Sets up the split pane that splits the side panel
@@ -391,9 +391,9 @@ ActionListener{//, MouseMotionListener {
 		OutputPanel newOutputPanel = new OutputPanel(server, channel, 
 				(int) outputFieldLayeredPane.getSize().getWidth(),
 				(int) outputFieldLayeredPane.getSize().getHeight());
-		
-//		newOutputPanel.getTextArea().addMouseMotionListener(this);
-		
+
+		//		newOutputPanel.getTextArea().addMouseMotionListener(this);
+
 		outputPanels.add(newOutputPanel);
 		outputFieldLayeredPane.add(newOutputPanel);
 	}
@@ -415,30 +415,8 @@ ActionListener{//, MouseMotionListener {
 	@Override
 	public void componentResized(ComponentEvent e) 
 	{
-		listsAndOutputSplitPane.setDividerLocation(frame.getWidth()-DEFAULTSIDEBARWIDTH);
 		sidePanelSplitPane.setDividerLocation((frame.getHeight()/2)-20);
 
-		//		if(joinedAServer) {
-		//			OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
-		//					outputFieldLayeredPane.getHeight());
-		//
-		//			UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
-		//					userListsLayeredPane.getHeight());
-		//		}
-		//		
-		//		treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
-		//
-		//		for(OutputPanel t : outputPanels)
-		//		{
-		//			t.setBounds(OutputPanel.getBoundsRec());
-		//			t.getScrollPane().getVerticalScrollBar().setValue(
-		//					t.getScrollPane().getVerticalScrollBar().getMaximum());
-		//		}
-		//
-		//		for(UserListPanel t: userListPanels)
-		//		{
-		//			t.setBounds(UserListPanel.getBoundsRec());
-		//		}
 		listsAndOutputSplitPane.invalidate();
 		sidePanelSplitPane.invalidate();
 
@@ -448,7 +426,7 @@ ActionListener{//, MouseMotionListener {
 	public void propertyChange(PropertyChangeEvent evt) {
 		if(joinedAServer)
 		{
-			if(evt.getSource() == listsAndOutputSplitPane)
+			if((evt.getSource() == listsAndOutputSplitPane) || (evt.getSource() == outputSplitPane))
 			{
 				OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
 						outputFieldLayeredPane.getHeight());
@@ -504,15 +482,12 @@ ActionListener{//, MouseMotionListener {
 		this.activeServer = activeServer;
 		this.activeChannel = activeChannel;
 
-		//frame.setTitle(activeServer + " " + activeChannel);
-
 		for(OutputPanel t : outputPanels)
 		{
 			if(!t.getServer().equals(activeServer) || !t.getChannel().equals(activeChannel))
-				//outputFieldLayeredPane.moveToBack(t);
 				t.setVisible(false);
 			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
-				t.setVisible(true);//outputFieldLayeredPane.moveToFront(t);
+				t.setVisible(true);
 		}
 
 		for(UserListPanel t : userListPanels)
@@ -727,22 +702,22 @@ ActionListener{//, MouseMotionListener {
 		return ircConnections.get(util.findIRCConnection()).getHost();
 	}
 
-//	@Override
-//	public void mouseDragged(MouseEvent e) {
-//		OutputPanel outputPanel = outputPanels.get(util.findChannel(activeServer, activeChannel, 0));
-//		outputPanel.resetDelayThreadCount();
-//	}
-//
-//	@Override
-//	public void mouseMoved(MouseEvent e) {
-//		OutputPanel outputPanel = outputPanels.get(util.findChannel(activeServer, activeChannel, 0));
-//		int dividerLocation = listsAndOutputSplitPane.getDividerLocation();
-//		if(e.getX()>dividerLocation-30&&e.getX()<dividerLocation-3){
-//			outputPanel.getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-//		}else{
-//			outputPanel.resetDelayThreadCount();
-//		}
-//		outputPanel.invalidate();
-//	}
+	//	@Override
+	//	public void mouseDragged(MouseEvent e) {
+	//		OutputPanel outputPanel = outputPanels.get(util.findChannel(activeServer, activeChannel, 0));
+	//		outputPanel.resetDelayThreadCount();
+	//	}
+	//
+	//	@Override
+	//	public void mouseMoved(MouseEvent e) {
+	//		OutputPanel outputPanel = outputPanels.get(util.findChannel(activeServer, activeChannel, 0));
+	//		int dividerLocation = listsAndOutputSplitPane.getDividerLocation();
+	//		if(e.getX()>dividerLocation-30&&e.getX()<dividerLocation-3){
+	//			outputPanel.getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+	//		}else{
+	//			outputPanel.resetDelayThreadCount();
+	//		}
+	//		outputPanel.invalidate();
+	//	}
 
 }
