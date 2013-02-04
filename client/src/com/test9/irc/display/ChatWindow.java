@@ -380,6 +380,14 @@ ActionListener{//, MouseMotionListener {
 				{
 					if(m.startsWith("/")) {
 						// If a command was sent.
+						String cmd = inputField.getText().substring(0, m.indexOf(" "));
+
+						if(cmd.equalsIgnoreCase("/join")) {
+							
+							listener.onJoinChannel(activeChannel, m.substring(m.indexOf(" "), m.length()).trim());
+
+						}
+
 						listener.onNewMessage(activeServer, activeServer, m, "REPLY");
 					} else {
 						IRCConnection temp = ircConnections.get(util.findIRCConnection());

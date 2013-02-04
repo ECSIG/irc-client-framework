@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -12,7 +14,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 
-public class UserListPanel extends JPanel implements ListSelectionListener{
+public class UserListPanel extends JPanel implements ListSelectionListener, FocusListener{
 
 	private static final long serialVersionUID = 3331343604631033360L;
 	/**
@@ -60,7 +62,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	 */
 	UserListPanel(String server, String channel, int width, int height)
 	{
-		System.out.println(server + " " + channel);
+		//System.out.println(server + " " + channel);
 		jList.setBackground(Color.BLACK);
 		jList.setForeground(Color.WHITE);
 		this.server = server;
@@ -77,6 +79,8 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 		scrollPane.getHorizontalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
 		scrollPane.setBorder(null);
 		add(scrollPane, BorderLayout.CENTER);
+		jList.addFocusListener(this);
+		
 
 	}
 
@@ -217,5 +221,16 @@ public class UserListPanel extends JPanel implements ListSelectionListener{
 	public void setListModel(SortedListModel<String> listModel) {
 		this.listModel = listModel;
 		invalidate();
+	}
+
+	@Override
+	public void focusGained(FocusEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		jList.getSelectionModel().clearSelection();
 	}
 }

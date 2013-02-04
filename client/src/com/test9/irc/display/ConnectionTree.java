@@ -2,7 +2,6 @@ package com.test9.irc.display;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 

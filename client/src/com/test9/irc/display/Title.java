@@ -24,7 +24,6 @@ public class Title {
 	 */
 	public Title(String server, String channel)
 	{
-		System.out.println("new title made");
 		this.server = server;
 		this.channel = channel;
 	}

@@ -137,7 +137,8 @@ public class EventAdapter implements Listener {
 	 * @param topic The topic of the channel/server.
 	 */
 	public void onNewTopic(String server, String channel, String topic) {
-		System.out.println(owner.getTitles().get(util.findTitle(server, channel)));
+		//System.out.println(owner.getTitles().get(util.findTitle(server, channel)));
+		System.out.println("server: "+server+" channel: "+channel+" topic: "+topic);
 		owner.getTitles().get(util.findTitle(server, channel)).setTopic(topic);
 		owner.getFrame().setTitle(owner.getTitles().get(
 				util.findTitle(owner.getActiveServer(), 

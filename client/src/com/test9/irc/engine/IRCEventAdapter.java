@@ -16,9 +16,12 @@ public class IRCEventAdapter implements IRCEventListener {
 	private IRCConnection connection;
 	private ChatWindow cw;
 
-	public IRCEventAdapter(ConnectionEngine connectionEngine) {
+	public IRCEventAdapter(ConnectionEngine connectionEngine, IRCConnection connection) {
 		this.owner = connectionEngine;
-		connection = owner.getConnection();
+		this.connection = connection;
+		//System.out.println("boop"+owner.getConnection(connection.getHost()));
+
+
 		cw = connectionEngine.getCw();
 	}
 
@@ -30,7 +33,7 @@ public class IRCEventAdapter implements IRCEventListener {
 
 	@Override
 	public void onDisconnect() {
-		
+
 	}
 
 	@Override
@@ -46,15 +49,24 @@ public class IRCEventAdapter implements IRCEventListener {
 
 	@Override
 	public void onInvite() {
-		
+
 	}
 
 	@Override
 	public void onJoin(String host, Message m) {
+
 		if(m.getNickname().equals(connection.getNick())) {
-			cw.getListener().onJoinChannel(host, m.getContent());
+			if(!(m.getContent().equals("")))
+			{
+				cw.getListener().onJoinChannel(host, m.getContent());
+			}
+
 		} else {
-			cw.getListener().onUserJoin(host, m.getContent(), m.getNickname(), false);
+			if(!(m.getParams()[0].equals(""))) {
+				cw.getListener().onUserJoin(host, m.getParams()[0], m.getNickname(), false);
+			} else if(!(m.getContent().equals(""))){
+				cw.getListener().onUserJoin(host, m.getContent(), m.getNickname(), false);
+			}
 			if(!(connection.getUsers().contains(m.getNickname())))
 			{
 				connection.getUsers().add(new User(m.getNickname(), false));
@@ -87,12 +99,12 @@ public class IRCEventAdapter implements IRCEventListener {
 		// If it is me
 		if(m.getNickname().equals(connection.getNick()))
 			connection.setNick(m.getContent());
-		
+
 	}
 
 	@Override	
 	public void onNotice(Message m) {
-		cw.getListener().onNotice(m.getServerName(), m.getParams().toString(), m.getContent());
+		cw.getListener().onNotice(connection.getHost(), m.getParams().toString(), m.getContent());
 
 	}
 
@@ -116,6 +128,11 @@ public class IRCEventAdapter implements IRCEventListener {
 		if(m.getContent().contains(connection.getNick()))
 			cw.newMessageHighlight(host, m.getParams()[0], m.getNickname(), m.getContent());
 		else
+			if(connection.getUser(m.getNickname())==null)
+			{
+				System.out.println("NEWNULLUSER");
+				connection.getUsers().add(new User(m.getNickname(), false));
+			}
 			cw.getListener().onNewPrivMessage(
 					connection.getUser(m.getNickname()), host, m.getParams()[0], 
 					m.getNickname(), m.getContent(), false);		
@@ -146,8 +163,8 @@ public class IRCEventAdapter implements IRCEventListener {
 					connection.getUsers().add(new User(n,true));
 			}
 		} else if(numCode == IRCUtil.RPL_TOPIC) {
-			cw.getListener().onNewTopic(m.getPrefix(), m.getParams()[1], m.getContent());
-			cw.getListener().onNewMessage(m.getPrefix(), m.getParams()[1],
+			cw.getListener().onNewTopic(connection.getHost(), m.getParams()[1], m.getContent());
+			cw.getListener().onNewMessage(connection.getHost(), m.getParams()[1],
 					"<Topic> " + m.getContent(), "TOPIC");
 		} else if(numCode == IRCUtil.RPL_NOWAWAY) {
 
@@ -166,7 +183,7 @@ public class IRCEventAdapter implements IRCEventListener {
 	public void onUnknown(String host, Message m) {
 		System.out.println("onUnknown");
 		try{
-		cw.getListener().onNewMessage(host, host, m.getContent(), "REPLY");	
+			cw.getListener().onNewMessage(host, host, m.getContent(), "REPLY");	
 		}catch(Exception e){}
 	}
 }
