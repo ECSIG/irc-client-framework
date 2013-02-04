@@ -186,6 +186,12 @@ public class EventAdapter implements Listener {
 		owner.getConnectionTree().removeChannelNode(server, channel);
 	}
 
+	@Override
+	public void onTerminalMessage(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void onUserJoin(String server, String channel, String nick, boolean isUserRply) {
 		if(util.findChannel(server, channel,1) != -1) {
 			owner.getUserListPanels().get(util.findChannel(server, channel,1)).newUser(nick);

@@ -77,7 +77,6 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		expandPath(path);
 		expandTree();
 		selectNode(newChannelNode.getUserObject().toString());
-
 	}
 
 	/**

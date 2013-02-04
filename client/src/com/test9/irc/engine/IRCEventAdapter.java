@@ -1,5 +1,7 @@
 package com.test9.irc.engine;
 
+import java.util.Arrays;
+
 import com.test9.irc.display.ChatWindow;
 import com.test9.irc.parser.Message;
 
@@ -145,10 +147,14 @@ public class IRCEventAdapter implements IRCEventListener {
 			}
 		} else if(numCode == IRCUtil.RPL_TOPIC) {
 			cw.getListener().onNewTopic(m.getPrefix(), m.getParams()[1], m.getContent());
-			cw.getListener().onNewMessage(m.getPrefix(), m.getParams()[1], "<Topic> " + m.getContent(), "TOPIC");
+			cw.getListener().onNewMessage(m.getPrefix(), m.getParams()[1],
+					"<Topic> " + m.getContent(), "TOPIC");
 		} else if(numCode == IRCUtil.RPL_NOWAWAY) {
 
-		} 
+		} else if(numCode == IRCUtil.RPL_ISUPPORT) {
+			cw.getListener().onNewMessage(connection.getHost(), connection.getHost(), 
+					Arrays.toString(m.getParams())+" "+m.getContent(), "REPLY");
+		}
 	}
 
 	@Override

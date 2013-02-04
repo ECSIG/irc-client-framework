@@ -180,7 +180,8 @@ ActionListener{//, MouseMotionListener {
 
 	private Util util;
 
-
+	private static ArrayList<String> messageBuffer = new ArrayList<String>();
+	private static int bufferSelection = 0;
 	private JTextPane terminalTextPane = new JTextPane();
 	private JScrollPane terminalScrollPane = new JScrollPane(terminalTextPane);
 	private JPanel terminalPanel = new JPanel();
@@ -360,6 +361,8 @@ ActionListener{//, MouseMotionListener {
 		if(e.getKeyCode() == KeyEvent.VK_ENTER)
 		{	
 			String m = inputField.getText();
+			messageBuffer.add(m);
+			bufferSelection = messageBuffer.size();
 			if(ircConnections.get(util.findIRCConnection()).send(oF.formatMessage(m, activeChannel))&&!m.equals(""))
 			{
 				if(m.startsWith("/")) {
@@ -377,6 +380,26 @@ ActionListener{//, MouseMotionListener {
 			// Resets the text in the input field.
 			inputField.setText("");
 		}
+
+		if(e.getKeyCode() == KeyEvent.VK_UP) {
+			if(bufferSelection > 0) {
+				bufferSelection--;
+				inputField.setText(messageBuffer.get(bufferSelection));
+			}
+		}
+
+		if(e.getKeyCode() == KeyEvent.VK_DOWN)
+		{
+			if(bufferSelection < messageBuffer.size() -1 ) {
+				bufferSelection++;
+				inputField.setText(messageBuffer.get(bufferSelection));
+			}
+
+		}
+
+		if(e.getModifiers()== KeyEvent.META_MASK)
+			if(Character.isDigit(e.getKeyChar()))
+				System.out.println("this will select a node for you "+e.getKeyChar());
 	}
 
 	/**
