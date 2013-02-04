@@ -15,8 +15,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
+//import java.awt.event.MouseEvent;
+//import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowStateListener;
@@ -35,7 +35,7 @@ import javax.swing.JTextPane;
 
 public class ChatWindow extends Observable implements ComponentListener,
 KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
-ActionListener, MouseMotionListener {
+ActionListener{//, MouseMotionListener {
 
 	/**
 	 * The ultimate frame of the chat client that holds
@@ -64,7 +64,7 @@ ActionListener, MouseMotionListener {
 	/**
 	 * The default width of a scroll bar.
 	 */
-	private static final Dimension scrollBarDim = new Dimension(15,0);
+	private static final Dimension scrollBarDim = new Dimension(5,0);
 
 	/**
 	 * Default window size of the JFrame calculated from the KIT.
@@ -231,7 +231,7 @@ ActionListener, MouseMotionListener {
 		connectionTree = new ConnectionTree(this);
 		treeScrollPane = new JScrollPane(connectionTree);
 
-		treeScrollPane.getVerticalScrollBar().setPreferredSize (new Dimension(5,0));
+		treeScrollPane.getVerticalScrollBar().setPreferredSize (scrollBarDim);
 
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 		treePanel.setMinimumSize(new Dimension(0,0));
@@ -392,7 +392,7 @@ ActionListener, MouseMotionListener {
 				(int) outputFieldLayeredPane.getSize().getWidth(),
 				(int) outputFieldLayeredPane.getSize().getHeight());
 		
-		newOutputPanel.getTextArea().addMouseMotionListener(this);
+//		newOutputPanel.getTextArea().addMouseMotionListener(this);
 		
 		outputPanels.add(newOutputPanel);
 		outputFieldLayeredPane.add(newOutputPanel);
@@ -727,22 +727,22 @@ ActionListener, MouseMotionListener {
 		return ircConnections.get(util.findIRCConnection()).getHost();
 	}
 
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		OutputPanel outputPanel = outputPanels.get(util.findChannel(activeServer, activeChannel, 0));
-		outputPanel.resetDelayThreadCount();
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		OutputPanel outputPanel = outputPanels.get(util.findChannel(activeServer, activeChannel, 0));
-		int dividerLocation = listsAndOutputSplitPane.getDividerLocation();
-		if(e.getX()>dividerLocation-30&&e.getX()<dividerLocation-3){
-			outputPanel.getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		}else{
-			outputPanel.resetDelayThreadCount();
-		}
-		outputPanel.invalidate();
-	}
+//	@Override
+//	public void mouseDragged(MouseEvent e) {
+//		OutputPanel outputPanel = outputPanels.get(util.findChannel(activeServer, activeChannel, 0));
+//		outputPanel.resetDelayThreadCount();
+//	}
+//
+//	@Override
+//	public void mouseMoved(MouseEvent e) {
+//		OutputPanel outputPanel = outputPanels.get(util.findChannel(activeServer, activeChannel, 0));
+//		int dividerLocation = listsAndOutputSplitPane.getDividerLocation();
+//		if(e.getX()>dividerLocation-30&&e.getX()<dividerLocation-3){
+//			outputPanel.getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+//		}else{
+//			outputPanel.resetDelayThreadCount();
+//		}
+//		outputPanel.invalidate();
+//	}
 
 }

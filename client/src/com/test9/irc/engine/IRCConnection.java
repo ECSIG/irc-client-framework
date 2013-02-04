@@ -192,7 +192,7 @@ public class IRCConnection extends Thread {
 			}
 		} else if ((reply = IRCUtil.parseInt(command)) >= 1 && reply < 400) { // RPL
 			listener.onReply(m);
-			listener.onUnknown(host, line);
+			listener.onUnknown(host, m);
 		} else if (reply >= 400 && reply < 600) { // ERROR
 			listener.onError(m);
 		} else if (command.equalsIgnoreCase("KICK")) { // KICK
@@ -204,7 +204,7 @@ public class IRCConnection extends Thread {
 		} else if (command.equalsIgnoreCase("ERROR")) { // ERROR
 			listener.onError(m);
 		} else {
-			listener.onUnknown(host, line);
+			listener.onUnknown(host, m);
 
 		}
 	}

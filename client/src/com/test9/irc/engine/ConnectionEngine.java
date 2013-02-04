@@ -18,6 +18,7 @@ public class ConnectionEngine {
 		//((SSLIRCConnection)connection).addTrustManager(new SSLTrustManager());
 		cw = new ChatWindow();
 		cw.addChatWindowListener(new EventAdapter(cw, cw.getUtil()));
+		cw.getListener().onJoinServer(connection.getHost());
 		connection.addIRCEventListener(new IRCEventAdapter(this));
 
 		connection.connect();

@@ -130,7 +130,7 @@ public class IRCEventAdapter implements IRCEventListener {
 
 		if(numCode == IRCUtil.RPL_WELCOME) {
 			cw.getIrcConnections().add(connection);
-			cw.getListener().onJoinServer(m.getServerName());
+			//cw.getListener().onJoinServer(m.getServerName());
 
 		} else if(numCode == IRCUtil.RPL_NAMREPLY) {
 			System.out.println("RPL_NAMERPKY");
@@ -157,9 +157,10 @@ public class IRCEventAdapter implements IRCEventListener {
 	}
 
 	@Override
-	public void onUnknown(String host, String line) {
+	public void onUnknown(String host, Message m) {
+		System.out.println("onUnknown");
 		try{
-		cw.getListener().onNewMessage(host, host, line, "REPLY");	
+		cw.getListener().onNewMessage(host, host, m.getContent(), "REPLY");	
 		}catch(Exception e){}
 	}
 }
