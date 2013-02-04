@@ -189,6 +189,10 @@ ActionListener{//, MouseMotionListener {
 
 	private static HilightNotificationFrame hnf = new HilightNotificationFrame();
 
+	private static String os;
+	private static boolean hasMetaKey = false;
+
+
 
 	/**
 	 * Initializes a new ChatWindow.
@@ -202,16 +206,18 @@ ActionListener{//, MouseMotionListener {
 		/*
 		 * Checks to see if the global OS X menu bar should be used.
 		 */
-		if(System.getProperty("os.name").equals("Mac OS X"))
+		os = System.getProperty("os.name");
+		if(os.equals("Mac OS X"))
 		{
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "AOSIDHOAISHDOAISHDOIASHD");
-
+			hasMetaKey = true;
 			// Initializes a new menu bar, ultimately should be constructed regardless
 			// of the operating system.
 			menuBar = new MenuBar();
 			frame.setJMenuBar(menuBar);
 		}
+
 
 		/*
 		 * Adds some general features to the frame.
@@ -405,11 +411,24 @@ ActionListener{//, MouseMotionListener {
 			}
 		} // end input field?
 
-		if(e.getModifiers()== KeyEvent.META_MASK) {
-			if(Character.isDigit(e.getKeyChar())) {
-				connectionTree.metaSelection(activeServer, Character.getNumericValue(e.getKeyChar())-1);		
-			} // end digit?
-		} // end key modifier meta?
+		if(!hasMetaKey)
+		{
+			if(e.getModifiers() == KeyEvent.CTRL_MASK) {
+				if(Character.isDigit(e.getKeyChar())) {
+					connectionTree.metaSelection(activeServer, Character.getNumericValue(e.getKeyChar())-1);		
+				} 
+			} else if(e.getModifiers() == KeyEvent.ALT_MASK) {
+				if(Character.isDigit(e.getKeyChar())) {
+					connectionTree.metaSelection(activeServer, Character.getNumericValue(e.getKeyChar())-1);		
+				} 
+			}
+		} else {
+			if(e.getModifiers()== KeyEvent.META_MASK) {
+				if(Character.isDigit(e.getKeyChar())) {
+					connectionTree.metaSelection(activeServer, Character.getNumericValue(e.getKeyChar())-1);		
+				} // end digit?
+			} // end key modifier meta?
+		}
 	}
 
 	/**
