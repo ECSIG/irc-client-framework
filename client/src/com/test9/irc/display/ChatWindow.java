@@ -407,11 +407,7 @@ ActionListener{//, MouseMotionListener {
 
 		if(e.getModifiers()== KeyEvent.META_MASK) {
 			if(Character.isDigit(e.getKeyChar())) {
-				System.out.println(Character.getNumericValue(e.getKeyChar()));
-				//char ec = e.getKeyChar();
-				Character.getNumericValue(e.getKeyChar());
-				connectionTree.metaSelection(activeServer, Character.getNumericValue(e.getKeyChar())-1);
-				
+				connectionTree.metaSelection(activeServer, Character.getNumericValue(e.getKeyChar())-1);		
 			} // end digit?
 		} // end key modifier meta?
 	}

@@ -79,20 +79,20 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		expandTree();
 		selectNode(newChannelNode.getUserObject().toString());
 	}
-	
+
 	void metaSelection(String server, int row) {
-		System.out.println(row);
-		expandTree();
-		//System.out.println(findMetaChannel(server, row).getUserObject().toString());
-		try {
-			System.out.println(findMetaChannel(server, row).getUserObject().toString());
-			selectNode(findMetaChannel(server, row).getUserObject().toString());
-		} catch (ArrayIndexOutOfBoundsException e) {
-			// TODO Auto-generated catch block
-			System.out.println("no can do");
+		if(row == -1) {
+			selectNode(server);
+		} else {
+			expandTree();
+			try {
+				selectNode(findMetaChannel(server, row).getUserObject().toString());
+			} catch (ArrayIndexOutOfBoundsException e) {
+				System.out.println("No channel at that row:"+row);
+			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	DefaultMutableTreeNode findMetaChannel(String server, int row) {
 		for (Object node : Collections.list(root.children()))
@@ -100,9 +100,6 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 			DefaultMutableTreeNode serverNode = (DefaultMutableTreeNode) node;
 
 			if(serverNode.getUserObject().toString().trim().equals(server.trim())) {
-				System.out.println("child count " + serverNode.getChildCount());
-				//System.out.println("this is the child ");
-				System.out.println(serverNode.getChildAt(row).toString());
 				return (DefaultMutableTreeNode) serverNode.getChildAt(row);
 			}
 		}
