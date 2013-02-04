@@ -116,7 +116,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener{//, MouseWh
 		add(scrollPane, BorderLayout.CENTER);
 
 	}
-
+	
 	private void initAttributes() {
 		highlight.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 		highlight.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GREEN);

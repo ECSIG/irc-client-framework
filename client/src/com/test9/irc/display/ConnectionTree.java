@@ -2,6 +2,7 @@ package com.test9.irc.display;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 
@@ -78,6 +79,35 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		expandTree();
 		selectNode(newChannelNode.getUserObject().toString());
 	}
+	
+	void metaSelection(String server, int row) {
+		System.out.println(row);
+		expandTree();
+		//System.out.println(findMetaChannel(server, row).getUserObject().toString());
+		try {
+			System.out.println(findMetaChannel(server, row).getUserObject().toString());
+			selectNode(findMetaChannel(server, row).getUserObject().toString());
+		} catch (ArrayIndexOutOfBoundsException e) {
+			// TODO Auto-generated catch block
+			System.out.println("no can do");
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	DefaultMutableTreeNode findMetaChannel(String server, int row) {
+		for (Object node : Collections.list(root.children()))
+		{
+			DefaultMutableTreeNode serverNode = (DefaultMutableTreeNode) node;
+
+			if(serverNode.getUserObject().toString().trim().equals(server.trim())) {
+				System.out.println("child count " + serverNode.getChildCount());
+				//System.out.println("this is the child ");
+				System.out.println(serverNode.getChildAt(row).toString());
+				return (DefaultMutableTreeNode) serverNode.getChildAt(row);
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Selects a node in the tree.
@@ -96,6 +126,13 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		}		
 	}
 
+	/**
+	 * 
+	 * @param server Server the channel is on
+	 * @param channel Channel you're looking for
+	 * @return the node you're looking for
+	 * @thanks JCsims
+	 */
 	@SuppressWarnings("unchecked")
 	DefaultMutableTreeNode findChannelNode(String server, String channel) {
 		for (Object node : Collections.list(root.children()))

@@ -229,13 +229,14 @@ ActionListener{//, MouseMotionListener {
 		 * and channel connections.
 		 */
 		connectionTree = new ConnectionTree(this);
+		connectionTree.addKeyListener(this);
 		treeScrollPane = new JScrollPane(connectionTree);
-
+		treeScrollPane.addKeyListener(this);
 		treeScrollPane.getVerticalScrollBar().setPreferredSize (scrollBarDim);
 
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 		treePanel.setMinimumSize(new Dimension(0,0));
-
+		treePanel.addKeyListener(this);
 		// Adds the required keylistener to the input field.
 		inputField.addKeyListener(this);
 		inputField.setMinimumSize(new Dimension(0,0));
@@ -250,11 +251,14 @@ ActionListener{//, MouseMotionListener {
 		centerPanel.add(outputFieldLayeredPane);
 		centerPanel.add(inputField, BorderLayout.SOUTH);
 		centerPanel.setBorder(null);
+		centerPanel.addKeyListener(this);
 		terminalPanel.setMinimumSize(new Dimension(0,0));
 		terminalPanel.setLayout(new BorderLayout());
 		terminalTextPane.setBackground(Color.BLACK);
+		terminalTextPane.addKeyListener(this);
 		terminalPanel.add(terminalScrollPane, BorderLayout.CENTER);
 		terminalPanel.setBackground(Color.BLACK);
+		terminalPanel.addKeyListener(this);
 
 		outputSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, centerPanel, terminalPanel);
 		outputSplitPane.setDividerSize(SPLITPANEWIDTH);
@@ -262,6 +266,7 @@ ActionListener{//, MouseMotionListener {
 		outputSplitPane.setResizeWeight(1);
 		outputSplitPane.setDividerSize(5);
 		outputSplitPane.setDividerLocation(frame.getPreferredSize().height);
+		outputSplitPane.addKeyListener(this);
 
 		/*
 		 * Sets up the side panel with a vertial split (one item on
@@ -275,6 +280,7 @@ ActionListener{//, MouseMotionListener {
 		sidePanelSplitPane.setDividerLocation((frame.getPreferredSize().height/2)-20);
 		sidePanelSplitPane.setContinuousLayout(true);
 		sidePanelSplitPane.setResizeWeight(0);
+		sidePanelSplitPane.addKeyListener(this);
 
 		/*
 		 * Sets up the split pane that splits the side panel
@@ -286,6 +292,7 @@ ActionListener{//, MouseMotionListener {
 		listsAndOutputSplitPane.setDividerSize(SPLITPANEWIDTH);
 		listsAndOutputSplitPane.setDividerLocation(
 				frame.getPreferredSize().width-DEFAULTSIDEBARWIDTH);
+		listsAndOutputSplitPane.addKeyListener(this);
 
 
 
@@ -358,48 +365,55 @@ ActionListener{//, MouseMotionListener {
 	 * active server after it sends it to the output factory for formatting.
 	 */
 	public void keyReleased(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_ENTER)
-		{	
-			String m = inputField.getText();
-			messageBuffer.add(m);
-			bufferSelection = messageBuffer.size();
-			if(ircConnections.get(util.findIRCConnection()).send(oF.formatMessage(m, activeChannel))&&!m.equals(""))
-			{
-				if(m.startsWith("/")) {
-					// If a command was sent.
-					listener.onNewMessage(activeServer, activeServer, m, "REPLY");
-				} else {
-					IRCConnection temp = ircConnections.get(util.findIRCConnection());
-					String nick = ircConnections.get(util.findIRCConnection()).getNick();
-					// If a PRIVMSG was sent
-					listener.onNewPrivMessage(
-							temp.getUser(temp.getNick()),
-							activeServer, activeChannel, nick, m, true);
+		if(e.getComponent() == inputField) {
+			if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+				String m = inputField.getText();
+				messageBuffer.add(m);
+				bufferSelection = messageBuffer.size();
+				if(ircConnections.get(util.findIRCConnection()).send(oF.formatMessage(m, activeChannel))&&!m.equals(""))
+				{
+					if(m.startsWith("/")) {
+						// If a command was sent.
+						listener.onNewMessage(activeServer, activeServer, m, "REPLY");
+					} else {
+						IRCConnection temp = ircConnections.get(util.findIRCConnection());
+						String nick = ircConnections.get(util.findIRCConnection()).getNick();
+						// If a PRIVMSG was sent
+						listener.onNewPrivMessage(
+								temp.getUser(temp.getNick()),
+								activeServer, activeChannel, nick, m, true);
+					}
+				}
+				// Resets the text in the input field.
+				inputField.setText("");
+			}
+
+			if(e.getKeyCode() == KeyEvent.VK_UP) {
+				if(bufferSelection > 0) {
+					bufferSelection--;
+					inputField.setText(messageBuffer.get(bufferSelection));
 				}
 			}
-			// Resets the text in the input field.
-			inputField.setText("");
-		}
 
-		if(e.getKeyCode() == KeyEvent.VK_UP) {
-			if(bufferSelection > 0) {
-				bufferSelection--;
-				inputField.setText(messageBuffer.get(bufferSelection));
+			if(e.getKeyCode() == KeyEvent.VK_DOWN)
+			{
+				if(bufferSelection < messageBuffer.size() -1 ) {
+					bufferSelection++;
+					inputField.setText(messageBuffer.get(bufferSelection));
+				}
+
 			}
-		}
+		} // end input field?
 
-		if(e.getKeyCode() == KeyEvent.VK_DOWN)
-		{
-			if(bufferSelection < messageBuffer.size() -1 ) {
-				bufferSelection++;
-				inputField.setText(messageBuffer.get(bufferSelection));
-			}
-
-		}
-
-		if(e.getModifiers()== KeyEvent.META_MASK)
-			if(Character.isDigit(e.getKeyChar()))
-				System.out.println("this will select a node for you "+e.getKeyChar());
+		if(e.getModifiers()== KeyEvent.META_MASK) {
+			if(Character.isDigit(e.getKeyChar())) {
+				System.out.println(Character.getNumericValue(e.getKeyChar()));
+				//char ec = e.getKeyChar();
+				Character.getNumericValue(e.getKeyChar());
+				connectionTree.metaSelection(activeServer, Character.getNumericValue(e.getKeyChar())-1);
+				
+			} // end digit?
+		} // end key modifier meta?
 	}
 
 	/**
@@ -414,7 +428,7 @@ ActionListener{//, MouseMotionListener {
 		OutputPanel newOutputPanel = new OutputPanel(server, channel, 
 				(int) outputFieldLayeredPane.getSize().getWidth(),
 				(int) outputFieldLayeredPane.getSize().getHeight());
-
+		newOutputPanel.addKeyListener(this);
 		//		newOutputPanel.getTextArea().addMouseMotionListener(this);
 
 		outputPanels.add(newOutputPanel);
@@ -431,6 +445,7 @@ ActionListener{//, MouseMotionListener {
 		UserListPanel newUserListPanel = new UserListPanel(server, channel,
 				(int) userListsLayeredPane.getSize().getWidth(),
 				(int) userListsLayeredPane.getSize().getHeight());
+		newUserListPanel.addKeyListener(this);
 		userListPanels.add(newUserListPanel);
 		userListsLayeredPane.add(newUserListPanel);
 	}
