@@ -130,7 +130,6 @@ public class IRCEventAdapter implements IRCEventListener {
 		else
 			if(connection.getUser(m.getNickname())==null)
 			{
-				System.out.println("NEWNULLUSER");
 				connection.getUsers().add(new User(m.getNickname(), false));
 			}
 			cw.getListener().onNewPrivMessage(
@@ -181,7 +180,6 @@ public class IRCEventAdapter implements IRCEventListener {
 
 	@Override
 	public void onUnknown(String host, Message m) {
-		System.out.println("onUnknown");
 		try{
 			cw.getListener().onNewMessage(host, host, m.getContent(), "REPLY");	
 		}catch(Exception e){}

@@ -31,33 +31,33 @@ public class Parser {
 	private static String content = "";
 	final private static String DIVIDER = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
 
-	public static void main(String[] args)
-	{
-		Parser p = new Parser();
-		p.parse(new StringBuffer(":irc.ecsig.com 005 jared-test CMDS=KNOCK,MAP,DCCALLOW,USERIP " +
-				"UHNAMES NAMESX SAFELIST HCN MAXCHANNELS=50 CHANLIMIT=#:50 MAXLIST=b:60,e:60,I:60 " +
-				"NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported " +
-				"by this server"));
-		System.out.println(DIVIDER);
-
-		p.parse(new StringBuffer(":irc.ecsig.com 255 jared-test :I have 12 clients and 1 servers")).toString();
-		System.out.println(DIVIDER);
-
-		p.parse(new StringBuffer(":jared-test!jared-test@ecsig-A1B219D7.ri.ri.cox.net JOIN :#jared"));
-		System.out.println(DIVIDER);
-
-		p.parse(new StringBuffer(":Jared!Jared@ecsig-A1B219D7.ri.ri.cox.net PRIVMSG #jircc :ermahgard"));
-		System.out.println(DIVIDER);
-
-		p.parse(new StringBuffer(":Jared!Jared@ecsig-A1B219D7.ri.ri.cox.net PRIVMSG #jared ::here is a message: with : some :semicolons:::"));
-		System.out.println(DIVIDER);
-
-		p.parse(new StringBuffer("255 jared-test :I have 12 clients and 1 servers"));
-		System.out.println(DIVIDER);
-
-		p.parse(new StringBuffer(":irc.ecsig.com 333 jared-test #jared Jared 1355349884"));
-
-	}
+//	public static void main(String[] args)
+//	{
+//		Parser p = new Parser();
+//		p.parse(new StringBuffer(":irc.ecsig.com 005 jared-test CMDS=KNOCK,MAP,DCCALLOW,USERIP " +
+//				"UHNAMES NAMESX SAFELIST HCN MAXCHANNELS=50 CHANLIMIT=#:50 MAXLIST=b:60,e:60,I:60 " +
+//				"NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported " +
+//				"by this server"));
+//		System.out.println(DIVIDER);
+//
+//		p.parse(new StringBuffer(":irc.ecsig.com 255 jared-test :I have 12 clients and 1 servers")).toString();
+//		System.out.println(DIVIDER);
+//
+//		p.parse(new StringBuffer(":jared-test!jared-test@ecsig-A1B219D7.ri.ri.cox.net JOIN :#jared"));
+//		System.out.println(DIVIDER);
+//
+//		p.parse(new StringBuffer(":Jared!Jared@ecsig-A1B219D7.ri.ri.cox.net PRIVMSG #jircc :ermahgard"));
+//		System.out.println(DIVIDER);
+//
+//		p.parse(new StringBuffer(":Jared!Jared@ecsig-A1B219D7.ri.ri.cox.net PRIVMSG #jared ::here is a message: with : some :semicolons:::"));
+//		System.out.println(DIVIDER);
+//
+//		p.parse(new StringBuffer("255 jared-test :I have 12 clients and 1 servers"));
+//		System.out.println(DIVIDER);
+//
+//		p.parse(new StringBuffer(":irc.ecsig.com 333 jared-test #jared Jared 1355349884"));
+//
+//	}
 
 	
 	/**
@@ -112,7 +112,7 @@ public class Parser {
 			content = "";
 		}
 
-		printStuff();
+		//printStuff();
 
 		return(new Message(prefix, command, params, serverName, nickname, user, host, content));
 

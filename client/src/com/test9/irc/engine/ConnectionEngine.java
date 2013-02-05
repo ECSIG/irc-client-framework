@@ -45,6 +45,12 @@ public class ConnectionEngine {
 //
 //		temp.addIRCEventListener(new IRCEventAdapter(this, temp));
 //		temp.connect();
+		
+//		temp = new IRCConnection("irc.mozilla.org", 6667, null, "jared", "jared", "jared", "UTF-8");
+//		connections.add(temp);
+//		cw.getListener().onJoinServer(temp.getHost());
+//		temp.addIRCEventListener(new IRCEventAdapter(this, temp));
+//		temp.connect();
 	}
 
 	/**

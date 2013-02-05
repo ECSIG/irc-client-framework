@@ -26,7 +26,11 @@ public class EventAdapter implements Listener {
 		owner.setActiveChannel(channel);
 		owner.newOutputPanel(server, channel);
 		owner.newUserListPanel(server, channel);
+		try {
 		owner.getConnectionTree().newChannelNode(server, channel);
+		} catch (IllegalStateException e) {
+			
+		}
 
 	}
 
@@ -137,8 +141,6 @@ public class EventAdapter implements Listener {
 	 * @param topic The topic of the channel/server.
 	 */
 	public void onNewTopic(String server, String channel, String topic) {
-		//System.out.println(owner.getTitles().get(util.findTitle(server, channel)));
-		System.out.println("server: "+server+" channel: "+channel+" topic: "+topic);
 		owner.getTitles().get(util.findTitle(server, channel)).setTopic(topic);
 		owner.getFrame().setTitle(owner.getTitles().get(
 				util.findTitle(owner.getActiveServer(), 
@@ -154,7 +156,6 @@ public class EventAdapter implements Listener {
 
 	@Override
 	public void onNotice(String server, String params, String content) {
-		System.out.println("ONNOTICE");
 		owner.getOutputPanels().get(util.findChannel(server, server, 0)).newMessage(content, TextFormat.notice);
 		
 	}
