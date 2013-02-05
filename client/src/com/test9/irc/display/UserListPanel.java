@@ -117,8 +117,9 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	{
 		if(listModel.removeElement(oldNick)) {
 			newUser(newNick);
-			invalidate();
+			
 		}
+		invalidate();
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package com.test9.irc.display;
 
+import com.test9.irc.engine.IRCConnection;
 import com.test9.irc.engine.User;
 
 public class EventAdapter implements Listener {
@@ -91,6 +92,20 @@ public class EventAdapter implements Listener {
 		// Calls on the connectionTree to remove the appropriate server node.
 		owner.getConnectionTree().removeServerNode(server);
 
+	}
+
+	@Override
+	public void onNewHighlight(String host, String params, String nickname,
+			String content) {
+		owner.newMessageHighlight(host, params, nickname, content);
+
+		
+	}
+
+	@Override
+	public void onNewIRCConnection(IRCConnection connection) {
+		owner.getIrcConnections().add(connection);
+		
 	}
 
 	/**

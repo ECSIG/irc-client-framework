@@ -77,6 +77,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		expandPath(path);
 		expandTree();
 		selectNode(newChannelNode.getUserObject().toString());
+		invalidate();
 	}
 
 	void metaSelection(String server, int row) {
@@ -200,7 +201,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		model.reload();
 		expandTree();
 		selectNode(newServerNode.getUserObject().toString());
-
+		invalidate();
 
 
 	}

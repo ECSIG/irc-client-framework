@@ -374,8 +374,11 @@ ActionListener{//, MouseMotionListener {
 	 * active server after it sends it to the output factory for formatting.
 	 */
 	public void keyReleased(KeyEvent e) {
+
 		if(e.getComponent() == inputField) {
+
 			if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+
 				String m = inputField.getText();
 				messageBuffer.add(m);
 				bufferSelection = messageBuffer.size();
@@ -387,7 +390,7 @@ ActionListener{//, MouseMotionListener {
 						String cmd = "";
 						if(m.contains(" "))
 							cmd = inputField.getText().substring(0, m.indexOf(" "));
-						
+
 						if(cmd.equalsIgnoreCase("/join")) {
 							listener.onJoinChannel(activeChannel, m.substring(m.indexOf(" "), 
 									m.length()).trim());
@@ -546,8 +549,8 @@ ActionListener{//, MouseMotionListener {
 	 * in the connection tree.
 	 */
 	void newActiveChannels(String activeServer, String activeChannel) {
-		this.activeServer = activeServer;
-		this.activeChannel = activeChannel;
+		ChatWindow.activeServer = activeServer;
+		ChatWindow.activeChannel = activeChannel;
 
 		for(OutputPanel t : outputPanels)
 		{
@@ -637,7 +640,7 @@ ActionListener{//, MouseMotionListener {
 	 * @param ircConnections the ircConnections to set
 	 */
 	public void setIrcConnections(ArrayList<IRCConnection> ircConnections) {
-		this.ircConnections = ircConnections;
+		ChatWindow.ircConnections = ircConnections;
 	}
 
 	public void newMessageHighlight(String server, String channel, String nickname, String content) {
@@ -667,7 +670,7 @@ ActionListener{//, MouseMotionListener {
 	 * @param activeServer the activeServer to set
 	 */
 	public void setActiveServer(String activeServer) {
-		this.activeServer = activeServer;
+		ChatWindow.activeServer = activeServer;
 	}
 
 	/**
@@ -681,7 +684,7 @@ ActionListener{//, MouseMotionListener {
 	 * @param activeChannel the activeChannel to set
 	 */
 	public void setActiveChannel(String activeChannel) {
-		this.activeChannel = activeChannel;
+		ChatWindow.activeChannel = activeChannel;
 	}
 
 	/**
