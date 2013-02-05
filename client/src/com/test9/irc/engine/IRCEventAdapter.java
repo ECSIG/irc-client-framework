@@ -169,6 +169,9 @@ public class IRCEventAdapter implements IRCEventListener {
 		} else if(numCode == IRCUtil.RPL_ISUPPORT) {
 			cw.getListener().onNewMessage(connection.getHost(), connection.getHost(), 
 					Arrays.toString(m.getParams())+" "+m.getContent(), "REPLY");
+		} else if(numCode == IRCUtil.RPL_LIST) {
+			cw.getListener().onNewMessage(connection.getHost(), connection.getHost(), Arrays.toString(m.getParams()), "REPLY");
+			
 		}
 	}
 

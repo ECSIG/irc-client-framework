@@ -25,7 +25,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	/**
 	 * Holds the font for the panel.
 	 */
-	private static Font font = new Font("Lucida Grande", Font.BOLD, 12);
+	private static Font font = new Font("Lucida Grande", Font.BOLD, 10);
 
 	/**
 	 * Holds the model of the list that will be used.
