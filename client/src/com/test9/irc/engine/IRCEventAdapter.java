@@ -19,7 +19,6 @@ public class IRCEventAdapter implements IRCEventListener {
 	public IRCEventAdapter(ConnectionEngine connectionEngine, IRCConnection connection) {
 		this.owner = connectionEngine;
 		this.connection = connection;
-		//System.out.println("boop"+owner.getConnection(connection.getHost()));
 
 
 		cw = connectionEngine.getCw();
@@ -95,7 +94,7 @@ public class IRCEventAdapter implements IRCEventListener {
 	public void onNick(Message m) {
 		connection.getUser(m.getNickname()).setNick(m.getContent());
 
-		cw.getListener().onNickChange(m.getNickname(), m.getContent());
+		cw.getListener().onNickChange(connection.getHost(), m.getNickname(), m.getContent());
 		// If it is me
 		if(m.getNickname().equals(connection.getNick()))
 			connection.setNick(m.getContent());

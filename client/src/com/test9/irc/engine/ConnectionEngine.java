@@ -29,28 +29,30 @@ public class ConnectionEngine {
 		temp.addIRCEventListener(new IRCEventAdapter(this, temp));
 		temp.connect();
 		
-
-
-
 		try {
 			IRCConnection.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		connections.get(0).send("join #jircc");
-//		
-//		temp = new IRCConnection("chat.freenode.net", 6667, null, "jared", "jared", "jared", "UTF-8");
-//		connections.add(temp);
-//		cw.getListener().onJoinServer(temp.getHost());
-//
-//		temp.addIRCEventListener(new IRCEventAdapter(this, temp));
-//		temp.connect();
 		
-//		temp = new IRCConnection("irc.mozilla.org", 6667, null, "jared", "jared", "jared", "UTF-8");
-//		connections.add(temp);
-//		cw.getListener().onJoinServer(temp.getHost());
-//		temp.addIRCEventListener(new IRCEventAdapter(this, temp));
-//		temp.connect();
+		IRCConnection temp2 = new IRCConnection("chat.freenode.net", 6667, null, "jared", "jared", "jared", "UTF-8");
+		connections.add(temp2);
+		cw.getListener().onJoinServer(temp2.getHost());
+		temp2.addIRCEventListener(new IRCEventAdapter(this, temp2));
+		temp2.connect();
+		
+		try {
+			IRCConnection.sleep(2000);
+		} catch(Exception e) {
+			
+		}
+		
+		IRCConnection temp3 = new IRCConnection("irc.mozilla.org", 6667, null, "jared", "jared", "jared", "UTF-8");
+		connections.add(temp3);
+		cw.getListener().onJoinServer(temp3.getHost());
+		temp3.addIRCEventListener(new IRCEventAdapter(this, temp3));
+		temp3.connect();
 	}
 
 	/**

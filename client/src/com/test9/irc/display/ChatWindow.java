@@ -125,25 +125,25 @@ ActionListener{//, MouseMotionListener {
 	 * Holds references to all of the output panels for the connected servers
 	 * and channels.
 	 */
-	private ArrayList<OutputPanel> outputPanels = new ArrayList<OutputPanel>();
+	private static ArrayList<OutputPanel> outputPanels = new ArrayList<OutputPanel>();
 
 	/**
 	 * Holds references to all of the user lists for all of the connected 
 	 * channels.
 	 */
-	private ArrayList<UserListPanel> userListPanels = new ArrayList<UserListPanel>();
+	private static ArrayList<UserListPanel> userListPanels = new ArrayList<UserListPanel>();
 
 	/**
 	 * Holds the name of the currectly active server. This is set by selecting a 
 	 * server or channel node on the connectionTree.
 	 */
-	private String activeServer;
+	private static String activeServer;
 
 	/**
 	 * Holds the name of the currectly active server. This is set by selecting a 
 	 * channel node on the connectionTree.
 	 */
-	private String activeChannel;
+	private static String activeChannel;
 
 	/**
 	 * A scroll pane to contain the connection tree.
@@ -164,7 +164,7 @@ ActionListener{//, MouseMotionListener {
 	 * Holds references to each of the ircConnections. Is used when the 
 	 * user wishes to send a message to a giver server or channel.
 	 */
-	private ArrayList<IRCConnection> ircConnections = new ArrayList<IRCConnection>();
+	private static ArrayList<IRCConnection> ircConnections = new ArrayList<IRCConnection>();
 
 	/**
 	 * Used to properly format a message that is sent to an IRCConnection.
@@ -174,7 +174,7 @@ ActionListener{//, MouseMotionListener {
 	/**
 	 * Holds the possible titles that can be used on the frame.
 	 */
-	private ArrayList<Title> titles = new ArrayList<Title>();
+	private static ArrayList<Title> titles = new ArrayList<Title>();
 
 	private Listener listener;
 
@@ -191,6 +191,8 @@ ActionListener{//, MouseMotionListener {
 
 	private static String os;
 	private static boolean hasMetaKey = false;
+	
+	private static ArrayList<String> serversAndChannels = new ArrayList<String>();
 
 
 
@@ -357,12 +359,13 @@ ActionListener{//, MouseMotionListener {
 	 * locally in the class.
 	 * @param server Name of the server to join.
 	 */
-	void joinChannel(String server)
+	void joinServerChannel(String server)
 	{
 		activeChannel = server;
 		titles.add(new Title(server, server));
 		newOutputPanel(server, server);
 		newUserListPanel(server, server);
+		serversAndChannels.add(server+","+server);
 	}
 
 	/**
@@ -376,15 +379,17 @@ ActionListener{//, MouseMotionListener {
 				String m = inputField.getText();
 				messageBuffer.add(m);
 				bufferSelection = messageBuffer.size();
-				if(ircConnections.get(util.findIRCConnection()).send(oF.formatMessage(m, activeChannel))&&!m.equals(""))
+				
+				if(ircConnections.get(util.findIRCConnection()).send(oF.formatMessage(
+						m, activeChannel))&&!m.equals(""))
 				{
 					if(m.startsWith("/")) {
 						// If a command was sent.
 						String cmd = inputField.getText().substring(0, m.indexOf(" "));
 
 						if(cmd.equalsIgnoreCase("/join")) {
-							
-							listener.onJoinChannel(activeChannel, m.substring(m.indexOf(" "), m.length()).trim());
+							listener.onJoinChannel(activeChannel, m.substring(m.indexOf(" "), 
+									m.length()).trim());
 
 						}
 
@@ -761,6 +766,13 @@ ActionListener{//, MouseMotionListener {
 
 	public String getRootConnection() {
 		return ircConnections.get(util.findIRCConnection()).getHost();
+	}
+
+	/**
+	 * @return the serversAndChannels
+	 */
+	public static ArrayList<String> getServersAndChannels() {
+		return serversAndChannels;
 	}
 
 	//	@Override

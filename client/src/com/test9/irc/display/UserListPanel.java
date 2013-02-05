@@ -80,7 +80,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 		scrollPane.setBorder(null);
 		add(scrollPane, BorderLayout.CENTER);
 		jList.addFocusListener(this);
-		
+
 
 	}
 
@@ -103,9 +103,9 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 		listModel.removeElement(user);
 		invalidate();
 	}
-	
+
 	void userAway(String nick) {
-		
+
 	}
 
 	/**
@@ -115,9 +115,10 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	 */
 	void nickChange(String oldNick, String newNick)
 	{
-		listModel.removeElement(oldNick);
-		newUser(newNick);
-		invalidate();
+		if(listModel.removeElement(oldNick)) {
+			newUser(newNick);
+			invalidate();
+		}
 	}
 
 	/**
@@ -226,7 +227,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	@Override
 	public void focusGained(FocusEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

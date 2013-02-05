@@ -22,14 +22,13 @@ public class EventAdapter implements Listener {
 	 * @param channel Name of the channel that is to be joined.
 	 */
 	public void onJoinChannel(String server, String channel) {
-		owner.getTitles().add(new Title(server, channel));
-		owner.setActiveChannel(channel);
-		owner.newOutputPanel(server, channel);
-		owner.newUserListPanel(server, channel);
-		try {
-		owner.getConnectionTree().newChannelNode(server, channel);
-		} catch (IllegalStateException e) {
-			
+		if(!ChatWindow.getServersAndChannels().contains(server+","+channel)) {
+			ChatWindow.getServersAndChannels().add(server+","+channel);
+			owner.getTitles().add(new Title(server, channel));
+			owner.setActiveChannel(channel);
+			owner.newOutputPanel(server, channel);
+			owner.newUserListPanel(server, channel);
+			owner.getConnectionTree().newChannelNode(server, channel);
 		}
 
 	}
@@ -42,11 +41,14 @@ public class EventAdapter implements Listener {
 	 * @param server The name of the server that is to be joined.
 	 */
 	public void onJoinServer(String server) {
-		owner.joinChannel(server);
-		owner.getConnectionTree().newServerNode(server);
-		owner.setJoinedAServer(true);
-		owner.setActiveChannel(server);
-		owner.setActiveServer(server);	
+		if(!(ChatWindow.getServersAndChannels().contains(server))) {
+			ChatWindow.getServersAndChannels().add(server);
+			owner.joinServerChannel(server);
+			owner.getConnectionTree().newServerNode(server);
+			owner.setJoinedAServer(true);
+			owner.setActiveChannel(server);
+			owner.setActiveServer(server);	
+		}
 	}
 
 	/**
@@ -157,7 +159,7 @@ public class EventAdapter implements Listener {
 	@Override
 	public void onNotice(String server, String params, String content) {
 		owner.getOutputPanels().get(util.findChannel(server, server, 0)).newMessage(content, TextFormat.notice);
-		
+
 	}
 
 	/**
@@ -165,10 +167,11 @@ public class EventAdapter implements Listener {
 	 * @param oldNick The original nick of the user.
 	 * @param newNick The new nick of a user.
 	 */
-	public void onNickChange(String oldNick, String newNick) {
+	public void onNickChange(String host, String oldNick, String newNick) {
 		for(UserListPanel u : owner.getUserListPanels())
 		{
-			u.nickChange(oldNick, newNick);
+			if(u.getServer().equals(host))
+				u.nickChange(oldNick, newNick);
 		}
 
 	}
@@ -182,7 +185,7 @@ public class EventAdapter implements Listener {
 	 */
 	public void onPartChannel(String server, String channel) {
 		int outputPanelId = util.findChannel(server, channel, 0);
-//		owner.getOutputPanels().get(outputPanelId).stopDelayThread();
+		//		owner.getOutputPanels().get(outputPanelId).stopDelayThread();
 		owner.getOutputPanels().remove(outputPanelId);
 		owner.getUserListPanels().remove(util.findChannel(server, channel, 1));
 		owner.getConnectionTree().removeChannelNode(server, channel);
@@ -191,7 +194,7 @@ public class EventAdapter implements Listener {
 	@Override
 	public void onTerminalMessage(String message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onUserJoin(String server, String channel, String nick, boolean isUserRply) {

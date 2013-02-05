@@ -11,7 +11,7 @@ public interface Listener {
 	public void onNewPrivMessage(User user, String server, String channel, String nick, String message, boolean isLocal);
 	public void onNewTopic(String server, String channel, String topic);
 	public void onNewUserMode(String server, String channel, String mode);
-	public void onNickChange(String oldNick, String newNick);
+	public void onNickChange(String host, String oldNick, String newNick);
 	public void onNotice(String server, String params, String content);
 	public void onPartChannel(String server, String channel);
 	public void onTerminalMessage(String message);
