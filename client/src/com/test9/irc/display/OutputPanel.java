@@ -211,6 +211,9 @@ public class OutputPanel extends JPanel implements HyperlinkListener{//, MouseWh
 	}
 
 	private String wrapInSpanTag(String message, SimpleAttributeSet attrs) {
+		message = message.replaceAll("<", "&lt");
+		message = message.replaceAll(">", "&gt");
+		
 		String messageWithLiveLinks = wrapLinks(message);
 		String styleString = getStyleStringFromSimpleAttributeSet(attrs);
 		return "<span style='"+styleString+"'>"+messageWithLiveLinks+"</span>";
