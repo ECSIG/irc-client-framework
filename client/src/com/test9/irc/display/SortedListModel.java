@@ -14,7 +14,7 @@ class SortedListModel<T> extends AbstractListModel {
 	@SuppressWarnings("unchecked")
 	SortedListModel() {
 		comparator = new MyComparator();
-		model = new TreeSet<T>(comparator);
+		model = Collections.synchronizedSortedSet(new TreeSet<T>(comparator));
 		
 	}
 
