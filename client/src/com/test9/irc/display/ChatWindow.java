@@ -248,7 +248,7 @@ ActionListener{//, MouseMotionListener {
 		// Adds the required keylistener to the input field.
 		inputField.addKeyListener(this);
 		inputField.setMinimumSize(new Dimension(0,0));
-
+		inputField.setFocusTraversalKeysEnabled(false);
 
 
 		/*
@@ -394,6 +394,7 @@ ActionListener{//, MouseMotionListener {
 						if(cmd.equalsIgnoreCase("/join")) {
 							listener.onJoinChannel(activeChannel, m.substring(m.indexOf(" "), 
 									m.length()).trim());
+							inputField.setText("");
 
 						}
 
@@ -446,6 +447,7 @@ ActionListener{//, MouseMotionListener {
 				} // end digit?
 			} // end key modifier meta?
 		}
+
 	}
 
 	/**
@@ -777,6 +779,10 @@ ActionListener{//, MouseMotionListener {
 	 */
 	public static ArrayList<String> getServersAndChannels() {
 		return serversAndChannels;
+	}
+
+	public static void notifyKeyListener(KeyEvent e) {
+		
 	}
 
 	//	@Override

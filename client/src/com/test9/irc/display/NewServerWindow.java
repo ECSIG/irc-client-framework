@@ -7,11 +7,18 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,13 +29,15 @@ import javax.swing.JTextField;
 import com.test9.irc.engine.ReadServerConfig;
 
 @SuppressWarnings("unused")
-public class NewServerWindow extends JFrame implements ActionListener{
-	
+public class NewServerWindow implements ActionListener{
+
 	private static final long serialVersionUID = 285475674231316918L;
 	private static final Toolkit KIT = Toolkit.getDefaultToolkit();	
 	private static double screenHeight = KIT.getScreenSize().getHeight();
 	private static double screenWidth = KIT.getScreenSize().getWidth();
-	
+
+	private static JFrame frame = new JFrame("New Server");
+
 	// ** General Tab ** //
 	private static JPanel generalPanel = new JPanel();
 
@@ -43,10 +52,10 @@ public class NewServerWindow extends JFrame implements ActionListener{
 	private static JPasswordField nickservPassword = new JPasswordField();
 	private static JTextField altNicks = new JTextField();
 	private static JPanel buttonPanel = new JPanel();
-	private static JCheckBox onStartupCheck = new JCheckBox("Connect on start up");
+	private static JCheckBox connectOnStartup = new JCheckBox("Connect on start up");
 	private static JCheckBox sslCheck = new JCheckBox("Use SSL");
 	// ** End General Tab ** //
-	
+
 	// ** Details Tab ** //
 	private static JPanel detailsPanel = new JPanel();
 	private static String[] encodingOptions = new String[]{
@@ -61,54 +70,59 @@ public class NewServerWindow extends JFrame implements ActionListener{
 	private static JComboBox encoding = new JComboBox();
 	private static JComboBox fallbackEncoding = new JComboBox();
 	// ** End Details Tab ** //
-	
+
 	private static JPanel onLoginPanel = new JPanel();
 	private static JPanel ignorePanel = new JPanel();
 	private static JButton cancel = new JButton("Cancel");
 	private static JButton ok = new JButton("OK");
+	private Preferences root = Preferences.userRoot();
+	private Preferences prefs = root.node(System.getProperty("user.dir"));
 
 
-	
-	
+
+
 	public static void main(String args[])
 	{
 		NewServerWindow w = new NewServerWindow();
 	}
 	public NewServerWindow()
 	{
+		System.out.println(Preferences.userRoot());
+		System.out.println(prefs.absolutePath());
+
 		initGeneralPanel();
 		initDetailsPanel();
 		initOnLoginPanel();
 		initIgnorePanel();
-		
+
 		tabbedPane.add("General", generalPanel);
 		tabbedPane.add("Details", detailsPanel);
 		tabbedPane.add("On Login", onLoginPanel);
 		tabbedPane.add("Ignore", ignorePanel);
 
-		setTitle("New Server");
-		setResizable(false);
-		setSize(400,450);
-		setLayout(new BorderLayout());
+		//setTitle("New Server");
+		frame.setResizable(false);
+		frame.setSize(400,450);
+		frame.setLayout(new BorderLayout());
 		cancel.addActionListener(this);
 		ok.addActionListener(this);
 		buttonPanel.add(cancel);
 		buttonPanel.add(ok);
-		add(buttonPanel, BorderLayout.SOUTH);
-		add(tabbedPane, BorderLayout.CENTER);
-		
+		frame.add(buttonPanel, BorderLayout.SOUTH);
+		frame.add(tabbedPane, BorderLayout.CENTER);
+
 		//pack();
-		setVisible(true);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-	
+
 	private void initGeneralPanel() {
 		generalPanel.setLayout(new GridLayout(11,2));
 		generalPanel.setOpaque(true);
 		generalPanel.add(new JLabel("Network Name: ", JLabel.RIGHT));
 		generalPanel.add(networkName);
 		generalPanel.add(new JLabel());
-		generalPanel.add(onStartupCheck);
+		generalPanel.add(connectOnStartup);
 		generalPanel.add(new JLabel("Server: ", JLabel.RIGHT));
 		generalPanel.add(server);
 		generalPanel.add(new JLabel("Port: ", JLabel.RIGHT));
@@ -128,9 +142,9 @@ public class NewServerWindow extends JFrame implements ActionListener{
 		generalPanel.add(new JLabel("Ald. Nicknames: ", JLabel.RIGHT));
 		generalPanel.add(altNicks);
 	}
-	
+
 	private void initDetailsPanel() {
-		
+
 		detailsPanel.setLayout(new GridLayout(4,2));
 		detailsPanel.add(new JLabel("Leaving Comment:", JLabel.RIGHT));
 		detailsPanel.add(leavingComment);
@@ -146,22 +160,58 @@ public class NewServerWindow extends JFrame implements ActionListener{
 		detailsPanel.add(new JLabel("Fallback Encoding:", JLabel.RIGHT));
 		detailsPanel.add(fallbackEncoding);
 	}
-	
+
 	private void initOnLoginPanel() {
-		
+
 	}
-	
+
 	private void initIgnorePanel() {
-		
+
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		ReadServerConfig rsc = new ReadServerConfig(networkName.getText()+".txt");
+		//ReadServerConfig rsc = new ReadServerConfig(networkName.getText()+".txt");
 		if(e.getSource() == ok) {
-			
+			savePrefs();
+			System.exit(0);
+			//frame.dispose();
 		} else if (e.getSource() == cancel) {
-			
+			// TODO Change to dispose after done debugging
+			//frame.dispose();
+			// TODO remove system exit
+			System.exit(0);
 		}
+	}
+
+	private void savePrefs() {
+		System.out.println("saving prefs");
+		prefs.put("networkName", networkName.getText());
+		prefs.putBoolean("connectOnStartup", connectOnStartup.isSelected());
+		prefs.put("server", server.getText());
+		prefs.put("port", server.getText());
+		prefs.putBoolean("sslCheck", sslCheck.isSelected());
+		prefs.put("password", serverPassword.getText());
+		prefs.put("nickname", nickName.getText());
+		prefs.put("loginname", loginName.getText());
+		prefs.put("realname", realName.getText());
+		prefs.put("nickservPassword", nickservPassword.getText());
+		JFileChooser chooser = new JFileChooser();
+		chooser.setCurrentDirectory(new File("."));
+		chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+			public boolean accept(File f) {
+				return f.getName().toLowerCase().endsWith(".xml") || f.isDirectory();
+			}
+			public String getDescription()
+			{
+				return "XML files";
+			}
+		});
+		if(chooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION)
+			try {
+				OutputStream out = new FileOutputStream(chooser.getSelectedFile());
+				prefs.exportSubtree(out);
+				out.close();
+			} catch (Exception e){}
 	}
 }
