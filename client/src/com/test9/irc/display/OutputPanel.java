@@ -138,7 +138,6 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 	 */
 	void newMessage(String message, SimpleAttributeSet sas)
 	{
-		System.out.println("THE MESSAGE I GOT WAS:"+message+"'");
 		try {
 			editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(message+"\r\n", sas),0,0,null);
 		} catch (BadLocationException e) {
@@ -161,8 +160,6 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 	 */
 	void newMessage(User user, String nick, String message, boolean isLocal)//, SimpleAttributeSet sas)
 	{
-		System.out.println("THE PMESSAGE I GOT WAS:"+message+"'");
-
 		if(isLocal){
 			try {
 				if(user != null)

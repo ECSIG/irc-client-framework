@@ -392,7 +392,7 @@ ActionListener{//, MouseMotionListener {
 							cmd = inputField.getText().substring(0, m.indexOf(" "));
 
 						if(cmd.equalsIgnoreCase("/join")) {
-							listener.onJoinChannel(activeChannel, m.substring(m.indexOf(" "), 
+							listener.onJoinChannel(activeServer, m.substring(m.indexOf(" "), 
 									m.length()).trim());
 							inputField.setText("");
 
@@ -409,6 +409,7 @@ ActionListener{//, MouseMotionListener {
 					}
 				}
 				// Resets the text in the input field.
+				System.out.println("should reset inputField");
 				inputField.setText("");
 			}
 
