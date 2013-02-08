@@ -8,9 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -29,7 +31,7 @@ import javax.swing.JTextField;
 import com.test9.irc.engine.ReadServerConfig;
 
 @SuppressWarnings("unused")
-public class NewServerWindow implements ActionListener{
+public class ServerConfigWindow implements ActionListener{
 
 	private static final long serialVersionUID = 285475674231316918L;
 	private static final Toolkit KIT = Toolkit.getDefaultToolkit();	
@@ -54,6 +56,17 @@ public class NewServerWindow implements ActionListener{
 	private static JPanel buttonPanel = new JPanel();
 	private static JCheckBox connectOnStartup = new JCheckBox("Connect on start up");
 	private static JCheckBox sslCheck = new JCheckBox("Use SSL");
+
+	private static String networkNameL = "networkName";
+	private static String connectOnStartupL = "connectOnStartup";
+	private static String serverL = "server";
+	private static String portL = "port";
+	private static String sslCheckL = "sslCheck";
+	private static String passwordL = "password";
+	private static String nickNameL = "nickname";
+	private static String loginNameL = "loginname";
+	private static String realNameL = "realname";
+	private static String nickservPasswordL = "nickservPassword";
 	// ** End General Tab ** //
 
 	// ** Details Tab ** //
@@ -76,19 +89,15 @@ public class NewServerWindow implements ActionListener{
 	private static JButton cancel = new JButton("Cancel");
 	private static JButton ok = new JButton("OK");
 	private Preferences root = Preferences.userRoot();
-	private Preferences prefs = root.node(System.getProperty("user.dir"));
 
-
-
+	private Preferences prefs;
 
 	public static void main(String args[])
 	{
-		NewServerWindow w = new NewServerWindow();
+		ServerConfigWindow w = new ServerConfigWindow();
 	}
-	public NewServerWindow()
+	public ServerConfigWindow()
 	{
-		System.out.println(Preferences.userRoot());
-		System.out.println(prefs.absolutePath());
 
 		initGeneralPanel();
 		initDetailsPanel();
@@ -113,7 +122,9 @@ public class NewServerWindow implements ActionListener{
 
 		//pack();
 		frame.setVisible(true);
+		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		loadPrefs();
 	}
 
 	private void initGeneralPanel() {
@@ -141,6 +152,7 @@ public class NewServerWindow implements ActionListener{
 		generalPanel.add(nickservPassword);
 		generalPanel.add(new JLabel("Ald. Nicknames: ", JLabel.RIGHT));
 		generalPanel.add(altNicks);
+		
 	}
 
 	private void initDetailsPanel() {
@@ -184,18 +196,51 @@ public class NewServerWindow implements ActionListener{
 		}
 	}
 
+	private void loadPrefs() {
+		prefs = root.node(this.getClass()+"_"+networkName.getText());
+
+		JFileChooser chooser = new JFileChooser();
+		chooser.setCurrentDirectory(new File("."));
+		chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+			public boolean accept(File f) {
+				return f.getName().toLowerCase().endsWith(".xml") || f.isDirectory();
+			}
+			public String getDescription()
+			{
+				return "XML files";
+			}
+		});
+		if(chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
+			try {
+				InputStream in = new FileInputStream(chooser.getSelectedFile());
+				prefs.importPreferences(in);
+				in.close();
+			} catch (Exception e){}
+		networkName.setText(prefs.get(networkNameL, ""));
+		connectOnStartup.setText(prefs.get(connectOnStartupL, ""));
+		server.setText(prefs.get(serverL, ""));
+		port.setText(prefs.get(portL, ""));
+		sslCheck.setSelected(prefs.getBoolean(sslCheckL, false));
+		serverPassword.setText(prefs.get(passwordL, ""));
+		nickName.setText(prefs.get(nickNameL, ""));
+		loginName.setText(prefs.get(loginNameL, ""));
+		realName.setText(prefs.get(realNameL, ""));
+		nickservPassword.setText(prefs.get(nickservPasswordL, ""));
+	}
+
 	private void savePrefs() {
 		System.out.println("saving prefs");
-		prefs.put("networkName", networkName.getText());
-		prefs.putBoolean("connectOnStartup", connectOnStartup.isSelected());
-		prefs.put("server", server.getText());
-		prefs.put("port", server.getText());
-		prefs.putBoolean("sslCheck", sslCheck.isSelected());
-		prefs.put("password", serverPassword.getText());
-		prefs.put("nickname", nickName.getText());
-		prefs.put("loginname", loginName.getText());
-		prefs.put("realname", realName.getText());
-		prefs.put("nickservPassword", nickservPassword.getText());
+		prefs = root.node(this.getClass()+"_"+networkName.getText());
+		prefs.put(networkNameL, networkName.getText());
+		prefs.putBoolean(connectOnStartupL, connectOnStartup.isSelected());
+		prefs.put(serverL, server.getText());
+		prefs.put(portL, server.getText());
+		prefs.putBoolean(sslCheckL, sslCheck.isSelected());
+		prefs.put(passwordL, serverPassword.getText());
+		prefs.put(nickNameL, nickName.getText());
+		prefs.put(loginNameL, loginName.getText());
+		prefs.put(realNameL, realName.getText());
+		prefs.put(nickservPasswordL, nickservPassword.getText());
 		JFileChooser chooser = new JFileChooser();
 		chooser.setCurrentDirectory(new File("."));
 		chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
