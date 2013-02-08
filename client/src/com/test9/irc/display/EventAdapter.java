@@ -1,5 +1,8 @@
 package com.test9.irc.display;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.test9.irc.engine.IRCConnection;
 import com.test9.irc.engine.User;
 
@@ -30,6 +33,8 @@ public class EventAdapter implements Listener {
 			owner.newOutputPanel(server, channel);
 			owner.newUserListPanel(server, channel);
 			owner.getConnectionTree().newChannelNode(server, channel);
+		} else {
+			System.out.println("IT CONTAIS IT AHHH");
 		}
 
 	}
@@ -200,14 +205,22 @@ public class EventAdapter implements Listener {
 	 */
 	public void onPartChannel(String server, String channel) {
 		int outputPanelId = util.findChannel(server, channel, 0);
+		int userListPanelId = util.findChannel(server, channel, 1);
 		//		owner.getOutputPanels().get(outputPanelId).stopDelayThread();
-		owner.getOutputPanels().remove(outputPanelId);
-		owner.getUserListPanels().remove(util.findChannel(server, channel, 1));
+		OutputPanel opr = owner.getOutputPanels().get(outputPanelId);
+		UserListPanel ulpr = owner.getUserListPanels().get(userListPanelId);
+		ChatWindow.getServersAndChannels().remove(new String(server +","+channel));
+		owner.getOutputFieldLayeredPane().remove(opr);
+		owner.getUserListsLayeredPane().remove(ulpr);
+		owner.getOutputPanels().remove(opr);
+		owner.getUserListPanels().remove(ulpr);
 		owner.getConnectionTree().removeChannelNode(server, channel);
+		owner.getOutputFieldLayeredPane().invalidate();
+		owner.getUserListsLayeredPane().invalidate();
 	}
 
 	@Override
-	public void onTerminalMessage(String message) {
+	public void onTerminalMessage(String host, String channel, String nick, String message) {
 		// TODO Auto-generated method stub
 
 	}
