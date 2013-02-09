@@ -5,6 +5,9 @@ import java.util.ArrayList;
 
 import com.test9.irc.display.ChatWindow;
 import com.test9.irc.display.EventAdapter;
+import com.test9.irc.engine.SSL.SSLDefaultTrustManager;
+import com.test9.irc.engine.SSL.SSLIRCConnection;
+import com.test9.irc.engine.SSL.SSLTrustManager;
 
 public class ConnectionEngine {
 	
@@ -29,13 +32,13 @@ public class ConnectionEngine {
 //			
 //		}
 		
-		IRCConnection temp = new IRCConnection("irc.ecsig.com", 6667, "jar-bot", "jar-bot", 
+		SSLIRCConnection temp = new SSLIRCConnection("irc.ecsig.com", 6697, "jar-bot", "jar-bot", 
 				"jar-bot", "jar-bot", "UTF-8");
 		connections.add(temp);
-
+		temp.addIRCEventListener(new IRCEventAdapter(this, temp));
+		temp.addTrustManager(new SSLDefaultTrustManager());
 		cw.getListener().onJoinServer(temp.getHost());
 
-		temp.addIRCEventListener(new IRCEventAdapter(this, temp));
 		temp.connect();
 		
 //		try {
