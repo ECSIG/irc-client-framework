@@ -138,8 +138,6 @@ public class IRCConnection extends Thread {
 	 *             trailing carriage return line feed (<code>\r\n</code>).
 	 */
 	public boolean send(String line) {
-		System.out.println("send called");
-		System.out.println("sending: " + line);
 		try {
 			out.write(line +"\r\n");
 			out.flush();

@@ -107,7 +107,7 @@ public class OutputFactory {
 		}
 		
 		formattedMessage += RNTAIL;
-		System.out.println("'"+formattedMessage+"'");
+		//System.out.println("'"+formattedMessage+"'");
 		//	case "KILL": be included
 		//	The RFC has no syntactical information about this currently.
 

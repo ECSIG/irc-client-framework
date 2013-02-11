@@ -76,9 +76,9 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 	private SimpleAttributeSet hyperlink = new SimpleAttributeSet();
 
 	private SimpleAttributeSet highlight = new SimpleAttributeSet();
-	
+
 	private HTMLEditorKit editorKit;
-	
+
 
 	/**
 	 * Creates a new OutputPanel for a server or channel that
@@ -103,8 +103,8 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 		textPane.addHyperlinkListener(this);
 		textPane.setEditorKit(new HTMLEditorKit());
 		textPane.setEditable(false);
-//		textPane.addMouseWheelListener(this);
-		
+		//		textPane.addMouseWheelListener(this);
+
 		editorKit = (HTMLEditorKit) textPane.getEditorKit();
 		doc = (HTMLDocument) editorKit.createDefaultDocument();
 		textPane.setDocument(doc);
@@ -113,11 +113,11 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 		scrollPane.setBackground(Color.BLACK);
 		scrollPane.setBorder(null);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-//		delayThread.start();
+		//		delayThread.start();
 		add(scrollPane, BorderLayout.CENTER);
 
 	}
-	
+
 	private void initAttributes() {
 		highlight.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 		highlight.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GREEN);
@@ -148,7 +148,9 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 			e.printStackTrace();
 		}
 		//		textArea.append(message+"\r\n");
+
 		textPane.setCaretPosition(textPane.getDocument().getLength());
+
 	}
 
 	Pattern urlPattern = Pattern.compile("(.*)(http.?://[\\p{Alnum}\\./?\\-_&=]*)([\\s\\p{Punct}]*.*)",Pattern.CASE_INSENSITIVE);
@@ -164,9 +166,12 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 			try {
 				if(user != null)
 					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag("["+nick+"] ", user.getUserSimpleAttributeSet())+wrapInSpanTag(message, privMsg),0,0,null);
-				else editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(message, privMsg),0,0,null);
+				else 
+					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(message, privMsg),0,0,null);
 
 				textPane.setCaretPosition(textPane.getDocument().getLength());
+
+
 			} catch (BadLocationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -198,7 +203,9 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 
 				if(invoker.hasBeenExecuted()){
 					parameters = new SwingMethodInvoker.Parameter[]{new SwingMethodInvoker.Parameter<Integer>(textPane.getDocument().getLength(), int.class)};
+
 					invoker.reconfigure(textPane, "setCaretPosition", parameters);
+
 					SwingUtilities.invokeAndWait(invoker);
 				}
 			} catch (InterruptedException e) {
@@ -214,7 +221,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 	private String wrapInSpanTag(String message, SimpleAttributeSet attrs) {
 		message = message.replaceAll("<", "&lt");
 		message = message.replaceAll(">", "&gt");
-		
+
 		String messageWithLiveLinks = wrapLinks(message);
 		String styleString = getStyleStringFromSimpleAttributeSet(attrs);
 		return "<span style='"+styleString+"'>"+messageWithLiveLinks+"</span>";
@@ -398,45 +405,45 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 			}
 	}
 
-//	@Override
-//	public void mouseWheelMoved(MouseWheelEvent arg0) {
-//		getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-//		BoundedRangeModel model = getScrollPane().getVerticalScrollBar().getModel();
-//		int scrollAmount = (arg0.getWheelRotation()*30);
-//		model.setValue(model.getValue()+scrollAmount);
-//		delayThread.count=0;
-//	}
-//	
-//	public void resetDelayThreadCount() {
-//		delayThread.count = 0;
-//	}
-//
-//	public void stopDelayThread(){
-//		delayThread.running=false;
-//	}
-//	
-//	private DelayThread delayThread = new DelayThread();
-//	
-//	private class DelayThread extends Thread{
-//		public boolean running = false;
-//		private int delayTime = 3;
-//		private int count = 1;
-//		public void run(){
-//			running = true;
-//			while (running){
-//				if(count<delayTime){
-//					count++;
-//				}else{
-//					getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-//					invalidate();
-//				}
-//				try {
-//					Thread.sleep(250);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//	}
+	//	@Override
+	//	public void mouseWheelMoved(MouseWheelEvent arg0) {
+	//		getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+	//		BoundedRangeModel model = getScrollPane().getVerticalScrollBar().getModel();
+	//		int scrollAmount = (arg0.getWheelRotation()*30);
+	//		model.setValue(model.getValue()+scrollAmount);
+	//		delayThread.count=0;
+	//	}
+	//	
+	//	public void resetDelayThreadCount() {
+	//		delayThread.count = 0;
+	//	}
+	//
+	//	public void stopDelayThread(){
+	//		delayThread.running=false;
+	//	}
+	//	
+	//	private DelayThread delayThread = new DelayThread();
+	//	
+	//	private class DelayThread extends Thread{
+	//		public boolean running = false;
+	//		private int delayTime = 3;
+	//		private int count = 1;
+	//		public void run(){
+	//			running = true;
+	//			while (running){
+	//				if(count<delayTime){
+	//					count++;
+	//				}else{
+	//					getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+	//					invalidate();
+	//				}
+	//				try {
+	//					Thread.sleep(250);
+	//				} catch (InterruptedException e) {
+	//					// TODO Auto-generated catch block
+	//					e.printStackTrace();
+	//				}
+	//			}
+	//		}
+	//	}
 }

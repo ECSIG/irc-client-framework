@@ -409,7 +409,6 @@ ActionListener{//, MouseMotionListener {
 					}
 				}
 				// Resets the text in the input field.
-				System.out.println("should reset inputField");
 				inputField.setText("");
 			}
 
