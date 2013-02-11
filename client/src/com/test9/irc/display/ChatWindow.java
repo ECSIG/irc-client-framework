@@ -64,7 +64,7 @@ ActionListener{//, MouseMotionListener {
 	/**
 	 * The default width of a scroll bar.
 	 */
-	private static final Dimension scrollBarDim = new Dimension(5,0);
+	private static final Dimension SCROLLBARDIM = new Dimension(5,0);
 
 	/**
 	 * Default window size of the JFrame calculated from the KIT.
@@ -240,7 +240,7 @@ ActionListener{//, MouseMotionListener {
 		connectionTree.addKeyListener(this);
 		treeScrollPane = new JScrollPane(connectionTree);
 		treeScrollPane.addKeyListener(this);
-		treeScrollPane.getVerticalScrollBar().setPreferredSize (scrollBarDim);
+		treeScrollPane.getVerticalScrollBar().setPreferredSize (SCROLLBARDIM);
 
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 		treePanel.setMinimumSize(new Dimension(0,0));
@@ -763,7 +763,7 @@ ActionListener{//, MouseMotionListener {
 	 * @return the scrollbar
 	 */
 	public static Dimension getScrollBarDim() {
-		return scrollBarDim;
+		return SCROLLBARDIM;
 	}
 
 	public static HilightNotificationFrame getHighlightNotificationFrame() {

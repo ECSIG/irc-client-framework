@@ -32,14 +32,21 @@ public class ConnectionEngine {
 //			
 //		}
 		
-		SSLIRCConnection temp = new SSLIRCConnection("irc.ecsig.com", 6697, "jar-bot", "jar-bot", 
-				"jar-bot", "jar-bot", "UTF-8");
-		connections.add(temp);
-		temp.addIRCEventListener(new IRCEventAdapter(this, temp));
-		temp.addTrustManager(new SSLDefaultTrustManager());
-		cw.getListener().onJoinServer(temp.getHost());
+//		SSLIRCConnection temp = new SSLIRCConnection("irc.ecsig.com", 6697, "jar-bot", "jar-bot", 
+//				"jar-bot", "jar-bot", "UTF-8");
+//		connections.add(temp);
+//		temp.addIRCEventListener(new IRCEventAdapter(this, temp));
+//		temp.addTrustManager(new SSLDefaultTrustManager());
+//		cw.getListener().onJoinServer(temp.getHost());
+//
+//		temp.connect();
+		
+//		try{
+//			IRCConnection.sleep(4000);
+//		} catch(Exception e) {
+//			
+//		}
 
-		temp.connect();
 		
 //		try {
 //			IRCConnection.sleep(2000);

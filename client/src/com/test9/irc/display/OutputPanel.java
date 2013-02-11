@@ -6,6 +6,9 @@ import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.TextArea;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 //import java.awt.event.MouseWheelEvent;
 //import java.awt.event.MouseWheelListener;
 import java.io.IOException;
@@ -15,8 +18,10 @@ import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BoundedRangeModel;
 //import javax.swing.BoundedRangeModel;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
@@ -24,6 +29,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.html.HTML.Tag;
@@ -78,6 +84,10 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 	private SimpleAttributeSet highlight = new SimpleAttributeSet();
 
 	private HTMLEditorKit editorKit;
+	private BoundedRangeModel model;
+	private DefaultCaret caret;
+	private JScrollBar scrollBar;
+
 
 
 	/**
@@ -109,6 +119,22 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 		doc = (HTMLDocument) editorKit.createDefaultDocument();
 		textPane.setDocument(doc);
 		scrollPane = new JScrollPane(textPane);
+		scrollBar = scrollPane.getVerticalScrollBar();
+
+		model = scrollBar.getModel();
+		caret = (DefaultCaret) textPane.getCaret();
+
+		scrollBar.addAdjustmentListener(new AdjustmentListener() {
+
+			public void adjustmentValueChanged(AdjustmentEvent e) {
+				if (model.getValue() == model.getMaximum() - model.getExtent()) {
+					caret.setDot(textPane.getText().length());
+					caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+				} else {
+					caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+				}
+			}
+		});
 		scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
 		scrollPane.setBackground(Color.BLACK);
 		scrollPane.setBorder(null);
@@ -149,7 +175,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 		}
 		//		textArea.append(message+"\r\n");
 
-		textPane.setCaretPosition(textPane.getDocument().getLength());
+		//textPane.setCaretPosition(textPane.getDocument().getLength());
 
 	}
 
@@ -169,7 +195,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 				else 
 					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(message, privMsg),0,0,null);
 
-				textPane.setCaretPosition(textPane.getDocument().getLength());
+				//textPane.setCaretPosition(textPane.getDocument().getLength());
 
 
 			} catch (BadLocationException e) {
@@ -204,7 +230,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 				if(invoker.hasBeenExecuted()){
 					parameters = new SwingMethodInvoker.Parameter[]{new SwingMethodInvoker.Parameter<Integer>(textPane.getDocument().getLength(), int.class)};
 
-					invoker.reconfigure(textPane, "setCaretPosition", parameters);
+					//invoker.reconfigure(textPane, "setCaretPosition", parameters);
 
 					SwingUtilities.invokeAndWait(invoker);
 				}
@@ -276,7 +302,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 			SwingUtilities.invokeAndWait(invoker);
 			if(invoker.hasBeenExecuted()){
 				parameters = new SwingMethodInvoker.Parameter[]{new SwingMethodInvoker.Parameter<Integer>(textPane.getDocument().getLength(), int.class)};
-				invoker.reconfigure(textPane, "setCaretPosition", parameters);
+				//invoker.reconfigure(textPane, "setCaretPosition", parameters);
 				SwingUtilities.invokeAndWait(invoker);
 			}
 		} catch (RuntimeException e) {
