@@ -117,9 +117,26 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	{
 		if(listModel.removeElement(oldNick)) {
 			newUser(newNick);
-			
+
 		}
 		invalidate();
+	}
+
+	String getTabComplete(String prefix, int tabs) {
+		int ltabs = 0;
+		
+		for(int i = 0; i < listModel.getSize(); i++){
+			String n = (String) listModel.getElementAt(i);
+			if (n.toLowerCase().startsWith(prefix.toLowerCase()))
+			{
+				ltabs++;
+				if(ltabs == tabs) {
+					return n;
+				}
+			}
+		}
+		System.out.println("returning null");
+		return null;
 	}
 
 	/**

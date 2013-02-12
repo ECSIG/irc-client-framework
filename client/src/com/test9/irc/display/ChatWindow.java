@@ -194,6 +194,10 @@ ActionListener{//, MouseMotionListener {
 
 	private static ArrayList<String> serversAndChannels = new ArrayList<String>();
 
+	private static int tabs = 0;
+	private static String nickPrefix = "";
+	private static boolean bufferedNickPrefix = false;
+
 
 
 	/**
@@ -367,6 +371,41 @@ ActionListener{//, MouseMotionListener {
 		newUserListPanel(server, server);
 		serversAndChannels.add(server+","+server);
 	}
+	void tabComplete() {
+		String inputText = inputField.getText().trim();
+		
+		if(inputText.contains(" ") && !bufferedNickPrefix) {
+			System.out.println(inputText.substring(inputText.lastIndexOf(" ")+1, inputText.length()));
+			nickPrefix = inputText.substring(inputText.lastIndexOf(" ")+1, inputText.length());
+			inputText = inputText.substring(0, inputText.lastIndexOf(" ")+1);
+		} else if(inputText != null && inputText.length() >= 1 && !bufferedNickPrefix) {
+			nickPrefix = inputText;
+			inputText = "";
+		} else if(inputText.contains(" ") && bufferedNickPrefix) {
+			inputText = inputText.substring(0, inputText.lastIndexOf(" ")+1);
+		} else if(inputText != null && inputText.length() >= 1) {
+			inputText = "";
+		}
+		
+		bufferedNickPrefix = true;
+		
+		String returnNick = tabCompleteNick(nickPrefix);
+		inputText+=returnNick;
+		inputField.setText(inputText);
+		
+	}
+	
+	String tabCompleteNick(String prefix) {
+		System.out.println("prefix:'"+prefix+"'");
+		String string = userListPanels.get(util.findChannel(activeServer, activeChannel, 1)).getTabComplete(nickPrefix, tabs);
+
+		if(string == null) {
+			tabs = 1;
+			return tabCompleteNick(prefix);
+		}
+		
+		return string;
+	}
 
 	/**
 	 * Used to send a message to a particular channel or server when the user hits 
@@ -376,7 +415,15 @@ ActionListener{//, MouseMotionListener {
 	public void keyReleased(KeyEvent e) {
 
 		if(e.getComponent() == inputField) {
-
+			if(e.getKeyCode() != KeyEvent.VK_TAB) {
+				tabs = 0;
+				bufferedNickPrefix = false;
+				nickPrefix = "";
+			}
+			if(e.getKeyCode() == KeyEvent.VK_TAB) {
+				tabs++;
+				tabComplete();
+			}
 			if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 
 				String m = inputField.getText();
@@ -782,7 +829,7 @@ ActionListener{//, MouseMotionListener {
 	}
 
 	public static void notifyKeyListener(KeyEvent e) {
-		
+
 	}
 
 	//	@Override

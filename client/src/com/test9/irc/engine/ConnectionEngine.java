@@ -19,12 +19,12 @@ public class ConnectionEngine {
 		cw = new ChatWindow();
 		cw.addChatWindowListener(new EventAdapter(cw, cw.getUtil()));
 		
-//		IRCConnection temp0 = new IRCConnection("jared.test9.us", 6667, "jircc", "jircc", 
-//				"jircc", "jircc", "UTF-8");
-//		connections.add(temp0);
-//		cw.getListener().onJoinServer(temp0.getHost());
-//		temp0.addIRCEventListener(new IRCEventAdapter(this, temp0));
-//		temp0.connect();
+		IRCConnection temp0 = new IRCConnection("jared.test9.us", 6667, "jircc", "jircc", 
+				"jircc", "jircc", "UTF-8");
+		connections.add(temp0);
+		cw.getListener().onJoinServer(temp0.getHost());
+		temp0.addIRCEventListener(new IRCEventAdapter(this, temp0));
+		temp0.connect();
 //		
 //		try {
 //			IRCConnection.sleep(4000);
@@ -46,23 +46,17 @@ public class ConnectionEngine {
 //		} catch(Exception e) {
 //			
 //		}
-
 		
-//		try {
-//			IRCConnection.sleep(2000);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
-//		connections.get(0).send("join #jircc");
+
 //		
 //		IRCConnection temp2 = new IRCConnection("chat.freenode.net", 6667, null, "jared", "jared", "jared", "UTF-8");
 //		connections.add(temp2);
 //		cw.getListener().onJoinServer(temp2.getHost());
 //		temp2.addIRCEventListener(new IRCEventAdapter(this, temp2));
 //		temp2.connect();
-//		
+		
 //		try {
-//			IRCConnection.sleep(2000);
+//			IRCConnection.sleep(4000);
 //		} catch(Exception e) {
 //			
 //		}

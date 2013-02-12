@@ -26,6 +26,7 @@ public class EventAdapter implements Listener {
 	 * @param channel Name of the channel that is to be joined.
 	 */
 	public void onJoinChannel(String server, String channel) {
+		System.out.println("Joined a channel:"+server+","+channel);
 		if(!ChatWindow.getServersAndChannels().contains(server+","+channel)) {
 			ChatWindow.getServersAndChannels().add(server+","+channel);
 			owner.getTitles().add(new Title(server, channel));

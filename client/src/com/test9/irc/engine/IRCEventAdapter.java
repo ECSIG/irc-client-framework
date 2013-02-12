@@ -56,7 +56,7 @@ public class IRCEventAdapter implements IRCEventListener {
 	@Override
 	public void onJoin(String host, Message m) {
 
-		if(m.getNickname().equals(connection.getNick())) {
+		if(m.getUser().equals(connection.getNick())) {
 			if(!(m.getContent().equals("")))
 			{
 				cw.onJoinChannel(host, m.getContent());
