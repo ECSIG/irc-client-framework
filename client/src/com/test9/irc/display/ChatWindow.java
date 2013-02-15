@@ -182,9 +182,8 @@ ActionListener{//, MouseMotionListener {
 
 	private static ArrayList<String> messageBuffer = new ArrayList<String>();
 	private static int bufferSelection = 0;
-	private JTextPane terminalTextPane = new JTextPane();
-	private JScrollPane terminalScrollPane = new JScrollPane(terminalTextPane);
-	private JPanel terminalPanel = new JPanel();
+
+	private TerminalPanel terminalPanel = new TerminalPanel();
 	private JSplitPane outputSplitPane;
 
 	private static HilightNotificationFrame hnf = new HilightNotificationFrame();
@@ -264,19 +263,13 @@ ActionListener{//, MouseMotionListener {
 		centerPanel.add(inputField, BorderLayout.SOUTH);
 		centerPanel.setBorder(null);
 		centerPanel.addKeyListener(this);
-		terminalPanel.setMinimumSize(new Dimension(0,0));
-		terminalPanel.setLayout(new BorderLayout());
-		terminalTextPane.setBackground(Color.BLACK);
-		terminalTextPane.addKeyListener(this);
-		terminalPanel.add(terminalScrollPane, BorderLayout.CENTER);
-		terminalPanel.setBackground(Color.BLACK);
-		terminalPanel.addKeyListener(this);
+
 
 		outputSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, centerPanel, terminalPanel);
 		outputSplitPane.setDividerSize(SPLITPANEWIDTH);
 		outputSplitPane.setContinuousLayout(true);
 		outputSplitPane.setResizeWeight(1);
-		outputSplitPane.setDividerSize(5);
+		outputSplitPane.setDividerSize(3);
 		outputSplitPane.setDividerLocation(frame.getPreferredSize().height);
 		outputSplitPane.addKeyListener(this);
 
@@ -334,8 +327,6 @@ ActionListener{//, MouseMotionListener {
 		//frame.setBackground(Color.BLACK);
 		//centerPanel.setBackground(Color.BLACK);
 		terminalPanel.setBackground(Color.BLACK);
-		terminalTextPane.setBackground(Color.BLACK);
-		terminalTextPane.setForeground(Color.WHITE);
 		treePanel.setBackground(Color.BLACK);
 		inputField.setFont(new Font("Lucida Grande", Font.BOLD, 12));
 		inputField.setBackground(Color.BLACK);
@@ -826,6 +817,10 @@ ActionListener{//, MouseMotionListener {
 	 */
 	public static ArrayList<String> getServersAndChannels() {
 		return serversAndChannels;
+	}
+	
+	public TerminalPanel getTerminalPanel() {
+		return terminalPanel;
 	}
 
 	public static void notifyKeyListener(KeyEvent e) {

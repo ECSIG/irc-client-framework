@@ -34,8 +34,6 @@ public class EventAdapter implements Listener {
 			owner.newOutputPanel(server, channel);
 			owner.newUserListPanel(server, channel);
 			owner.getConnectionTree().newChannelNode(server, channel);
-		} else {
-			System.out.println("IT CONTAIS IT AHHH");
 		}
 
 	}
@@ -103,15 +101,16 @@ public class EventAdapter implements Listener {
 	@Override
 	public void onNewHighlight(String host, String params, String nickname,
 			String content) {
-		owner.newMessageHighlight(host, params, nickname, content);
+		//owner.newMessageHighlight(host, params, nickname, content);
+		owner.getTerminalPanel().newMessage(null, nickname, params, content, TextFormat.privmsg);
 
-		
+
 	}
 
 	@Override
 	public void onNewIRCConnection(IRCConnection connection) {
 		owner.getIrcConnections().add(connection);
-		
+
 	}
 
 	/**
@@ -131,10 +130,12 @@ public class EventAdapter implements Listener {
 				owner.getOutputPanels().get(
 						util.findChannel(server, channel, 0)).newMessage(
 								message, TextFormat.topic);
-			} else if(command.equals("REPLY")) {
+				owner.getTerminalPanel().newMessage(null, null, channel, message, TextFormat.topic);
+			} else if(command.equals("REPLY") || command.equals("ERROR")) {
 				owner.getOutputPanels().get(
 						util.findChannel(server, channel, 0)).newMessage(
 								message, TextFormat.reply);
+				owner.getTerminalPanel().newMessage(null, null, server, message, TextFormat.reply);
 			}
 		}
 		else
@@ -145,6 +146,7 @@ public class EventAdapter implements Listener {
 	@Override
 	public void onNewPrivMessage(User user, String server, String channel,
 			String nick, String message, boolean isLocal) {
+
 		if(util.findChannel(server, channel,0) != -1) {
 			owner.getOutputPanels().get(
 					util.findChannel(server, channel, 0)).newMessage(user, nick, message, isLocal);
@@ -154,6 +156,10 @@ public class EventAdapter implements Listener {
 			onUserJoin(server, channel, channel, false);
 			onNewPrivMessage(user, server, channel, nick, message, isLocal);
 		}
+
+		if(!(owner.getActiveServer().equals(server)) || (!(owner.getActiveChannel().equals(channel)))) {
+			owner.getTerminalPanel().newMessage(user, nick, channel, message, TextFormat.privmsg);
+		} 
 
 	}
 
@@ -168,6 +174,7 @@ public class EventAdapter implements Listener {
 		owner.getFrame().setTitle(owner.getTitles().get(
 				util.findTitle(owner.getActiveServer(), 
 						owner.getActiveChannel())).getFullTitle());
+		owner.getTerminalPanel().newMessage(null, null, channel, topic, TextFormat.topic);
 
 	}
 
@@ -180,7 +187,7 @@ public class EventAdapter implements Listener {
 	@Override
 	public void onNotice(String server, String params, String content) {
 		owner.getOutputPanels().get(util.findChannel(server, server, 0)).newMessage(content, TextFormat.notice);
-
+		owner.getTerminalPanel().newMessage(null, null, server, content, TextFormat.notice);
 	}
 
 	/**
@@ -194,6 +201,8 @@ public class EventAdapter implements Listener {
 			if(u.getServer().equals(host))
 				u.nickChange(oldNick, newNick);
 		}
+		owner.getTerminalPanel().newMessage(null, null, host, 
+				oldNick + " is now known as "+newNick, TextFormat.nick);
 
 	}
 
@@ -236,6 +245,8 @@ public class EventAdapter implements Listener {
 		} else {
 			System.err.println("[ChatWindowError] Cound not find channel to add new user.");
 		}
+		if(!isUserRply)
+			owner.getTerminalPanel().newMessage(null, null, channel, nick+" joined "+channel, TextFormat.join);
 	}
 
 	public void onUserPart(String server, String channel, String nick) {
@@ -247,6 +258,7 @@ public class EventAdapter implements Listener {
 		} else {
 			System.err.println("Cound not find channel to add new user.");
 		}
+		owner.getTerminalPanel().newMessage(null, null, channel, nick + " left "+channel, TextFormat.part);
 
 	}
 
@@ -263,5 +275,8 @@ public class EventAdapter implements Listener {
 				} // endif
 			} // endif
 		} // endfor
+
+		owner.getTerminalPanel().newMessage(null, null, server, 
+				nick+" quit. Reason("+reason+")", TextFormat.quit);
 	}
 }

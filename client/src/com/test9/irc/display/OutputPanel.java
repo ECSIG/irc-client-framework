@@ -32,6 +32,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
@@ -100,6 +101,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 	 */
 	OutputPanel(String server, String channel, int width, int height)
 	{
+
 		initAttributes();
 		this.server = server;
 		this.channel = channel;
@@ -113,9 +115,13 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 		textPane.addHyperlinkListener(this);
 		textPane.setEditorKit(new HTMLEditorKit());
 		textPane.setEditable(false);
+		
 		//		textPane.addMouseWheelListener(this);
 
 		editorKit = (HTMLEditorKit) textPane.getEditorKit();
+		
+		editorKit.getStyleSheet().addRule("body {line-height: 4.0;}");
+		
 		doc = (HTMLDocument) editorKit.createDefaultDocument();
 		textPane.setDocument(doc);
 		scrollPane = new JScrollPane(textPane);
@@ -274,6 +280,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 		}
 		styleString+="font-family:\""+font.getFamily()+"\";";
 		styleString+="font-size:\""+font.getSize()+"pt\";";
+		styleString+="line-height:4;";
 		return styleString;
 	}
 

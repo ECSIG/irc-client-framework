@@ -22,7 +22,7 @@ public class User {
 	private SimpleAttributeSet userSimpleAttributeSet;
 
 	private static Color[] colors = {
-		new Color(255, 105, 105), new Color(105, 198, 252), new Color(252, 216, 105),
+		new Color(0, 105, 105), new Color(105, 198, 252), new Color(252, 216, 105),
 		new Color(122, 105, 252), new Color(179, 252, 105), new Color(233, 105, 252), 
 		new Color(105, 252, 142), new Color(252, 105, 161), new Color(105, 252, 252), 
 		new Color(252, 159, 105), new Color(105, 142, 252), new Color(235, 252, 105), 

@@ -44,8 +44,10 @@ public class IRCEventAdapter implements IRCEventListener {
 			System.out.println("ERR_NICKNAMEINUSE");
 			connection.setNick(connection.getNick()+"_");
 			connection.send("NICK "+ connection.getNick());
+		} else {
+			cw.onNewMessage(connection.getHost(), connection.getHost(),
+					"Error("+m.getCommand()+")"+m.getContent(), "ERROR");
 		}
-
 	}
 
 	@Override
@@ -143,7 +145,7 @@ public class IRCEventAdapter implements IRCEventListener {
 				// Add the user
 				connection.getUsers().add(new User(m.getNickname(), false));
 			}
-			
+
 			// There is a new private message from some nickanem for host at channel
 			// It is not a local ChatWindow event
 			cw.onNewPrivMessage(
@@ -172,7 +174,7 @@ public class IRCEventAdapter implements IRCEventListener {
 		} else if(numCode == IRCUtil.RPL_NAMREPLY) {
 			//Split up the nicks list
 			String[] nicks = m.getContent().split(" ");
-			
+
 			// Add nicks 1 at a time
 			for(String n : nicks)
 			{
@@ -205,7 +207,11 @@ public class IRCEventAdapter implements IRCEventListener {
 		} else if(numCode == IRCUtil.RPL_LIST) {
 			cw.onNewMessage(connection.getHost(), 
 					connection.getHost(), Arrays.toString(m.getParams()), "REPLY");
-
+		} else if(numCode == IRCUtil.RPL_MOTD) {
+			cw.onNewMessage(connection.getHost(), connection.getHost(), m.getContent(), "REPLY");
+		}else {
+			cw.onNewMessage(connection.getHost(), connection.getHost(),
+					"Reply("+m.getCommand()+")"+m.getContent(), "REPLY");
 		}
 	}
 
