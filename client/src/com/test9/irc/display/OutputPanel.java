@@ -6,7 +6,6 @@ import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.TextArea;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 //import java.awt.event.MouseWheelEvent;
@@ -19,7 +18,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.BoundedRangeModel;
-//import javax.swing.BoundedRangeModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -32,7 +30,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
@@ -71,18 +68,12 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 	/**
 	 * Font for the text area.
 	 */
-	private static Font font = new Font("Lucida Grande", Font.BOLD, 12);
+	private static Font font = TextFormat.font;
 
 	/**
 	 * Something fancy, I forget what.
 	 */
 	private HTMLDocument doc;
-
-	private SimpleAttributeSet privMsg = new SimpleAttributeSet();
-
-	private SimpleAttributeSet hyperlink = new SimpleAttributeSet();
-
-	private SimpleAttributeSet highlight = new SimpleAttributeSet();
 
 	private HTMLEditorKit editorKit;
 	private BoundedRangeModel model;
@@ -102,7 +93,6 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 	OutputPanel(String server, String channel, int width, int height)
 	{
 
-		initAttributes();
 		this.server = server;
 		this.channel = channel;
 		setLayout(new BorderLayout());
@@ -150,18 +140,6 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 
 	}
 
-	private void initAttributes() {
-		highlight.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		highlight.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GREEN);
-		privMsg.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.WHITE);
-		privMsg.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		privMsg.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
-		hyperlink.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.BLUE);
-		hyperlink.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		hyperlink.addAttribute(StyleConstants.CharacterConstants.Underline, Boolean.TRUE);
-	}
-
-
 	/**
 	 * This is used to append a new string to a servers output 
 	 * panel.
@@ -197,9 +175,12 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 		if(isLocal){
 			try {
 				if(user != null)
-					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag("["+nick+"] ", user.getUserSimpleAttributeSet())+wrapInSpanTag(message, privMsg),0,0,null);
+					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag("["+nick+"] ", 
+							user.getUserSimpleAttributeSet())+wrapInSpanTag(
+									message, TextFormat.privMsg),0,0,null);
 				else 
-					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(message, privMsg),0,0,null);
+					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(
+							message, TextFormat.privMsg),0,0,null);
 
 				//textPane.setCaretPosition(textPane.getDocument().getLength());
 
@@ -220,7 +201,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 				if(user != null) {
 					line += wrapInSpanTag("["+nick+"] ",user.getUserSimpleAttributeSet()) + " ";
 				}
-				line+=wrapInSpanTag(message+"\r\n",privMsg);
+				line+=wrapInSpanTag(message+"\r\n",TextFormat.privMsg);
 
 				parameters = new SwingMethodInvoker.Parameter[6];
 				parameters[0] = new SwingMethodInvoker.Parameter<HTMLDocument>(doc, HTMLEditorKit.class);
@@ -304,7 +285,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 			parameters = new SwingMethodInvoker.Parameter[3];
 			parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
 			parameters[1] = new SwingMethodInvoker.Parameter<String>("["+nick+"] "+message+"\r\n",String.class);
-			parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(highlight,AttributeSet.class);
+			parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(TextFormat.highlight,AttributeSet.class);
 			invoker = new SwingMethodInvoker(doc, "insertString", parameters);
 			SwingUtilities.invokeAndWait(invoker);
 			if(invoker.hasBeenExecuted()){

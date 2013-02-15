@@ -7,7 +7,6 @@ import com.test9.irc.parser.OutputFactory;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +30,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 
 public class ChatWindow extends Observable implements ComponentListener,
 KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
@@ -165,11 +163,6 @@ ActionListener{//, MouseMotionListener {
 	 * user wishes to send a message to a giver server or channel.
 	 */
 	private static ArrayList<IRCConnection> ircConnections = new ArrayList<IRCConnection>();
-
-	/**
-	 * Used to properly format a message that is sent to an IRCConnection.
-	 */
-	private OutputFactory oF = new OutputFactory();
 
 	/**
 	 * Holds the possible titles that can be used on the frame.
@@ -328,7 +321,7 @@ ActionListener{//, MouseMotionListener {
 		//centerPanel.setBackground(Color.BLACK);
 		terminalPanel.setBackground(Color.BLACK);
 		treePanel.setBackground(Color.BLACK);
-		inputField.setFont(new Font("Lucida Grande", Font.BOLD, 12));
+		inputField.setFont(TextFormat.font);
 		inputField.setBackground(Color.BLACK);
 		inputField.setForeground(Color.WHITE);
 		inputField.setCaretColor(Color.WHITE);
@@ -421,7 +414,7 @@ ActionListener{//, MouseMotionListener {
 				messageBuffer.add(m);
 				bufferSelection = messageBuffer.size();
 
-				if(ircConnections.get(util.findIRCConnection()).send(oF.formatMessage(
+				if(ircConnections.get(util.findIRCConnection()).send(OutputFactory.formatMessage(
 						m, activeChannel))&&!m.equals(""))
 				{
 					if(m.startsWith("/")) {

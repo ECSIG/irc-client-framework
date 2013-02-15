@@ -1,6 +1,7 @@
 package com.test9.irc.display;
 
 import java.awt.Color;
+import java.awt.Font;
 
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -27,6 +28,13 @@ public class TextFormat extends SimpleAttributeSet {
 	public final static SimpleAttributeSet topic = new SimpleAttributeSet();
 	public final static SimpleAttributeSet invite = new SimpleAttributeSet();
 	public final static SimpleAttributeSet wallops = new SimpleAttributeSet();
+	public final static SimpleAttributeSet privMsg = new SimpleAttributeSet();
+	public final static SimpleAttributeSet hyperlink = new SimpleAttributeSet();
+	public final static SimpleAttributeSet highlight = new SimpleAttributeSet();
+	public final static SimpleAttributeSet originAttrSet = new SimpleAttributeSet();
+	public final static SimpleAttributeSet replyAttrSet = new SimpleAttributeSet();
+	public final static SimpleAttributeSet timeAttrSet = new SimpleAttributeSet();
+	public final static Font font = new Font("Lucida Grande", Font.BOLD, 12);
 	
 	
 	static void loadColors() {
@@ -98,5 +106,29 @@ public class TextFormat extends SimpleAttributeSet {
 		wallops.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
 		wallops.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 		wallops.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+	
+		highlight.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+		highlight.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GREEN);
+		
+		privMsg.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.WHITE);
+		privMsg.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+		privMsg.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		
+		hyperlink.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.BLUE);
+		hyperlink.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+		hyperlink.addAttribute(StyleConstants.CharacterConstants.Underline, Boolean.TRUE);
+		
+		originAttrSet.addAttribute(StyleConstants.CharacterConstants.Foreground, new Color(0xae81ff));
+		originAttrSet.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+		originAttrSet.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+
+		replyAttrSet.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
+		replyAttrSet.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+		replyAttrSet.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+
+		timeAttrSet.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.CYAN);
+		timeAttrSet.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+		timeAttrSet.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+
 	}
 }

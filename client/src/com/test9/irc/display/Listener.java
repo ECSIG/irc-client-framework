@@ -17,7 +17,6 @@ public interface Listener {
 	public void onNickChange(String host, String oldNick, String newNick);
 	public void onNotice(String server, String params, String content);
 	public void onPartChannel(String server, String channel);
-	public void onTerminalMessage(String host, String channel, String nick, String message);
 	public void onUserJoin(String server, String channel, String nick, boolean isUserRply);
 	public void onUserPart(String server, String channel, String nick);
 	public void onUserQuit(String server, String nick, String reason);

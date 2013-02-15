@@ -9,7 +9,6 @@ package com.test9.irc.parser;
  */
 public class OutputFactory {
 
-	private static boolean init = false;
 	private static final String RNTAIL= "\r\n";
 
 	final private static String commands[] = 
@@ -18,10 +17,6 @@ public class OutputFactory {
 		"REHASH", "DIE", "RESTART", "SUMMON", "USERS", "ISON", "JOIN", "PART", "PONG",
 		"MODE", "USER", "SERVICE", "SQUIT", "TOPIC", "NAMES", "LIST", "KICK", "NOTICE",
 		"AWAY", "SQUERY", "SERVLIST", "USERHOST", "ERROR", "QUIT"};
-
-	public OutputFactory() {
-		init = true;
-	}
 
 	/**
 	 * Use this method to create a formatted message that can be sent to the server.
@@ -61,7 +56,7 @@ public class OutputFactory {
 	 * @param target
 	 * @return
 	 */
-	public String formatMessage(String message, String target)
+	public static String formatMessage(String message, String target)
 	{
 		String formattedMessage = "";
 		boolean validCommand = false;
@@ -126,7 +121,7 @@ public class OutputFactory {
 	 * @param message
 	 * @return privmsg
 	 */
-	private String makePrivmsg(String message, String target)
+	private static String makePrivmsg(String message, String target)
 	{
 		String privmsg = "";
 
@@ -145,7 +140,7 @@ public class OutputFactory {
 	 * @param message
 	 * @return
 	 */
-	private String makeQuit(String message)
+	private static String makeQuit(String message)
 	{
 		String quitMessage = "";
 
@@ -154,13 +149,5 @@ public class OutputFactory {
 		quitMessage += RNTAIL;
 
 		return quitMessage;
-	}
-
-
-	/**
-	 * @return the init
-	 */
-	public static boolean isInit() {
-		return init;
 	}
 }

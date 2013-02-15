@@ -1,8 +1,5 @@
 package com.test9.irc.display;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import com.test9.irc.engine.IRCConnection;
 import com.test9.irc.engine.User;
 
@@ -135,7 +132,11 @@ public class EventAdapter implements Listener {
 				owner.getOutputPanels().get(
 						util.findChannel(server, channel, 0)).newMessage(
 								message, TextFormat.reply);
-				owner.getTerminalPanel().newMessage(null, null, server, message, TextFormat.reply);
+				if(command.equals("REPLY")) {
+					owner.getTerminalPanel().newMessage(null, null, server, message, TextFormat.reply);
+				} else if(command.equals("ERROR")) {
+					owner.getTerminalPanel().newMessage(null, null, server, message, TextFormat.error);
+				}
 			}
 		}
 		else
@@ -227,12 +228,6 @@ public class EventAdapter implements Listener {
 		owner.getConnectionTree().removeChannelNode(server, channel);
 		owner.getOutputFieldLayeredPane().invalidate();
 		owner.getUserListsLayeredPane().invalidate();
-	}
-
-	@Override
-	public void onTerminalMessage(String host, String channel, String nick, String message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void onUserJoin(String server, String channel, String nick, boolean isUserRply) {
