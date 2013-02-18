@@ -3,6 +3,7 @@ package com.test9.irc.engine;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -26,14 +27,15 @@ public class ConnectionEngine {
 	private String host = "", pass="", nick="", username="", realname="", encoding="";
 	private int port;
 	private boolean ssl;
-	
+
 	public ConnectionEngine() throws IOException {
 
 		cw = new ChatWindow();
 		cw.addChatWindowListener(new EventAdapter(cw, cw.getUtil()));
 
 		loadConnection();
-		
+		System.out.println(host);
+
 		if(ssl) {
 			SSLIRCConnection sslc = new SSLIRCConnection(host, port, pass, nick, 
 					username, realname, encoding);
@@ -54,74 +56,79 @@ public class ConnectionEngine {
 		//public IRCConnection(String host, int port, String pass, String nick, 
 		//		String username, String realname, String encoding) 
 	}
+
 	private void loadConnection() {
 		String serverSettingsPath = "";
-		File file = new File("settings/settings.txt");
+		InputStream stream = ConnectionEngine.class.getResourceAsStream("/resources/settings.txt");
+		Scanner in = new Scanner(stream);
 		try {
-			Scanner in = new Scanner(new File("settings/settings.txt"));
+			serverSettingsPath = in.nextLine();
+			in.close();
+			stream.close();
+			System.out.println(serverSettingsPath);
+			loadConnectionSettings(serverSettingsPath);
+		} catch (NoSuchElementException e) {
+			try {stream.close();} catch (IOException e2) {}
+
+			System.out.println("This must be the first run, choose where to put file.");
+			PrintWriter out;
 			try {
-				serverSettingsPath = in.nextLine();
-				loadConnectionSettings(serverSettingsPath, file);
-			} catch (NoSuchElementException nsee) {
-				PrintWriter pw = new PrintWriter(file);
-				serverSettingsPath = newServerSettingsPath()+"/jirccsettings.txt";
-				pw.write(serverSettingsPath);
-				pw.close();
+				System.out.println("should ask for a file path");
+				System.out.println(ConnectionEngine.class.getResource("/resources/settings.txt").getPath());
+				out = new PrintWriter(new File(
+						ConnectionEngine.class.getResource("/resources/settings.txt").getPath()));
+				String nssp = newServerSettingsPath();
+				if(nssp != null)
+					serverSettingsPath = nssp + "/jirccsettings.txt";
+
+				out.close();
 				writeNewServerSettingsFile(serverSettingsPath);
 				JOptionPane.showMessageDialog(null, "The client will now close, go to "+serverSettingsPath +
 						" to input the settings you want to use." +
-						"The file will be named \"ircsettings.txt.\"");
+						"The file will be named \"ircsettings.txt\".");
 				System.exit(0);
-			}
-			in.close();
-		} catch (FileNotFoundException e) {}
-
+			} catch (FileNotFoundException e1) {}
+		} catch (IOException e) {}
 	}
 
-	private void loadConnectionSettings(String ssp, File settingsLocationFile) {
+	private void loadConnectionSettings(String ssp) {
 		File file = new File(ssp);
 		String temp = "";
 		try {
 			Scanner in = new Scanner(file);
-			
+			temp = in.nextLine();
 			temp = in.nextLine();
 			host = temp.substring(temp.indexOf("= ")+2, temp.length()).trim();
-			
+
 			temp = in.nextLine();
 			String temp0 = temp.substring(temp.indexOf("= ")+2, temp.length()).trim();
 			port = Integer.valueOf(temp0);
-			
+
 			temp = in.nextLine();
 			pass = temp.substring(temp.indexOf("= ")+2, temp.length()).trim();
-			
+
 			temp = in.nextLine();
 			nick = temp.substring(temp.indexOf("= ")+2, temp.length()).trim();
-			
+
 			temp = in.nextLine();
 			username = temp.substring(temp.indexOf("= ")+2, temp.length()).trim();
-			
+
 			temp = in.nextLine();
 			realname = temp.substring(temp.indexOf("= ")+2, temp.length()).trim();
-			
+
 			temp = in.nextLine();
 			encoding = temp.substring(temp.indexOf("= ")+2, temp.length()).trim();
-			
+
 			temp = in.nextLine();
 			temp0 = temp.substring(temp.indexOf("= ")+2, temp.length()).trim();
 			ssl = Boolean.parseBoolean(temp0);
-		} catch (FileNotFoundException e) {
-			try {
-				PrintWriter pw = new PrintWriter(settingsLocationFile);	
-			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
+		} catch (FileNotFoundException e) {}
 	}
 
 	private void writeNewServerSettingsFile(String path) {
 		try {
 			PrintWriter pw = new PrintWriter(new File(path));
+			pw.println("#Make sure to put in a space between the '=' and a variables value.");
 			pw.println("host = ");
 			pw.println("port = ");
 			pw.println("pass = ");
@@ -137,13 +144,15 @@ public class ConnectionEngine {
 	}
 
 	private String newServerSettingsPath() {
+		System.out.println("newServerSettingsPath");
 		JFrame frame = new JFrame();
 		JFileChooser chooser = new JFileChooser();
 		chooser.setCurrentDirectory(new File("."));
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		if(chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
 			return chooser.getSelectedFile().getAbsolutePath();
-		return null;
+		else 
+			return null;
 	}
 
 	/**
