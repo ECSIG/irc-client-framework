@@ -1,12 +1,14 @@
 package com.test9.irc.display;
 
 import com.test9.irc.display.notifications.HilightNotificationFrame;
+import com.test9.irc.engine.ConnectionEngine;
 import com.test9.irc.engine.IRCConnection;
 import com.test9.irc.parser.OutputFactory;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +24,7 @@ import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowStateListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Observable;
 
@@ -191,8 +194,7 @@ ActionListener{//, MouseMotionListener {
 	private static int tabs = 0;
 	private static String nickPrefix = "";
 	private static boolean bufferedNickPrefix = false;
-	private static ImageIcon img = new ImageIcon("images/elmo.png");
-
+	private static ImageIcon img;
 
 
 	/**
@@ -202,8 +204,10 @@ ActionListener{//, MouseMotionListener {
 	public ChatWindow()
 	{
 		TextFormat.loadColors();
+		ClassLoader cl = this.getClass().getClassLoader();
+		
+		img = new ImageIcon(getClass().getResource("elmo.png"));
 		frame.setIconImage(img.getImage());
-
 		util = new Util(this);
 		/*
 		 * Checks to see if the global OS X menu bar should be used.
