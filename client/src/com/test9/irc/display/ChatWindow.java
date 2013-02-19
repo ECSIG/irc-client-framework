@@ -222,6 +222,10 @@ ActionListener{//, MouseMotionListener {
 			// of the operating system.
 			menuBar = new MenuBar();
 			frame.setJMenuBar(menuBar);
+			com.apple.eawt.Application macApp = com.apple.eawt.Application.getApplication();
+			macApp.setDockIconImage (new ImageIcon (getClass ().
+                    getResource ("elmo.png")).
+                  getImage ());
 		}
 
 

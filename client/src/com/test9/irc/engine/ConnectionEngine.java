@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
@@ -28,6 +29,7 @@ public class ConnectionEngine {
 	private boolean ssl;
 
 	public ConnectionEngine() throws IOException {
+
 
 		cw = new ChatWindow();
 		cw.addChatWindowListener(new EventAdapter(cw, cw.getUtil()));
@@ -64,13 +66,13 @@ public class ConnectionEngine {
 		String os = System.getProperty("os.name").toLowerCase();
 		String userHome = System.getProperty("user.home");
 		String fileSeparator = System.getProperty("file.separator");
-		
+
 		if(os.contains("mac os x")) {
 			settingsDir = userHome+"/Library/Application Support/JIRCC";
 		} else if (os.contains("windows")) {
 			settingsDir = userHome+"\\Documents\\JIRCC";
 		}
-		
+
 		System.out.println(settingsDir);
 		File dir = new File(settingsDir);
 		File settingsFile = new File(settingsDir + fileSeparator + "settings.txt");
@@ -85,7 +87,7 @@ public class ConnectionEngine {
 			} catch (IOException e) {
 				System.err.println("Error loading file into properties.");
 			}
-			
+
 			host = properties.getProperty("host", "");
 			pass = properties.getProperty("pass", "");
 			nick = properties.getProperty("nick", "");
@@ -107,7 +109,7 @@ public class ConnectionEngine {
 				System.err.println("Error creating new settings file.");
 			}
 			host = JOptionPane.showInputDialog("What is the host?");
-		    JPasswordField pwd = new JPasswordField(30);  
+			JPasswordField pwd = new JPasswordField(30);  
 			JOptionPane.showConfirmDialog(null, pwd,"Enter Password",JOptionPane.OK_CANCEL_OPTION);  
 			pass = new String(pwd.getPassword());
 			nick = JOptionPane.showInputDialog("What is the nick?");
@@ -125,7 +127,7 @@ public class ConnectionEngine {
 			properties.put("encoding", encoding);
 			properties.put("port", Integer.toString(port));
 			properties.put("ssl", Boolean.toString(ssl));
-			
+
 
 			try {
 				FileOutputStream out = new FileOutputStream(settingsFile);
@@ -136,11 +138,11 @@ public class ConnectionEngine {
 			} catch (IOException e) {
 				System.err.println("Error storing the application settings.");
 			}
-			
+
 			JOptionPane.showMessageDialog(null, "Your settings file is located at " + settingsFile.getPath());
 		}
 	}
-	
+
 	/**
 	 * @return the connection
 	 */
