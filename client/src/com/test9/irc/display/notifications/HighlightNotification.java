@@ -47,6 +47,7 @@ public class HighlightNotification {
 		this.user = user;
 	}
 	
+	@Override
 	public String toString(){
 		return this.channel +" : " + this.user.getNick() + " : " + this.message;
 	}

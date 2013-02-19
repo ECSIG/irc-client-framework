@@ -39,96 +39,96 @@ public class TextFormat extends SimpleAttributeSet {
 	
 	static void loadColors() {
 
-		privmsg.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.WHITE);
-		privmsg.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		privmsg.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		privmsg.addAttribute(StyleConstants.Foreground, Color.WHITE);
+		privmsg.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		privmsg.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 
-		action.addAttribute(StyleConstants.CharacterConstants.Foreground,  Color.GRAY);
-		action.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		action.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		action.addAttribute(StyleConstants.Foreground,  Color.GRAY);
+		action.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		action.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 
-		error.addAttribute(StyleConstants.CharacterConstants.Foreground, new Color(0xf00));
-		error.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		error.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		error.addAttribute(StyleConstants.Foreground, new Color(0xf00));
+		error.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		error.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 
-		errorReply.addAttribute(StyleConstants.CharacterConstants.Foreground, new Color(0xf00));
-		errorReply.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		errorReply.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		errorReply.addAttribute(StyleConstants.Foreground, new Color(0xf00));
+		errorReply.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		errorReply.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 
-		invite.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
-		invite.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		invite.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		invite.addAttribute(StyleConstants.Foreground, Color.GRAY);
+		invite.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		invite.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 
-		join.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
-		join.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		join.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		join.addAttribute(StyleConstants.Foreground, Color.GRAY);
+		join.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		join.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 
-		kick.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
-		kick.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		kick.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		kick.addAttribute(StyleConstants.Foreground, Color.GRAY);
+		kick.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		kick.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 
-		kill.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
-		kill.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		kill.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		kill.addAttribute(StyleConstants.Foreground, Color.GRAY);
+		kill.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		kill.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 
-		mode.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
-		mode.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		mode.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		mode.addAttribute(StyleConstants.Foreground, Color.GRAY);
+		mode.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		mode.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 
-		notice.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.BLUE);
-		notice.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		notice.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		notice.addAttribute(StyleConstants.Foreground, Color.BLUE);
+		notice.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		notice.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 
-		nick.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
-		nick.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		nick.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		nick.addAttribute(StyleConstants.Foreground, Color.GRAY);
+		nick.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		nick.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 		
-		part.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
-		part.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		part.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		part.addAttribute(StyleConstants.Foreground, Color.GRAY);
+		part.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		part.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 		
-		quit.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
-		quit.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		quit.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		quit.addAttribute(StyleConstants.Foreground, Color.GRAY);
+		quit.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		quit.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 		
-		reply.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
-		reply.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		reply.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		reply.addAttribute(StyleConstants.Foreground, Color.GRAY);
+		reply.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		reply.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 		
-		system.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
-		system.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		system.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		system.addAttribute(StyleConstants.Foreground, Color.GRAY);
+		system.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		system.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 		
-		topic.addAttribute(StyleConstants.CharacterConstants.Foreground, new Color(0x8e9c69));
-		topic.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		topic.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		topic.addAttribute(StyleConstants.Foreground, new Color(0x8e9c69));
+		topic.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		topic.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 		
-		wallops.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
-		wallops.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		wallops.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		wallops.addAttribute(StyleConstants.Foreground, Color.GRAY);
+		wallops.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		wallops.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 	
-		highlight.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		highlight.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GREEN);
+		highlight.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		highlight.addAttribute(StyleConstants.Foreground, Color.GREEN);
 		
-		privMsg.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.WHITE);
-		privMsg.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		privMsg.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		privMsg.addAttribute(StyleConstants.Foreground, Color.WHITE);
+		privMsg.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		privMsg.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 		
-		hyperlink.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.BLUE);
-		hyperlink.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		hyperlink.addAttribute(StyleConstants.CharacterConstants.Underline, Boolean.TRUE);
+		hyperlink.addAttribute(StyleConstants.Foreground, Color.BLUE);
+		hyperlink.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		hyperlink.addAttribute(StyleConstants.Underline, Boolean.TRUE);
 		
-		originAttrSet.addAttribute(StyleConstants.CharacterConstants.Foreground, new Color(0xae81ff));
-		originAttrSet.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		originAttrSet.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		originAttrSet.addAttribute(StyleConstants.Foreground, new Color(0xae81ff));
+		originAttrSet.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		originAttrSet.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 
-		replyAttrSet.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.GRAY);
-		replyAttrSet.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		replyAttrSet.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		replyAttrSet.addAttribute(StyleConstants.Foreground, Color.GRAY);
+		replyAttrSet.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		replyAttrSet.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 
-		timeAttrSet.addAttribute(StyleConstants.CharacterConstants.Foreground, Color.CYAN);
-		timeAttrSet.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		timeAttrSet.addAttribute(StyleConstants.CharacterConstants.Alignment, StyleConstants.CharacterConstants.ALIGN_LEFT);
+		timeAttrSet.addAttribute(StyleConstants.Foreground, Color.CYAN);
+		timeAttrSet.addAttribute(StyleConstants.Bold, Boolean.TRUE);
+		timeAttrSet.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
 
 	}
 }

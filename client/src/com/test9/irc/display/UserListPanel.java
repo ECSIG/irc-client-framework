@@ -150,6 +150,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	}
 
 
+	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		invalidate();
 	}

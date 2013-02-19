@@ -10,6 +10,7 @@ public class QueueProcessing implements Runnable {
 		this.owner = owner;
 	}
 	
+	@Override
 	public void run() {
 		ArrayBlockingQueue<String> queue = owner.getQueue();
 		while(true) {

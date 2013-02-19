@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 //import java.awt.event.MouseEvent;
@@ -396,6 +397,7 @@ ActionListener{//, MouseMotionListener {
 	 * VK_ENTER in the inputfield. Sends the message to the active channel and 
 	 * active server after it sends it to the output factory for formatting.
 	 */
+	@Override
 	public void keyReleased(KeyEvent e) {
 
 		if(e.getComponent() == inputField) {
@@ -462,17 +464,17 @@ ActionListener{//, MouseMotionListener {
 
 		if(!hasMetaKey)
 		{
-			if(e.getModifiers() == KeyEvent.CTRL_MASK) {
+			if(e.getModifiers() == InputEvent.CTRL_MASK) {
 				if(Character.isDigit(e.getKeyChar())) {
 					connectionTree.metaSelection(activeServer, Character.getNumericValue(e.getKeyChar())-1);		
 				} 
-			} else if(e.getModifiers() == KeyEvent.ALT_MASK) {
+			} else if(e.getModifiers() == InputEvent.ALT_MASK) {
 				if(Character.isDigit(e.getKeyChar())) {
 					connectionTree.metaSelection(activeServer, Character.getNumericValue(e.getKeyChar())-1);		
 				} 
 			}
 		} else {
-			if(e.getModifiers()== KeyEvent.META_MASK) {
+			if(e.getModifiers()== InputEvent.META_MASK) {
 				if(Character.isDigit(e.getKeyChar())) {
 					connectionTree.metaSelection(activeServer, Character.getNumericValue(e.getKeyChar())-1);		
 				} // end digit?
@@ -526,6 +528,7 @@ ActionListener{//, MouseMotionListener {
 		frame.invalidate();
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if(joinedAServer)
 		{
@@ -608,6 +611,7 @@ ActionListener{//, MouseMotionListener {
 		}
 	}
 
+	@Override
 	public void windowGainedFocus(WindowEvent e) {
 		inputField.requestFocus();
 	}

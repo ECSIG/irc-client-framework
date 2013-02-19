@@ -22,6 +22,7 @@ public class EventAdapter implements Listener {
 	 * @param server Name of the server that the channel resides on.
 	 * @param channel Name of the channel that is to be joined.
 	 */
+	@Override
 	public void onJoinChannel(String server, String channel) {
 		System.out.println("Joined a channel:"+server+","+channel);
 		if(!ChatWindow.getServersAndChannels().contains(server+","+channel)) {
@@ -42,6 +43,7 @@ public class EventAdapter implements Listener {
 	 * joined server.
 	 * @param server The name of the server that is to be joined.
 	 */
+	@Override
 	public void onJoinServer(String server) {
 		if(!(ChatWindow.getServersAndChannels().contains(server))) {
 			ChatWindow.getServersAndChannels().add(server);
@@ -59,6 +61,7 @@ public class EventAdapter implements Listener {
 	 * array lists.
 	 * @param server The name of the server that is to be left.
 	 */
+	@Override
 	public void onLeaveServer(String server) {
 		/*
 		 * Searches for the output panel in the outputPanels
@@ -120,6 +123,7 @@ public class EventAdapter implements Listener {
 	 * @param channel The channel the message is from.
 	 * @param message The message that was received. 
 	 */
+	@Override
 	public void onNewMessage(String server, String channel, String message, String command) {
 		if(util.findChannel(server, channel,0) != -1)
 		{
@@ -170,6 +174,7 @@ public class EventAdapter implements Listener {
 	 * @param channel The channel that the topic is from.
 	 * @param topic The topic of the channel/server.
 	 */
+	@Override
 	public void onNewTopic(String server, String channel, String topic) {
 		owner.getTitles().get(util.findTitle(server, channel)).setTopic(topic);
 		owner.getFrame().setTitle(owner.getTitles().get(
@@ -196,6 +201,7 @@ public class EventAdapter implements Listener {
 	 * @param oldNick The original nick of the user.
 	 * @param newNick The new nick of a user.
 	 */
+	@Override
 	public void onNickChange(String host, String oldNick, String newNick) {
 		for(UserListPanel u : owner.getUserListPanels())
 		{
@@ -214,6 +220,7 @@ public class EventAdapter implements Listener {
 	 * @param server Name of the server that is being left.
 	 * @param channel Name of the channel that is being parted from.
 	 */
+	@Override
 	public void onPartChannel(String server, String channel) {
 		int outputPanelId = util.findChannel(server, channel, 0);
 		int userListPanelId = util.findChannel(server, channel, 1);
@@ -230,6 +237,7 @@ public class EventAdapter implements Listener {
 		owner.getUserListsLayeredPane().invalidate();
 	}
 
+	@Override
 	public void onUserJoin(String server, String channel, String nick, boolean isUserRply) {
 		if(util.findChannel(server, channel,1) != -1) {
 			owner.getUserListPanels().get(util.findChannel(server, channel,1)).newUser(nick);
@@ -244,6 +252,7 @@ public class EventAdapter implements Listener {
 			owner.getTerminalPanel().newMessage(null, null, channel, nick+" joined "+channel, TextFormat.join);
 	}
 
+	@Override
 	public void onUserPart(String server, String channel, String nick) {
 		if(util.findChannel(server,channel,1) != -1) {
 			owner.getUserListPanels().get(util.findChannel(server, channel,1)).userPart(nick);
@@ -257,6 +266,7 @@ public class EventAdapter implements Listener {
 
 	}
 
+	@Override
 	public void onUserQuit(String server, String nick, String reason) {
 		for(UserListPanel u : owner.getUserListPanels())
 		{

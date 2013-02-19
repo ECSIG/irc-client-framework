@@ -45,6 +45,7 @@ public class SSLDefaultTrustManager implements SSLTrustManager {
 	 * @param chain The peer certificate chain.
 	 * @return <code>true</code>.
 	 */
+	@Override
 	public boolean isTrusted(X509Certificate[] chain) {
 		accepted = chain;
 		return true;
@@ -58,6 +59,7 @@ public class SSLDefaultTrustManager implements SSLTrustManager {
 	 * @return A non-null (possibly empty) array of acceptable CA issuer 
 	 *         certificates.
 	 */
+	@Override
 	public X509Certificate[] getAcceptedIssuers() {
 		return accepted;
 	}

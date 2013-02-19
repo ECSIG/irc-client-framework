@@ -4,6 +4,7 @@ import java.util.Comparator;
 
 public class MyComparator implements Comparator<String> {
 
+	@Override
 	public int compare(String o1, String o2) {
 		char o1c = o1.charAt(0);
 		char o2c = o2.charAt(0);

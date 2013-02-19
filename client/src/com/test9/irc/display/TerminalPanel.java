@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.SimpleAttributeSet;
@@ -51,6 +52,7 @@ public class TerminalPanel extends JPanel {
 	private void initScrollBar() {
 		scrollBar.addAdjustmentListener(new AdjustmentListener() {
 
+			@Override
 			public void adjustmentValueChanged(AdjustmentEvent e) {
 				if (model.getValue() == model.getMaximum() - model.getExtent()) {
 					caret.setDot(textPane.getText().length());
@@ -63,7 +65,7 @@ public class TerminalPanel extends JPanel {
 		scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
 		scrollPane.setBackground(Color.BLACK);
 		scrollPane.setBorder(null);
-		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 	}
 
 	/**

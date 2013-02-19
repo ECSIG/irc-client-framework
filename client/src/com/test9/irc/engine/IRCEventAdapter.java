@@ -40,7 +40,7 @@ public class IRCEventAdapter implements IRCEventListener {
 	@Override
 	public void onError(Message m) {
 		int numCode = Integer.valueOf(m.getCommand());
-		if(numCode == IRCUtil.ERR_NICKNAMEINUSE) {
+		if(numCode == IRCConstants.ERR_NICKNAMEINUSE) {
 			System.out.println("ERR_NICKNAMEINUSE");
 			connection.setNick(connection.getNick()+"_");
 			connection.send("NICK "+ connection.getNick());
@@ -166,12 +166,12 @@ public class IRCEventAdapter implements IRCEventListener {
 		int numCode = Integer.valueOf(m.getCommand());
 
 		// If it is a welcome message 001
-		if(numCode == IRCUtil.RPL_WELCOME) {
+		if(numCode == IRCConstants.RPL_WELCOME) {
 			// Notify the chat window listener of a new irc connection
 			cw.onNewIRCConnection(connection);
 
 			// If the numCode is the name list of a channel
-		} else if(numCode == IRCUtil.RPL_NAMREPLY) {
+		} else if(numCode == IRCConstants.RPL_NAMREPLY) {
 			//Split up the nicks list
 			String[] nicks = m.getContent().split(" ");
 
@@ -190,24 +190,24 @@ public class IRCEventAdapter implements IRCEventListener {
 					connection.getUsers().add(new User(n,true));
 			}
 			// If there is a topic message
-		} else if(numCode == IRCUtil.RPL_TOPIC) {
+		} else if(numCode == IRCConstants.RPL_TOPIC) {
 			// Notify the chat window listener of a new topic
 			cw.onNewTopic(connection.getHost(), m.getParams()[1], m.getContent());
 			// Notify the chat window listener that there is a new topic to show the user
 			cw.onNewMessage(connection.getHost(), m.getParams()[1],
 					"<Topic> " + m.getContent(), "TOPIC");
 			// Someone went away
-		} else if(numCode == IRCUtil.RPL_NOWAWAY) {
+		} else if(numCode == IRCConstants.RPL_NOWAWAY) {
 
 			// Services supported by the server
-		} else if(numCode == IRCUtil.RPL_ISUPPORT) {
+		} else if(numCode == IRCConstants.RPL_ISUPPORT) {
 			cw.onNewMessage(connection.getHost(), connection.getHost(), 
 					Arrays.toString(m.getParams())+" "+m.getContent(), "REPLY");
 			//List of channels available
-		} else if(numCode == IRCUtil.RPL_LIST) {
+		} else if(numCode == IRCConstants.RPL_LIST) {
 			cw.onNewMessage(connection.getHost(), 
 					connection.getHost(), Arrays.toString(m.getParams()), "REPLY");
-		} else if(numCode == IRCUtil.RPL_MOTD) {
+		} else if(numCode == IRCConstants.RPL_MOTD) {
 			cw.onNewMessage(connection.getHost(), connection.getHost(), m.getContent(), "REPLY");
 		}else {
 			cw.onNewMessage(connection.getHost(), connection.getHost(),

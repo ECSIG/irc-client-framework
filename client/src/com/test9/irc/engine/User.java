@@ -51,8 +51,8 @@ public class User {
 		for(int i = 0; i < attributes.length; i++)
 		{
 			attributes[i] = new SimpleAttributeSet();
-			attributes[i].addAttribute(StyleConstants.CharacterConstants.Foreground, User.getColors()[i]);
-			attributes[i].addAttribute(StyleConstants.CharacterConstants.Bold, true);
+			attributes[i].addAttribute(StyleConstants.Foreground, User.getColors()[i]);
+			attributes[i].addAttribute(StyleConstants.Bold, true);
 		}
 		init = true;
 
@@ -62,8 +62,8 @@ public class User {
 		if(yourself)
 		{
 			userSimpleAttributeSet = new SimpleAttributeSet();
-			userSimpleAttributeSet.addAttribute(StyleConstants.CharacterConstants.Foreground, new Color(0x89bdff));
-			userSimpleAttributeSet.addAttribute(StyleConstants.CharacterConstants.Bold, true);
+			userSimpleAttributeSet.addAttribute(StyleConstants.Foreground, new Color(0x89bdff));
+			userSimpleAttributeSet.addAttribute(StyleConstants.Bold, true);
 		} else {
 			try {
 				userSimpleAttributeSet = attributes[index];

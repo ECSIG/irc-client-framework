@@ -225,6 +225,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 	 * Used by the tree to listen for when the user 
 	 * changes the channel that is selected.
 	 */
+	@Override
 	public void valueChanged(TreeSelectionEvent e) {
 
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)

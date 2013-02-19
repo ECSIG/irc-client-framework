@@ -210,6 +210,7 @@ public class SSLIRCConnection extends IRCConnection {
 	 * @see #doQuit(String)
 	 * @see #close()
 	 */
+	@Override
 	public void connect() throws IOException {
 		if (regLevel != 0) // otherwise disconnected or connect
 			throw new SocketException("Socket closed or already open ("+ regLevel +")");

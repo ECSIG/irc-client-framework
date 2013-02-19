@@ -107,6 +107,7 @@ public class IRCConnection extends Thread {
 				+" :"+ realname); 
 	}
 
+	@Override
 	public void run() {
 		try {
 			String line;

@@ -63,6 +63,7 @@ class TrustManagerJava14Wrapper implements javax.net.ssl.X509TrustManager {
 	 * @param authType The authentication type based on the client certificate.
 	 * @throws CertificateException Always.
 	 */
+	@Override
 	public void checkClientTrusted(X509Certificate[] chain, String authType) 
 	throws CertificateException {
 		throw new CertificateException("This trust manager _is_ for clients. "+
@@ -77,6 +78,7 @@ class TrustManagerJava14Wrapper implements javax.net.ssl.X509TrustManager {
 	 * the <code>trustManager</code>.
 	 * @throws CertificateException If the server is not trusted.
 	 */
+	@Override
 	public void checkServerTrusted(X509Certificate[] chain, String authType) 
 	throws CertificateException {
 		if (!trustManager.isTrusted(chain)) {
@@ -92,6 +94,7 @@ class TrustManagerJava14Wrapper implements javax.net.ssl.X509TrustManager {
 	 * made by the <code>trustManager</code>.
 	 * @return <code>trustManager.isTrusted(chain)</code>.
 	 */
+	@Override
 	public X509Certificate[] getAcceptedIssuers() {
 		return trustManager.getAcceptedIssuers();
 	}

@@ -18,10 +18,12 @@ class SortedListModel<T> extends AbstractListModel {
 		
 	}
 
+	@Override
 	public int getSize() {
 		return model.size();
 	}
 
+	@Override
 	public Object getElementAt(int index) {
 		return model.toArray()[index];
 	}

@@ -78,6 +78,7 @@ public class SwingMethodInvoker implements Runnable{
 	/**
 	 * Do not call this method yourself, pass the SwingMethodInvoker instance to the SwingUtilities.invokeLater(..) to be run for you.
 	 */
+	@Override
 	public void run(){
 		try {
 			switch (parameters.length){

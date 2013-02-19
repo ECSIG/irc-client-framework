@@ -139,6 +139,7 @@ public class HilightNotificationFrame extends JWindow {
 	 * 
 	 * @return font
 	 */
+	@Override
 	public Font getFont(){
 		return font;
 	}
@@ -148,6 +149,7 @@ public class HilightNotificationFrame extends JWindow {
 	 * 
 	 * @param font
 	 */
+	@Override
 	public void setFont(Font font){
 		this.font = font;
 	}
@@ -229,6 +231,7 @@ public class HilightNotificationFrame extends JWindow {
 			this.target = target;
 		}
 
+		@Override
 		public void run(){
 			while(running){
 				if(redraw){
@@ -246,6 +249,7 @@ public class HilightNotificationFrame extends JWindow {
 	// This panel actually does the drawing. JPanels support double-buffering so we use them.
 	private JPanel contents = new JPanel(true){	
 
+		@Override
 		public void paint(Graphics g){
 			// Clear anything that is still in the Graphics buffer from last frame
 			g.clearRect(0, 0, getWidth(), getHeight());

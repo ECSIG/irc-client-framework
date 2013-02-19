@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import com.test9.irc.engine.ReadServerConfig;
 
@@ -129,27 +130,27 @@ public class NewServerConfigWindow implements ActionListener{
 	private void initGeneralPanel() {
 		generalPanel.setLayout(new GridLayout(11,2));
 		generalPanel.setOpaque(true);
-		generalPanel.add(new JLabel("Network Name: ", JLabel.RIGHT));
+		generalPanel.add(new JLabel("Network Name: ", SwingConstants.RIGHT));
 		generalPanel.add(networkName);
 		generalPanel.add(new JLabel());
 		generalPanel.add(connectOnStartup);
-		generalPanel.add(new JLabel("Server: ", JLabel.RIGHT));
+		generalPanel.add(new JLabel("Server: ", SwingConstants.RIGHT));
 		generalPanel.add(server);
-		generalPanel.add(new JLabel("Port: ", JLabel.RIGHT));
+		generalPanel.add(new JLabel("Port: ", SwingConstants.RIGHT));
 		generalPanel.add(port);
 		generalPanel.add(new JLabel());
 		generalPanel.add(sslCheck);
-		generalPanel.add(new JLabel("Server Password: ", JLabel.RIGHT));
+		generalPanel.add(new JLabel("Server Password: ", SwingConstants.RIGHT));
 		generalPanel.add(serverPassword);
-		generalPanel.add(new JLabel("Nickname: ", JLabel.RIGHT));
+		generalPanel.add(new JLabel("Nickname: ", SwingConstants.RIGHT));
 		generalPanel.add(nickName);
-		generalPanel.add(new JLabel("Login Name: ", JLabel.RIGHT));
+		generalPanel.add(new JLabel("Login Name: ", SwingConstants.RIGHT));
 		generalPanel.add(loginName);
-		generalPanel.add(new JLabel("Real Name: ", JLabel.RIGHT));
+		generalPanel.add(new JLabel("Real Name: ", SwingConstants.RIGHT));
 		generalPanel.add(realName);
-		generalPanel.add(new JLabel("Nickserv Password: ", JLabel.RIGHT));
+		generalPanel.add(new JLabel("Nickserv Password: ", SwingConstants.RIGHT));
 		generalPanel.add(nickservPassword);
-		generalPanel.add(new JLabel("Ald. Nicknames: ", JLabel.RIGHT));
+		generalPanel.add(new JLabel("Ald. Nicknames: ", SwingConstants.RIGHT));
 		generalPanel.add(altNicks);
 
 	}
@@ -157,18 +158,18 @@ public class NewServerConfigWindow implements ActionListener{
 	private void initDetailsPanel() {
 
 		detailsPanel.setLayout(new GridLayout(4,2));
-		detailsPanel.add(new JLabel("Leaving Comment:", JLabel.RIGHT));
+		detailsPanel.add(new JLabel("Leaving Comment:", SwingConstants.RIGHT));
 		detailsPanel.add(leavingComment);
-		detailsPanel.add(new JLabel("CTCP User Info:", JLabel.RIGHT));
+		detailsPanel.add(new JLabel("CTCP User Info:", SwingConstants.RIGHT));
 		detailsPanel.add(ctcpUserInfo);
 		for(String e : encodingOptions)
 		{
 			encoding.addItem(e);
 			fallbackEncoding.addItem(e);
 		}
-		detailsPanel.add(new JLabel("Encoding:", JLabel.RIGHT));
+		detailsPanel.add(new JLabel("Encoding:", SwingConstants.RIGHT));
 		detailsPanel.add(encoding);
-		detailsPanel.add(new JLabel("Fallback Encoding:", JLabel.RIGHT));
+		detailsPanel.add(new JLabel("Fallback Encoding:", SwingConstants.RIGHT));
 		detailsPanel.add(fallbackEncoding);
 	}
 
@@ -199,9 +200,11 @@ public class NewServerConfigWindow implements ActionListener{
 		JFileChooser chooser = new JFileChooser();
 		chooser.setCurrentDirectory(new File("."));
 		chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+			@Override
 			public boolean accept(File f) {
 				return f.getName().toLowerCase().endsWith(".xml") || f.isDirectory();
 			}
+			@Override
 			public String getDescription()
 			{
 				return "XML files";
@@ -210,7 +213,7 @@ public class NewServerConfigWindow implements ActionListener{
 		if(chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
 			try {
 				InputStream in = new FileInputStream(chooser.getSelectedFile());
-				prefs.importPreferences(in);
+				Preferences.importPreferences(in);
 				in.close();
 			} catch (Exception e){}
 		networkName.setText(prefs.get(networkNameL, ""));
@@ -241,9 +244,11 @@ public class NewServerConfigWindow implements ActionListener{
 		JFileChooser chooser = new JFileChooser();
 		chooser.setCurrentDirectory(new File("."));
 		chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+			@Override
 			public boolean accept(File f) {
 				return f.getName().toLowerCase().endsWith(".xml") || f.isDirectory();
 			}
+			@Override
 			public String getDescription()
 			{
 				return "XML files";

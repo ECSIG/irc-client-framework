@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -122,6 +123,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 
 		scrollBar.addAdjustmentListener(new AdjustmentListener() {
 
+			@Override
 			public void adjustmentValueChanged(AdjustmentEvent e) {
 				if (model.getValue() == model.getMaximum() - model.getExtent()) {
 					caret.setDot(textPane.getText().length());
@@ -134,7 +136,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 		scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
 		scrollPane.setBackground(Color.BLACK);
 		scrollPane.setBorder(null);
-		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		//		delayThread.start();
 		add(scrollPane, BorderLayout.CENTER);
 
@@ -251,9 +253,9 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 
 	private String getStyleStringFromSimpleAttributeSet(SimpleAttributeSet attrs) {
 		String styleString = "";
-		Color foregroundAttribute = (Color)attrs.getAttribute(StyleConstants.CharacterConstants.Foreground);
-		styleString += "color:"+getHtmlColor((Color)foregroundAttribute)+";";
-		Boolean bold = (Boolean)attrs.getAttribute(StyleConstants.CharacterConstants.Bold);
+		Color foregroundAttribute = (Color)attrs.getAttribute(StyleConstants.Foreground);
+		styleString += "color:"+getHtmlColor(foregroundAttribute)+";";
+		Boolean bold = (Boolean)attrs.getAttribute(StyleConstants.Bold);
 		if(bold!=null && bold){
 			styleString+="font-weight:bold;";
 		}else{

@@ -62,6 +62,7 @@ class TrustManagerJsseWrapper implements com.sun.net.ssl.X509TrustManager {
 	 * @param chain The peer certificate chain.
 	 * @return Always <code>false</code>.
 	 */
+	@Override
 	public boolean isClientTrusted(X509Certificate[] chain) {
 		return false;
 	}
@@ -73,6 +74,7 @@ class TrustManagerJsseWrapper implements com.sun.net.ssl.X509TrustManager {
 	 * made by the <code>trustManager</code>.
 	 * @return <code>trustManager.isTrusted(chain)</code>.
 	 */
+	@Override
 	public boolean isServerTrusted(X509Certificate[] chain) {
 		return trustManager.isTrusted(chain);
 	}
@@ -84,6 +86,7 @@ class TrustManagerJsseWrapper implements com.sun.net.ssl.X509TrustManager {
 	 * for authenticating peers.
 	 * @return <code>trustManager.getAcceptedIssuers</code>.
 	 */
+	@Override
 	public X509Certificate[] getAcceptedIssuers() {
 		return trustManager.getAcceptedIssuers();
 	}
