@@ -79,8 +79,9 @@ public class ConnectionEngine {
 			try {
 				in = new FileInputStream(settingsFile);
 				properties.load(in);
+				in.close();
 			} catch (FileNotFoundException e) {
-				System.err.println("Error creating fileInputStream");
+				System.err.println("You seem to not have a settings file. Please create one.");
 			} catch (IOException e) {
 				System.err.println("Error loading file into properties.");
 			}
@@ -129,11 +130,14 @@ public class ConnectionEngine {
 			try {
 				FileOutputStream out = new FileOutputStream(settingsFile);
 				properties.store(out, "Program settings");
+				out.close();
 			} catch (FileNotFoundException e) {
 				System.err.println("Error writing settings to new settings file.");
 			} catch (IOException e) {
 				System.err.println("Error storing the application settings.");
 			}
+			
+			JOptionPane.showMessageDialog(null, "Your settings file is located at " + settingsFile.getPath());
 		}
 	}
 	

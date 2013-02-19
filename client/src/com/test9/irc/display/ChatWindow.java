@@ -25,6 +25,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Observable;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
@@ -190,6 +191,7 @@ ActionListener{//, MouseMotionListener {
 	private static int tabs = 0;
 	private static String nickPrefix = "";
 	private static boolean bufferedNickPrefix = false;
+	private static ImageIcon img = new ImageIcon("images/elmo.png");
 
 
 
@@ -200,6 +202,7 @@ ActionListener{//, MouseMotionListener {
 	public ChatWindow()
 	{
 		TextFormat.loadColors();
+		frame.setIconImage(img.getImage());
 
 		util = new Util(this);
 		/*
