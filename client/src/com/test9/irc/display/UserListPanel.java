@@ -127,6 +127,9 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 		
 		for(int i = 0; i < listModel.getSize(); i++){
 			String n = (String) listModel.getElementAt(i);
+			if(!Character.isLetter(n.charAt(0))) {
+				n = n.substring(1, n.length());
+			}
 			if (n.toLowerCase().startsWith(prefix.toLowerCase()))
 			{
 				ltabs++;

@@ -1,14 +1,12 @@
 package com.test9.irc.display;
 
 import com.test9.irc.display.notifications.HilightNotificationFrame;
-import com.test9.irc.engine.ConnectionEngine;
 import com.test9.irc.engine.IRCConnection;
 import com.test9.irc.parser.OutputFactory;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,7 +22,6 @@ import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowStateListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Observable;
 
@@ -204,8 +201,7 @@ ActionListener{//, MouseMotionListener {
 	public ChatWindow()
 	{
 		TextFormat.loadColors();
-		ClassLoader cl = this.getClass().getClassLoader();
-		
+
 		img = new ImageIcon(getClass().getResource("elmo.png"));
 		frame.setIconImage(img.getImage());
 		util = new Util(this);
@@ -222,10 +218,6 @@ ActionListener{//, MouseMotionListener {
 			// of the operating system.
 			menuBar = new MenuBar();
 			frame.setJMenuBar(menuBar);
-//			com.apple.eawt.Application macApp = com.apple.eawt.Application.getApplication();
-//			macApp.setDockIconImage (new ImageIcon (getClass ().
-//                    getResource ("elmo.png")).
-//                  getImage ());
 		}
 
 
@@ -233,7 +225,6 @@ ActionListener{//, MouseMotionListener {
 		 * Adds some general features to the frame.
 		 */
 		frame.addKeyListener(this);
-		//frame.setTitle(initialServerName);
 		frame.addComponentListener(this);
 		frame.addWindowFocusListener(this);
 		frame.setPreferredSize(defaultWindowSize);
@@ -369,7 +360,7 @@ ActionListener{//, MouseMotionListener {
 	}
 	void tabComplete() {
 		String inputText = inputField.getText().trim();
-		
+
 		if(inputText.contains(" ") && !bufferedNickPrefix) {
 			System.out.println(inputText.substring(inputText.lastIndexOf(" ")+1, inputText.length()));
 			nickPrefix = inputText.substring(inputText.lastIndexOf(" ")+1, inputText.length());
@@ -382,15 +373,15 @@ ActionListener{//, MouseMotionListener {
 		} else if(inputText != null && inputText.length() >= 1) {
 			inputText = "";
 		}
-		
+
 		bufferedNickPrefix = true;
-		
+
 		String returnNick = tabCompleteNick(nickPrefix);
 		inputText+=returnNick;
 		inputField.setText(inputText);
-		
+
 	}
-	
+
 	String tabCompleteNick(String prefix) {
 		System.out.println("prefix:'"+prefix+"'");
 		String string = userListPanels.get(util.findChannel(activeServer, activeChannel, 1)).getTabComplete(nickPrefix, tabs);
@@ -399,7 +390,7 @@ ActionListener{//, MouseMotionListener {
 			tabs = 1;
 			return tabCompleteNick(prefix);
 		}
-		
+
 		return string;
 	}
 
@@ -426,24 +417,33 @@ ActionListener{//, MouseMotionListener {
 				String m = inputField.getText();
 				messageBuffer.add(m);
 				bufferSelection = messageBuffer.size();
-
-				if(ircConnections.get(util.findIRCConnection()).send(OutputFactory.formatMessage(
+				if(m.startsWith("/part")) {
+					ircConnections.get(util.findIRCConnection()).send(
+							OutputFactory.formatMessage(m+" "+activeChannel, activeChannel));
+				}
+				else if(ircConnections.get(util.findIRCConnection()).send(OutputFactory.formatMessage(
 						m, activeChannel))&&!m.equals(""))
 				{
 					if(m.startsWith("/")) {
 						String cmd = "";
-						if(m.contains(" "))
+						m = inputField.getText().trim();
+						if(m.contains(" ")) {
 							cmd = inputField.getText().substring(0, m.indexOf(" "));
-
+						} else{
+							cmd = inputField.getText();
+						}
 						if(cmd.equalsIgnoreCase("/join")) {
 							listener.onJoinChannel(activeServer, m.substring(m.indexOf(" "), 
 									m.length()).trim());
 							inputField.setText("");
-
+						} else if(cmd.equalsIgnoreCase("/part"))
+						{
+							listener.onPartChannel(activeServer, activeChannel);
+							inputField.setText("");
 						}
 
 						listener.onNewMessage(activeServer, activeServer, m, "REPLY");
-					} else {
+					}else {
 						IRCConnection temp = ircConnections.get(util.findIRCConnection());
 						String nick = ircConnections.get(util.findIRCConnection()).getNick();
 						// If a PRIVMSG was sent
@@ -826,7 +826,7 @@ ActionListener{//, MouseMotionListener {
 	public static ArrayList<String> getServersAndChannels() {
 		return serversAndChannels;
 	}
-	
+
 	public TerminalPanel getTerminalPanel() {
 		return terminalPanel;
 	}
