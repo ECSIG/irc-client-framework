@@ -308,5 +308,9 @@ public class IRCConnection extends Thread {
 	public void setQueue(ArrayBlockingQueue<String> queue) {
 		this.queue = queue;
 	}
+	
+	public String getUserName() {
+		return username;
+	}
 
 }

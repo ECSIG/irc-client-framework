@@ -8,9 +8,7 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.prefs.Preferences;
 
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
@@ -60,7 +58,6 @@ public class ConnectionEngine {
 
 	private void loadConnection() {
 		Properties properties = new Properties();
-		//String userDir = ConnectionEngine.class.getClassLoader().getResourceAsStream("settings.properties").toString();
 		System.out.println(System.getProperty("user.home"));
 		String settingsDir = "";
 		String os = System.getProperty("os.name").toLowerCase();
@@ -71,6 +68,10 @@ public class ConnectionEngine {
 			settingsDir = userHome+"/Library/Application Support/JIRCC";
 		} else if (os.contains("windows")) {
 			settingsDir = userHome+"\\Documents\\JIRCC";
+		} else if (os.contains("linux")) {
+			settingsDir = userHome + "/JIRCC";
+		} else if (os.contains("bsd")) {
+			settingsDir = userHome +"/JIRCC";
 		}
 
 		System.out.println(settingsDir);
