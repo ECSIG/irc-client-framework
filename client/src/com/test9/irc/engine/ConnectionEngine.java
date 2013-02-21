@@ -112,7 +112,7 @@ public class ConnectionEngine {
 
 		File[] files = new File(connectionsDir.getPath()).listFiles();
 		for(File n : files) {
-			if((Character.isAlphabetic(n.getName().charAt(0)) || Character.isDigit(n.getName().charAt(0)))) {
+			if(Character.isLetterOrDigit(n.getName().charAt(0))) {
 				loadedConnection = true;
 				System.out.println(n.getAbsolutePath());
 				FileInputStream in;

@@ -467,7 +467,7 @@ ActionListener, WindowListener{//, MouseMotionListener {
 				tabComplete();
 			}
 			if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-
+				
 				String m = inputField.getText();
 				messageBuffer.add(m);
 				bufferSelection = messageBuffer.size();
@@ -926,11 +926,11 @@ ActionListener, WindowListener{//, MouseMotionListener {
 	}
 
 	void giveInputFieldFocus(char c) {
-		inputField.requestFocusInWindow();
 		inputField.setText(Character.toString(c));
 		inputField.setCaretPosition(inputField.getText().length());
-
-		//inputField.setSelectionStart(inputField.getText().length()+1);
+		inputField.requestFocusInWindow();
+		inputField.getHighlighter().removeAllHighlights();
+		inputField.setCaretPosition(inputField.getText().length());
 	}
 
 	@Override
