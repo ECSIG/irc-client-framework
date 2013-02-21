@@ -25,7 +25,10 @@ public class ConnectionEngine {
 
 	public static String settingsDir = ""; 
 	public static final String fileSeparator = System.getProperty("file.separator");
-
+	private String host = "", pass="", nick="", username="", realname="", encoding="";
+	private int port;
+	private boolean ssl;
+	private boolean loadedConnection = false;
 
 	public ConnectionEngine() throws IOException {
 
@@ -36,7 +39,7 @@ public class ConnectionEngine {
 		if(os.contains("mac os x")) {
 			settingsDir = userHome+"/Library/Application Support/JIRCC";
 		} else if (os.contains("windows")) {
-			settingsDir = userHome+"\\Documents\\JIRCC\\connections";
+			settingsDir = userHome+"\\Documents\\JIRCC";
 		} else if (os.contains("linux")) {
 			settingsDir = userHome + "/JIRCC/connections";
 		} else if (os.contains("bsd")) {
@@ -91,9 +94,7 @@ public class ConnectionEngine {
 	}
 
 	private void loadConnection() {
-		String host = "", pass="", nick="", username="", realname="", encoding="";
-		int port;
-		boolean ssl;
+
 
 		Properties properties = new Properties();
 
@@ -104,41 +105,15 @@ public class ConnectionEngine {
 			connectionsDir.mkdir();
 		}
 
-		if((new File(connectionsDir.getPath()).list().length) <= 1) {
-			host = JOptionPane.showInputDialog("What is the host?");
-			JPasswordField pwd = new JPasswordField(30);  
-			JOptionPane.showConfirmDialog(null, pwd,"Enter Password",JOptionPane.OK_CANCEL_OPTION);  
-			pass = new String(pwd.getPassword());
-			nick = JOptionPane.showInputDialog("What is the nick?");
-			username = JOptionPane.showInputDialog("What is the username?");
-			realname = JOptionPane.showInputDialog("What is the realname?");
-			encoding = JOptionPane.showInputDialog("What is the encoding?(type in 'UTF-8' for now)");
-			port = Integer.parseInt(JOptionPane.showInputDialog("What port?"));
-			ssl = Boolean.parseBoolean(JOptionPane.showInputDialog("SSL?('true'/'false')"));
-
-			properties.put("host", host);
-			properties.put("pass", pass);
-			properties.put("nick", nick);
-			properties.put("username", username);
-			properties.put("realname", realname);
-			properties.put("encoding", encoding);
-			properties.put("port", Integer.toString(port));
-			properties.put("ssl", Boolean.toString(ssl));
-
-			File settingsFile = new File(connectionsDir.getPath() + fileSeparator + host);
-			try {
-				settingsFile.createNewFile();			
-				FileOutputStream out = new FileOutputStream(settingsFile);
-				properties.store(out, "Program settings");
-				out.close();
-			} catch (FileNotFoundException e) {
-			} catch (IOException e) {}
+		if((new File(connectionsDir.getPath()).list().length) < 1) {
+			createNewConnectionSettings(properties, connectionsDir);
 
 		}
 
 		File[] files = new File(connectionsDir.getPath()).listFiles();
 		for(File n : files) {
-			if(!n.getName().startsWith(".")) {
+			if((Character.isAlphabetic(n.getName().charAt(0)) || Character.isDigit(n.getName().charAt(0)))) {
+				loadedConnection = true;
 				System.out.println(n.getAbsolutePath());
 				FileInputStream in;
 				try {
@@ -174,6 +149,40 @@ public class ConnectionEngine {
 				}
 			}
 		}
+		if(!loadedConnection) {
+			createNewConnectionSettings(properties, connectionsDir);
+		}
+	}
+	
+	private void createNewConnectionSettings(Properties properties, File connectionsDir) {
+		host = JOptionPane.showInputDialog("What is the host?");
+		JPasswordField pwd = new JPasswordField(30);  
+		JOptionPane.showConfirmDialog(null, pwd,"Enter Password",JOptionPane.OK_CANCEL_OPTION); 
+		pass = new String(pwd.getPassword());
+		nick = JOptionPane.showInputDialog("What is the nick?");
+		username = JOptionPane.showInputDialog("What is the username?");
+		realname = JOptionPane.showInputDialog("What is the realname?");
+		encoding = JOptionPane.showInputDialog("What is the encoding?(type in 'UTF-8' for now)");
+		port = Integer.parseInt(JOptionPane.showInputDialog("What port?"));
+		ssl = Boolean.parseBoolean(JOptionPane.showInputDialog("SSL?('true'/'false')"));
+
+		properties.put("host", host);
+		properties.put("pass", pass);
+		properties.put("nick", nick);
+		properties.put("username", username);
+		properties.put("realname", realname);
+		properties.put("encoding", encoding);
+		properties.put("port", Integer.toString(port));
+		properties.put("ssl", Boolean.toString(ssl));
+
+		File settingsFile = new File(connectionsDir.getPath() + fileSeparator + host+".txt");
+		try {
+			settingsFile.createNewFile();			
+			FileOutputStream out = new FileOutputStream(settingsFile);
+			properties.store(out, "Program settings");
+			out.close();
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {}
 	}
 
 	/**

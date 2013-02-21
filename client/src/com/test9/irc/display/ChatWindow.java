@@ -678,12 +678,46 @@ ActionListener, WindowListener{//, MouseMotionListener {
 
 	@Override
 	public void windowGainedFocus(WindowEvent e) {
-		inputField.requestFocus();
+		inputField.requestFocusInWindow();
 	}
 
 	@Override
 	public void windowStateChanged(WindowEvent e) {
 		System.out.println("window state changed");
+
+		sidePanelSplitPane.setDividerLocation((frame.getHeight()/2)-20);
+
+		listsAndOutputSplitPane.invalidate();
+		sidePanelSplitPane.invalidate();
+		if(joinedAServer)
+		{
+				OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
+						outputFieldLayeredPane.getHeight());
+				UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
+						userListsLayeredPane.getHeight());
+
+				for(OutputPanel t : outputPanels)
+				{
+					t.setBounds(OutputPanel.getBoundsRec());
+					t.getScrollPane().getVerticalScrollBar().setValue(
+							t.getScrollPane().getVerticalScrollBar().getMaximum());
+					t.invalidate();
+
+				}
+
+				for(UserListPanel t: userListPanels)
+				{
+					t.setBounds(UserListPanel.getBoundsRec());
+					t.invalidate();
+
+				}
+				treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
+				outputFieldLayeredPane.invalidate();
+			
+			
+		}
+
+		frame.invalidate();
 	}
 
 
@@ -894,7 +928,7 @@ ActionListener, WindowListener{//, MouseMotionListener {
 	void giveInputFieldFocus(char c) {
 		inputField.requestFocusInWindow();
 		inputField.setText(Character.toString(c));
-		inputField.select(0, 0);
+		inputField.setCaretPosition(inputField.getText().length());
 
 		//inputField.setSelectionStart(inputField.getText().length()+1);
 	}

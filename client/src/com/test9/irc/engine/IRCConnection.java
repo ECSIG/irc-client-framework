@@ -30,7 +30,7 @@ public class IRCConnection extends Thread {
 	private Parser p;
 	private IRCEventListener listener;
 	private ArrayList<User> users = new ArrayList<User>();
-	private ArrayBlockingQueue<String> queue = new ArrayBlockingQueue<String>(1000);
+	private ArrayBlockingQueue<String> queue = new ArrayBlockingQueue<String>(10000);
 	private QueueProcessing qp = new QueueProcessing(this);
 
 	public IRCConnection(String host, int port, String pass, String nick, 
