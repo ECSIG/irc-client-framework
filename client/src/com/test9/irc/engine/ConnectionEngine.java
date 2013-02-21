@@ -167,11 +167,11 @@ public class ConnectionEngine {
 					beginIRCConnection(host, port, pass, nick, 
 							username, realname, encoding);
 				}
-//				try {
-//					IRCConnection.sleep(4000);
-//				} catch (InterruptedException e) {
-//
-//				}
+				try {
+					IRCConnection.sleep(4000);
+				} catch (InterruptedException e) {
+
+				}
 			}
 		}
 	}
