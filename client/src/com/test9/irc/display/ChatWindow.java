@@ -585,11 +585,12 @@ ActionListener, WindowListener{//, MouseMotionListener {
 	@Override
 	public void componentResized(ComponentEvent e) 
 	{
+		System.out.println(e.getSource());
 		sidePanelSplitPane.setDividerLocation((frame.getHeight()/2)-20);
 
 		listsAndOutputSplitPane.invalidate();
 		sidePanelSplitPane.invalidate();
-
+		
 		frame.invalidate();
 	}
 
@@ -599,6 +600,7 @@ ActionListener, WindowListener{//, MouseMotionListener {
 		{
 			if((evt.getSource() == listsAndOutputSplitPane) || (evt.getSource() == outputSplitPane))
 			{
+				System.out.println("source was listsandoutputsplitpane and or outputsplitpane");
 				OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
 						outputFieldLayeredPane.getHeight());
 				UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
@@ -624,6 +626,7 @@ ActionListener, WindowListener{//, MouseMotionListener {
 			}
 			else if(evt.getSource() == sidePanelSplitPane)
 			{
+				System.out.println("source was sidepanelsplitpane");
 				UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
 						userListsLayeredPane.getHeight());
 
@@ -689,34 +692,34 @@ ActionListener, WindowListener{//, MouseMotionListener {
 
 		listsAndOutputSplitPane.invalidate();
 		sidePanelSplitPane.invalidate();
-		if(joinedAServer)
-		{
-				OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
-						outputFieldLayeredPane.getHeight());
-				UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
-						userListsLayeredPane.getHeight());
-
-				for(OutputPanel t : outputPanels)
-				{
-					t.setBounds(OutputPanel.getBoundsRec());
-					t.getScrollPane().getVerticalScrollBar().setValue(
-							t.getScrollPane().getVerticalScrollBar().getMaximum());
-					t.invalidate();
-
-				}
-
-				for(UserListPanel t: userListPanels)
-				{
-					t.setBounds(UserListPanel.getBoundsRec());
-					t.invalidate();
-
-				}
-				treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
-				outputFieldLayeredPane.invalidate();
-			
-			
-		}
-
+		
+//		if(joinedAServer)
+//		{
+//				OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
+//						outputFieldLayeredPane.getHeight());
+//				UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
+//						userListsLayeredPane.getHeight());
+//
+//				for(OutputPanel t : outputPanels)
+//				{
+//					t.setBounds(OutputPanel.getBoundsRec());
+//					t.getScrollPane().getVerticalScrollBar().setValue(
+//							t.getScrollPane().getVerticalScrollBar().getMaximum());
+//					t.invalidate();
+//
+//				}
+//
+//				for(UserListPanel t: userListPanels)
+//				{
+//					t.setBounds(UserListPanel.getBoundsRec());
+//					t.invalidate();
+//
+//				}
+//				treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
+//				outputFieldLayeredPane.invalidate();
+//			
+//			
+//		}
 		frame.invalidate();
 	}
 
