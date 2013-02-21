@@ -6,6 +6,9 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -14,7 +17,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 
-public class UserListPanel extends JPanel implements ListSelectionListener, FocusListener{
+public class UserListPanel extends JPanel implements ListSelectionListener, FocusListener, KeyListener{
 
 	private static final long serialVersionUID = 3331343604631033360L;
 	/**
@@ -52,6 +55,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	 */
 	private JList jList = new JList();
 
+	private ChatWindow owner;
 
 	/**
 	 * Constructs a new UserListPanel for a channel.
@@ -60,8 +64,9 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	 * @param width Width.
 	 * @param height Height.
 	 */
-	UserListPanel(String server, String channel, int width, int height)
+	UserListPanel(String server, String channel, int width, int height, ChatWindow owner)
 	{
+		this.owner = owner;
 		//System.out.println(server + " " + channel);
 		jList.setBackground(Color.BLACK);
 		jList.setForeground(Color.WHITE);
@@ -78,8 +83,10 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 		scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
 		scrollPane.getHorizontalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
 		scrollPane.setBorder(null);
+		scrollPane.addKeyListener(this);
 		add(scrollPane, BorderLayout.CENTER);
 		jList.addFocusListener(this);
+		addKeyListener(this);
 
 
 	}
@@ -113,18 +120,19 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	 * @param oldNick The original nick.
 	 * @param newNick The user's new nick.
 	 */
-	void nickChange(String oldNick, String newNick)
+	boolean nickChange(String oldNick, String newNick)
 	{
 		if(listModel.removeElement(oldNick)) {
 			newUser(newNick);
-
+			return true;
 		}
 		invalidate();
+		return false;
 	}
 
 	String getTabComplete(String prefix, int tabs) {
 		int ltabs = 0;
-		
+
 		for(int i = 0; i < listModel.getSize(); i++){
 			String n = (String) listModel.getElementAt(i);
 			if(!Character.isLetter(n.charAt(0))) {
@@ -255,5 +263,42 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	@Override
 	public void focusLost(FocusEvent e) {
 		jList.getSelectionModel().clearSelection();
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void keyPressed(KeyEvent e) {
+		if(!ChatWindow.hasMetaKey)
+		{
+			if(e.getModifiers() == InputEvent.CTRL_MASK) {
+				if(Character.isDigit(e.getKeyChar())) {
+					owner.connectionTreeTabSelection(Character.getNumericValue(e.getKeyChar())-1);
+				} 
+			} else if(e.getModifiers() == InputEvent.ALT_MASK) {
+				if(Character.isDigit(e.getKeyChar())) {
+					owner.connectionTreeTabSelection(Character.getNumericValue(e.getKeyChar())-1);
+				} 
+			} else {
+				owner.giveInputFieldFocus(e.getKeyChar());
+			}
+		} else {
+			if(e.getModifiers()== InputEvent.META_MASK) {
+				if(Character.isDigit(e.getKeyChar())) {
+					owner.connectionTreeTabSelection(Character.getNumericValue(e.getKeyChar())-1);
+				} // end digit?
+			} else {
+				owner.giveInputFieldFocus(e.getKeyChar());
+			}
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 }

@@ -2,6 +2,9 @@ package com.test9.irc.display;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Collections;
 import java.util.Enumeration;
 
@@ -14,7 +17,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-public class ConnectionTree extends JTree implements TreeSelectionListener {
+public class ConnectionTree extends JTree implements TreeSelectionListener, KeyListener {
 
 	private static final long serialVersionUID = 8988928665652702491L;
 
@@ -47,6 +50,7 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 		setRootVisible(false);
 		getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		addTreeSelectionListener(this);
+		addKeyListener(this);
 		setShowsRootHandles(true);
 		setCellRenderer(treeRenderer);
 		expandTree();
@@ -243,5 +247,42 @@ public class ConnectionTree extends JTree implements TreeSelectionListener {
 
 			owner.newActiveChannels(activeServer, activeChannel);
 		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void keyPressed(KeyEvent e) {
+		if(!ChatWindow.hasMetaKey)
+		{
+			if(e.getModifiers() == InputEvent.CTRL_MASK) {
+				if(Character.isDigit(e.getKeyChar())) {
+					owner.connectionTreeTabSelection(Character.getNumericValue(e.getKeyChar())-1);
+				} 
+			} else if(e.getModifiers() == InputEvent.ALT_MASK) {
+				if(Character.isDigit(e.getKeyChar())) {
+					owner.connectionTreeTabSelection(Character.getNumericValue(e.getKeyChar())-1);
+				} 
+			} else {
+				owner.giveInputFieldFocus(e.getKeyChar());
+			}
+		} else {
+			if(e.getModifiers()== InputEvent.META_MASK) {
+				if(Character.isDigit(e.getKeyChar())) {
+					owner.connectionTreeTabSelection(Character.getNumericValue(e.getKeyChar())-1);
+				} // end digit?
+			} else {
+				owner.giveInputFieldFocus(e.getKeyChar());
+			}
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

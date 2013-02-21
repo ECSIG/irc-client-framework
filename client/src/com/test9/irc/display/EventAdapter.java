@@ -99,10 +99,10 @@ public class EventAdapter implements Listener {
 	}
 
 	@Override
-	public void onNewHighlight(String host, String params, String nickname,
+	public void onNewHighlight(User user, String host, String params, String nickname,
 			String content) {
-		//owner.newMessageHighlight(host, params, nickname, content);
-		owner.getTerminalPanel().newMessage(null, nickname, params, content, TextFormat.privmsg);
+		owner.newMessageHighlight(host, params, nickname, content);
+		owner.getTerminalPanel().newMessage(user, nickname, params, content, TextFormat.privmsg);
 
 
 	}
@@ -205,8 +205,12 @@ public class EventAdapter implements Listener {
 	public void onNickChange(String host, String oldNick, String newNick) {
 		for(UserListPanel u : owner.getUserListPanels())
 		{
-			if(u.getServer().equals(host))
-				u.nickChange(oldNick, newNick);
+			if(u.getServer().equals(host)) {
+				if(u.nickChange(oldNick, newNick)) {
+					onNewMessage(u.getServer(), u.getChannel(), 
+							oldNick + " is now known as "+ newNick, "REPLY");
+				}
+			}
 		}
 		owner.getTerminalPanel().newMessage(null, null, host, 
 				oldNick + " is now known as "+newNick, TextFormat.nick);

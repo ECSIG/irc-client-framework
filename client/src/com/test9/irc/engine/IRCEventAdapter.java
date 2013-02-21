@@ -58,14 +58,14 @@ public class IRCEventAdapter implements IRCEventListener {
 	@Override
 	public void onJoin(String host, Message m) {
 
-		if(m.getUser().equals(connection.getUserName())) {
+		if(m.getUser().equalsIgnoreCase(connection.getUserName())) {
 			if(!(m.getContent().equals("")))
 			{
 				System.out.println("i am joining a channel myself.");
 				cw.onJoinChannel(host, m.getContent());
 			}
 
-		} else if(m.getUser().equals(connection.getNick())) {
+		} else if(m.getUser().equalsIgnoreCase(connection.getNick())) {
 			if(!(m.getContent().equals("")))
 			{
 				System.out.println("i am joining a channel myself.");
@@ -75,7 +75,7 @@ public class IRCEventAdapter implements IRCEventListener {
 			if(!(m.getParams()[0].equals(""))) {
 				System.out.println("no params[0]");
 				cw.onUserJoin(host, m.getParams()[0], m.getNickname(), false);
-			} else if(!(m.getContent().equals(""))){
+			} else if(m.getContent().equals("")){
 				System.out.println("no content");
 				cw.onUserJoin(host, m.getContent(), m.getNickname(), false);
 			}
@@ -143,9 +143,9 @@ public class IRCEventAdapter implements IRCEventListener {
 	@Override
 	public void onPrivmsg(String host, Message m) {
 		// If my name was mentioned in a message, notify the window listener of a highlight
-		if(m.getContent().contains(connection.getNick())) {
+		if(m.getContent().toLowerCase().contains(connection.getNick().toLowerCase())) {
 
-			cw.onNewHighlight(host, m.getParams()[0], m.getNickname(), m.getContent());
+			cw.onNewHighlight(connection.getUser(m.getNickname()),host, m.getParams()[0], m.getNickname(), m.getContent());
 
 		} else { // Otherwise...
 

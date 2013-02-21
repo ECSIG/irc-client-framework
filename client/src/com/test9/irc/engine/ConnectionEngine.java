@@ -22,93 +22,89 @@ public class ConnectionEngine {
 
 	private ArrayList<IRCConnection> connections = new ArrayList<IRCConnection>();
 	private ChatWindow cw;
-	private String host = "", pass="", nick="", username="", realname="", encoding="";
-	private int port;
-	private boolean ssl;
+
+	public static String settingsDir = ""; 
+	public static final String fileSeparator = System.getProperty("file.separator");
+
 
 	public ConnectionEngine() throws IOException {
 
+		System.out.println(System.getProperty("user.home"));
+		String os = System.getProperty("os.name").toLowerCase();
+		String userHome = System.getProperty("user.home");
+
+		if(os.contains("mac os x")) {
+			settingsDir = userHome+"/Library/Application Support/JIRCC";
+		} else if (os.contains("windows")) {
+			settingsDir = userHome+"\\Documents\\JIRCC\\connections";
+		} else if (os.contains("linux")) {
+			settingsDir = userHome + "/JIRCC/connections";
+		} else if (os.contains("bsd")) {
+			settingsDir = userHome +"/JIRCC/connections";
+		}
+
+		File dir = new File(settingsDir);
+		System.out.println(dir.getAbsolutePath());
+
+		if(!dir.exists()) {
+			System.out.println("making new directory");
+			dir.mkdir();
+		}		
 
 		cw = new ChatWindow();
 		cw.addChatWindowListener(new EventAdapter(cw, cw.getUtil()));
 
 		loadConnection();
-		//System.out.println(host);
 
-		if(ssl) {
-			SSLIRCConnection sslc = new SSLIRCConnection(host, port, pass, nick, 
-					username, realname, encoding);
-			connections.add(sslc);
-			sslc.addIRCEventListener(new IRCEventAdapter(this, sslc));
-			sslc.addTrustManager(new SSLDefaultTrustManager());
-			cw.getListener().onJoinServer(sslc.getHost());
-
-			sslc.connect();
-		} else {
-			IRCConnection temp0 = new IRCConnection(host, port, pass, nick, 
-					username, realname, encoding);
-			connections.add(temp0);
-			cw.getListener().onJoinServer(temp0.getHost());
-			temp0.addIRCEventListener(new IRCEventAdapter(this, temp0));
-			temp0.connect();
-		}
 		//public IRCConnection(String host, int port, String pass, String nick, 
 		//		String username, String realname, String encoding) 
 	}
 
+	private void beginSSLIRCConnection(String host, int port, String pass, 
+			String nick, String username, String realname, String encoding) {
+		SSLIRCConnection sslc = new SSLIRCConnection(host, port, pass, nick, 
+				username, realname, encoding);
+		connections.add(sslc);
+		sslc.addIRCEventListener(new IRCEventAdapter(this, sslc));
+		sslc.addTrustManager(new SSLDefaultTrustManager());
+		cw.getListener().onJoinServer(sslc.getHost());
+
+		try {
+			sslc.connect();
+		} catch (IOException e) {
+			System.err.println("Could not start connection ["+host+"]");
+		}
+	}
+
+	private void beginIRCConnection(String host, int port, String pass, String nick, 
+			String username, String realname, String encoding) {
+		IRCConnection irc = new IRCConnection(host, port, pass, nick, 
+				username, realname, encoding);
+		connections.add(irc);
+		cw.getListener().onJoinServer(irc.getHost());
+		irc.addIRCEventListener(new IRCEventAdapter(this, irc));
+		try {
+			irc.connect();
+		} catch (IOException e) {
+			System.err.println("Could not start connection ["+host+"]");
+		}
+	}
+
 	private void loadConnection() {
+		String host = "", pass="", nick="", username="", realname="", encoding="";
+		int port;
+		boolean ssl;
+
 		Properties properties = new Properties();
-		System.out.println(System.getProperty("user.home"));
-		String settingsDir = "";
-		String os = System.getProperty("os.name").toLowerCase();
-		String userHome = System.getProperty("user.home");
-		String fileSeparator = System.getProperty("file.separator");
 
-		if(os.contains("mac os x")) {
-			settingsDir = userHome+"/Library/Application Support/JIRCC";
-		} else if (os.contains("windows")) {
-			settingsDir = userHome+"\\Documents\\JIRCC";
-		} else if (os.contains("linux")) {
-			settingsDir = userHome + "/JIRCC";
-		} else if (os.contains("bsd")) {
-			settingsDir = userHome +"/JIRCC";
+		File connectionsDir = new File(settingsDir+fileSeparator+"connections");
+
+		if(!connectionsDir.exists()){
+			System.out.println("making new connecitons directory");
+			connectionsDir.mkdir();
 		}
 
-		System.out.println(settingsDir);
-		File dir = new File(settingsDir);
-		File settingsFile = new File(settingsDir + fileSeparator + "settings.txt");
-		if(settingsFile.exists()) {
-			FileInputStream in;
-			try {
-				in = new FileInputStream(settingsFile);
-				properties.load(in);
-				in.close();
-			} catch (FileNotFoundException e) {
-				System.err.println("You seem to not have a settings file. Please create one.");
-			} catch (IOException e) {
-				System.err.println("Error loading file into properties.");
-			}
-
-			host = properties.getProperty("host", "");
-			pass = properties.getProperty("pass", "");
-			nick = properties.getProperty("nick", "");
-			username = properties.getProperty("username", "");
-			realname = properties.getProperty("realname", "");
-			encoding = properties.getProperty("encoding", "");
-			port = Integer.parseInt(properties.getProperty("port"));
-			ssl = Boolean.parseBoolean(properties.getProperty("ssl"));
-
-		}
-		if(!dir.exists()) {
-			dir.mkdir();
-		}
-
-		if(!settingsFile.exists()) {
-			try {
-				settingsFile.createNewFile();
-			} catch (IOException e) {
-				System.err.println("Error creating new settings file.");
-			}
+		if((new File(connectionsDir.getPath()).list().length) <= 1) {
 			host = JOptionPane.showInputDialog("What is the host?");
 			JPasswordField pwd = new JPasswordField(30);  
 			JOptionPane.showConfirmDialog(null, pwd,"Enter Password",JOptionPane.OK_CANCEL_OPTION);  
@@ -129,18 +125,54 @@ public class ConnectionEngine {
 			properties.put("port", Integer.toString(port));
 			properties.put("ssl", Boolean.toString(ssl));
 
-
+			File settingsFile = new File(connectionsDir.getPath() + fileSeparator + host);
 			try {
+				settingsFile.createNewFile();			
 				FileOutputStream out = new FileOutputStream(settingsFile);
 				properties.store(out, "Program settings");
 				out.close();
 			} catch (FileNotFoundException e) {
-				System.err.println("Error writing settings to new settings file.");
-			} catch (IOException e) {
-				System.err.println("Error storing the application settings.");
-			}
+			} catch (IOException e) {}
 
-			JOptionPane.showMessageDialog(null, "Your settings file is located at " + settingsFile.getPath());
+		}
+
+		File[] files = new File(connectionsDir.getPath()).listFiles();
+		for(File n : files) {
+			if(!n.getName().startsWith(".")) {
+				System.out.println(n.getAbsolutePath());
+				FileInputStream in;
+				try {
+					in = new FileInputStream(n);
+					properties.load(in);
+					in.close();
+				} catch (FileNotFoundException e) {
+					System.err.println("You seem to not have a settings file. Please create one.");
+				} catch (IOException e) {
+					System.err.println("Error loading file into properties.");
+				}
+
+				host = properties.getProperty("host", "");
+				pass = properties.getProperty("pass", "");
+				nick = properties.getProperty("nick", "");
+				username = properties.getProperty("username", "");
+				realname = properties.getProperty("realname", "");
+				encoding = properties.getProperty("encoding", "");
+				port = Integer.parseInt(properties.getProperty("port"));
+				ssl = Boolean.parseBoolean(properties.getProperty("ssl"));
+
+				if(ssl) {
+					beginSSLIRCConnection(host, port, pass, nick, 
+							username, realname, encoding);
+				} else {
+					beginIRCConnection(host, port, pass, nick, 
+							username, realname, encoding);
+				}
+//				try {
+//					IRCConnection.sleep(4000);
+//				} catch (InterruptedException e) {
+//
+//				}
+			}
 		}
 	}
 

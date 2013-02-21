@@ -289,7 +289,7 @@ public class IRCConnection extends Thread {
 		User user = null;
 
 		for(User u : users)
-			if(u.getNick().equals(nick))
+			if(u.getNick().equalsIgnoreCase(nick))
 				return(u);
 
 		return user;

@@ -1,12 +1,14 @@
 package com.test9.irc.display;
 
 import com.test9.irc.display.notifications.HilightNotificationFrame;
+import com.test9.irc.engine.ConnectionEngine;
 import com.test9.irc.engine.IRCConnection;
 import com.test9.irc.parser.OutputFactory;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +17,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowListener;
 //import java.awt.event.MouseEvent;
 //import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
@@ -22,12 +25,19 @@ import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowStateListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
+import java.util.Properties;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -35,7 +45,7 @@ import javax.swing.JTextField;
 
 public class ChatWindow extends Observable implements ComponentListener,
 KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
-ActionListener{//, MouseMotionListener {
+ActionListener, WindowListener{//, MouseMotionListener {
 
 	/**
 	 * The ultimate frame of the chat client that holds
@@ -184,7 +194,7 @@ ActionListener{//, MouseMotionListener {
 	private static HilightNotificationFrame hnf = new HilightNotificationFrame();
 
 	private static String os;
-	private static boolean hasMetaKey = false;
+	public static boolean hasMetaKey = false;
 
 	private static ArrayList<String> serversAndChannels = new ArrayList<String>();
 
@@ -192,6 +202,7 @@ ActionListener{//, MouseMotionListener {
 	private static String nickPrefix = "";
 	private static boolean bufferedNickPrefix = false;
 	private static ImageIcon img;
+	private static final String fileDirectory = "windowState";
 
 
 	/**
@@ -204,6 +215,7 @@ ActionListener{//, MouseMotionListener {
 
 		img = new ImageIcon(getClass().getResource("elmo.png"));
 		frame.setIconImage(img.getImage());
+
 		util = new Util(this);
 		/*
 		 * Checks to see if the global OS X menu bar should be used.
@@ -228,8 +240,11 @@ ActionListener{//, MouseMotionListener {
 		frame.addComponentListener(this);
 		frame.addWindowFocusListener(this);
 		frame.setPreferredSize(defaultWindowSize);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(true);
+		frame.addWindowStateListener(this);
+		frame.addWindowListener(this);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
 
 		/*
 		 * Sets up the connection tree that will list all server
@@ -316,7 +331,47 @@ ActionListener{//, MouseMotionListener {
 		frame.add(listsAndOutputSplitPane, BorderLayout.CENTER);
 		frame.pack();
 		inputField.requestFocus();
+
 		frame.setVisible(true);
+		loadPreviousState();
+		frame.pack();
+	}
+
+	private void loadPreviousState() {
+		boolean loadSettings = true;
+		File programStateDir = new File(ConnectionEngine.settingsDir+ConnectionEngine.fileSeparator+
+				fileDirectory);
+		if(!programStateDir.exists()) {
+			programStateDir.mkdir();
+		}
+		File settingsFile = new File(programStateDir.getPath()+ConnectionEngine.fileSeparator+"windowState.txt");	
+
+		if(!settingsFile.exists()) {
+			try {settingsFile.createNewFile();} catch (IOException e) {}
+			loadSettings = false;
+			saveWindowState();
+		}
+		Properties properties = new Properties();
+		FileInputStream in;
+
+		if(loadSettings) {
+			try {
+				in = new FileInputStream(settingsFile);
+				properties.load(in);
+				in.close();
+			} catch (FileNotFoundException e) {
+				System.err.println("Error loading windowState.txt.");
+			} catch (IOException e) {
+				System.err.println("Error reading windowState.txt.");
+			}
+			frame.setLocation(new Point(
+					Integer.valueOf(properties.getProperty("xlocation")), 
+					Integer.valueOf(properties.getProperty("ylocation"))
+					));
+			frame.setPreferredSize(new Dimension(Integer.valueOf(properties.getProperty("width")),
+					Integer.valueOf(properties.getProperty("height"))));
+
+		}
 	}
 
 	public void loadColors() {
@@ -400,8 +455,7 @@ ActionListener{//, MouseMotionListener {
 	 * active server after it sends it to the output factory for formatting.
 	 */
 	@Override
-	public void keyReleased(KeyEvent e) {
-
+	public void keyPressed(KeyEvent e) {
 		if(e.getComponent() == inputField) {
 			if(e.getKeyCode() != KeyEvent.VK_TAB) {
 				tabs = 0;
@@ -491,8 +545,8 @@ ActionListener{//, MouseMotionListener {
 				} // end digit?
 			} // end key modifier meta?
 		}
-
 	}
+
 
 	/**
 	 * Creates a new output panel for a server or channel.
@@ -505,7 +559,7 @@ ActionListener{//, MouseMotionListener {
 	{
 		OutputPanel newOutputPanel = new OutputPanel(server, channel, 
 				(int) outputFieldLayeredPane.getSize().getWidth(),
-				(int) outputFieldLayeredPane.getSize().getHeight());
+				(int) outputFieldLayeredPane.getSize().getHeight(), this);
 		newOutputPanel.addKeyListener(this);
 		//		newOutputPanel.getTextArea().addMouseMotionListener(this);
 
@@ -522,7 +576,7 @@ ActionListener{//, MouseMotionListener {
 	{
 		UserListPanel newUserListPanel = new UserListPanel(server, channel,
 				(int) userListsLayeredPane.getSize().getWidth(),
-				(int) userListsLayeredPane.getSize().getHeight());
+				(int) userListsLayeredPane.getSize().getHeight(), this);
 		newUserListPanel.addKeyListener(this);
 		userListPanels.add(newUserListPanel);
 		userListsLayeredPane.add(newUserListPanel);
@@ -629,7 +683,7 @@ ActionListener{//, MouseMotionListener {
 
 	@Override
 	public void windowStateChanged(WindowEvent e) {
-
+		System.out.println("window state changed");
 	}
 
 
@@ -638,16 +692,14 @@ ActionListener{//, MouseMotionListener {
 		//System.out.println("keyTyped");
 	}
 
-
 	@Override
-	public void keyPressed(KeyEvent e) {
-		//System.out.println("keyPressed");
+	public void keyReleased(KeyEvent e) {
+
 	}
 
 
 	@Override
 	public void componentMoved(ComponentEvent e) {
-		//  Auto-generated method stub
 
 	}
 
@@ -673,8 +725,7 @@ ActionListener{//, MouseMotionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//  Auto-generated method stub
-
+		System.out.println("action preformed");
 	}
 
 	/**
@@ -698,9 +749,9 @@ ActionListener{//, MouseMotionListener {
 
 			IRCConnection temp = ircConnections.get(util.findIRCConnection());
 
-			if(hnf !=null){
-				hnf.newHighlightNotification(channel,temp.getUser(nickname) , content);
-			}
+//			if(hnf !=null){
+//				hnf.newHighlightNotification(channel,temp.getUser(nickname) , content);
+//			}
 		}
 		else
 			System.err.println("Cound not find channel to append message to.");
@@ -832,6 +883,100 @@ ActionListener{//, MouseMotionListener {
 	}
 
 	public static void notifyKeyListener(KeyEvent e) {
+
+	}
+
+	void connectionTreeTabSelection(int c) {
+		connectionTree.metaSelection(activeServer, c);		
+
+	}
+
+	void giveInputFieldFocus(char c) {
+		inputField.requestFocusInWindow();
+		inputField.setText(Character.toString(c));
+		inputField.select(0, 0);
+
+		//inputField.setSelectionStart(inputField.getText().length()+1);
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		int ok = JOptionPane.showConfirmDialog(frame, "Quit JIRCC?", "", JOptionPane.OK_CANCEL_OPTION);
+		System.out.println(ok + " closing");
+		if(ok == 0) {
+			saveWindowState();
+			System.exit(0);
+		}
+
+	}
+
+	private void saveWindowState() {
+		Properties properties = new Properties();
+		File stateDir = new File(ConnectionEngine.settingsDir+ConnectionEngine.fileSeparator+
+				fileDirectory);
+		if(!stateDir.exists())
+			stateDir.mkdir();
+		File file = new File(stateDir.getAbsolutePath()+ConnectionEngine.fileSeparator+"windowState.txt");
+		System.out.println("file path in save "+file.getPath());
+
+		if(!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {}
+		}
+		writeWindowState(properties, file);
+	}
+
+	private void writeWindowState(Properties properties, File file) {
+		System.out.println("writing window state");
+		properties.put("xlocation", Integer.toString((int)frame.getLocationOnScreen().getX()));
+		properties.put("ylocation", Integer.toString((int)frame.getLocationOnScreen().getY()));
+		properties.put("width", Integer.toString(frame.getWidth()));
+		properties.put("height", Integer.toString(frame.getHeight()));	
+		try {
+			FileOutputStream out = new FileOutputStream(file);
+			properties.store(out, "Program settings");
+			out.close();
+		} catch (FileNotFoundException e) {
+			System.err.println("Error writing settings to new settings file.");
+		} catch (IOException e) {
+			System.err.println("Error storing the application settings.");
+		}
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
 
 	}
 

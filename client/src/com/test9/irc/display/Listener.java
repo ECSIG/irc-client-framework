@@ -9,7 +9,7 @@ public interface Listener {
 	public void onJoinServer(String server);
 	public void onLeaveServer(String server);
 	public void onNewIRCConnection(IRCConnection connection);
-	public void onNewHighlight(String host, String string, String string2, String string3);
+	public void onNewHighlight(User user, String host, String string, String string2, String string3);
 	public void onNewMessage(String server, String channel, String message, String command);
 	public void onNewPrivMessage(User user, String server, String channel, String nick, String message, boolean isLocal);
 	public void onNewTopic(String server, String channel, String topic);

@@ -6,8 +6,9 @@ import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 //import java.awt.event.MouseWheelEvent;
 //import java.awt.event.MouseWheelListener;
 import java.io.IOException;
@@ -37,7 +38,7 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import com.test9.irc.engine.User;
 
-public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseWheelListener{
+public class OutputPanel extends JPanel implements HyperlinkListener, KeyListener {//, MouseWheelListener{
 
 	private static final long serialVersionUID = 3331343604631033360L;
 
@@ -80,6 +81,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 	private BoundedRangeModel model;
 	private DefaultCaret caret;
 	private JScrollBar scrollBar;
+	private ChatWindow owner;
 
 
 
@@ -91,11 +93,12 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 	 * @param width Width for new construction.
 	 * @param height Height for new construction.
 	 */
-	OutputPanel(String server, String channel, int width, int height)
+	OutputPanel(String server, String channel, int width, int height, ChatWindow owner)
 	{
-
+		this.owner = owner;
 		this.server = server;
 		this.channel = channel;
+		this.addKeyListener(this);
 		setLayout(new BorderLayout());
 		boundsRect = new Rectangle(0,0,width,height);
 		setBounds(boundsRect);
@@ -106,21 +109,25 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 		textPane.addHyperlinkListener(this);
 		textPane.setEditorKit(new HTMLEditorKit());
 		textPane.setEditable(false);
-		
+		textPane.addKeyListener(this);
+
 		//		textPane.addMouseWheelListener(this);
 
 		editorKit = (HTMLEditorKit) textPane.getEditorKit();
-		
+
 		editorKit.getStyleSheet().addRule("body {line-height: 4.0;}");
-		
+
 		doc = (HTMLDocument) editorKit.createDefaultDocument();
 		textPane.setDocument(doc);
 		scrollPane = new JScrollPane(textPane);
 		scrollBar = scrollPane.getVerticalScrollBar();
+		scrollPane.addKeyListener(this);
+		
 
 		model = scrollBar.getModel();
 		caret = (DefaultCaret) textPane.getCaret();
-
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		/*
 		scrollBar.addAdjustmentListener(new AdjustmentListener() {
 
 			@Override
@@ -128,17 +135,19 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 				if (model.getValue() == model.getMaximum() - model.getExtent()) {
 					caret.setDot(textPane.getText().length());
 					caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-				} else {
+				} 
+				else {
 					caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 				}
 			}
-		});
+		});*/
 		scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
 		scrollPane.setBackground(Color.BLACK);
 		scrollPane.setBorder(null);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		//		delayThread.start();
 		add(scrollPane, BorderLayout.CENTER);
+		addKeyListener(this);
 
 	}
 
@@ -161,7 +170,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 		}
 		//		textArea.append(message+"\r\n");
 
-		//textPane.setCaretPosition(textPane.getDocument().getLength());
+		textPane.setCaretPosition(textPane.getDocument().getLength());
 
 	}
 
@@ -184,7 +193,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(
 							message, TextFormat.privMsg),0,0,null);
 
-				//textPane.setCaretPosition(textPane.getDocument().getLength());
+				textPane.setCaretPosition(textPane.getDocument().getLength());
 
 
 			} catch (BadLocationException e) {
@@ -219,7 +228,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 				if(invoker.hasBeenExecuted()){
 					parameters = new SwingMethodInvoker.Parameter[]{new SwingMethodInvoker.Parameter<Integer>(textPane.getDocument().getLength(), int.class)};
 
-					//invoker.reconfigure(textPane, "setCaretPosition", parameters);
+					invoker.reconfigure(textPane, "setCaretPosition", parameters);
 
 					SwingUtilities.invokeAndWait(invoker);
 				}
@@ -293,7 +302,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 			SwingUtilities.invokeAndWait(invoker);
 			if(invoker.hasBeenExecuted()){
 				parameters = new SwingMethodInvoker.Parameter[]{new SwingMethodInvoker.Parameter<Integer>(textPane.getDocument().getLength(), int.class)};
-				//invoker.reconfigure(textPane, "setCaretPosition", parameters);
+				invoker.reconfigure(textPane, "setCaretPosition", parameters);
 				SwingUtilities.invokeAndWait(invoker);
 			}
 		} catch (RuntimeException e) {
@@ -420,6 +429,43 @@ public class OutputPanel extends JPanel implements HyperlinkListener {//, MouseW
 					e.printStackTrace();
 				}
 			}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void keyPressed(KeyEvent e) {
+		if(!ChatWindow.hasMetaKey)
+		{
+			if(e.getModifiers() == InputEvent.CTRL_MASK) {
+				if(Character.isDigit(e.getKeyChar())) {
+					owner.connectionTreeTabSelection(Character.getNumericValue(e.getKeyChar())-1);
+				} 
+			} else if(e.getModifiers() == InputEvent.ALT_MASK) {
+				if(Character.isDigit(e.getKeyChar())) {
+					owner.connectionTreeTabSelection(Character.getNumericValue(e.getKeyChar())-1);
+				} 
+			} else {
+				owner.giveInputFieldFocus(e.getKeyChar());
+			}
+		} else {
+			if(e.getModifiers()== InputEvent.META_MASK) {
+				if(Character.isDigit(e.getKeyChar())) {
+					owner.connectionTreeTabSelection(Character.getNumericValue(e.getKeyChar())-1);
+				} // end digit?
+			} else {
+				owner.giveInputFieldFocus(e.getKeyChar());
+			}
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 
 	//	@Override
