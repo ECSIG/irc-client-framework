@@ -76,7 +76,7 @@ ActionListener, WindowListener{//, MouseMotionListener {
 	/**
 	 * The default width of a scroll bar.
 	 */
-	private static final Dimension SCROLLBARDIM = new Dimension(10,0);
+	//private static final Dimension SCROLLBARDIM = new Dimension(10,0);
 
 	/**
 	 * Default window size of the JFrame calculated from the KIT.
@@ -206,13 +206,13 @@ ActionListener, WindowListener{//, MouseMotionListener {
 	private static ImageIcon img;
 	private static final String fileDirectory = "windowState";
 
-
 	/**
 	 * Initializes a new ChatWindow.
 	 * @param initialServerName Name of the server that is initially joined.
 	 */
 	public ChatWindow()
 	{
+		MySystemTray.init();
 		TextFormat.loadColors();
 
 		img = new ImageIcon(getClass().getResource("elmo.png"));
@@ -256,7 +256,7 @@ ActionListener, WindowListener{//, MouseMotionListener {
 		connectionTree.addKeyListener(this);
 		treeScrollPane = new JScrollPane(connectionTree);
 		treeScrollPane.addKeyListener(this);
-		treeScrollPane.getVerticalScrollBar().setPreferredSize (SCROLLBARDIM);
+		//treeScrollPane.getVerticalScrollBar().setPreferredSize (SCROLLBARDIM);
 
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 		treePanel.setMinimumSize(new Dimension(0,0));
@@ -787,7 +787,7 @@ ActionListener, WindowListener{//, MouseMotionListener {
 		if(util.findChannel(server, channel,0) != -1)
 		{
 			outputPanels.get(util.findChannel(server, channel, 0)).newMessageHighlight(nickname, content);
-
+			MySystemTray.notification("Highlight", "["+nickname+"] " + content);
 			//			IRCConnection temp = ircConnections.get(util.findIRCConnection());
 
 			//			if(hnf !=null){
@@ -900,9 +900,9 @@ ActionListener, WindowListener{//, MouseMotionListener {
 	/**
 	 * @return the scrollbar
 	 */
-	public static Dimension getScrollBarDim() {
-		return SCROLLBARDIM;
-	}
+	//public static Dimension getScrollBarDim() {
+		//return SCROLLBARDIM;
+	//}
 
 	public static HilightNotificationFrame getHighlightNotificationFrame() {
 		return null;

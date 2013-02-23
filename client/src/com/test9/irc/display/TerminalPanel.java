@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -69,7 +67,7 @@ public class TerminalPanel extends JPanel {
 //				}
 //			}
 //		});
-		scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
+//		scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
 		scrollPane.setBackground(Color.BLACK);
 		scrollPane.setBorder(null);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);

@@ -80,8 +80,8 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 		jList.setFont(font);
 		scrollPane = new JScrollPane(jList);
 		scrollPane.setBackground(Color.BLACK);
-		scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
-		scrollPane.getHorizontalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
+//		scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
+//		scrollPane.getHorizontalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
 		scrollPane.setBorder(null);
 		scrollPane.addKeyListener(this);
 		add(scrollPane, BorderLayout.CENTER);

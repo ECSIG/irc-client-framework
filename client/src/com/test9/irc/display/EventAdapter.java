@@ -103,6 +103,7 @@ public class EventAdapter implements Listener {
 			String content) {
 		owner.newMessageHighlight(host, params, nickname, content);
 		owner.getTerminalPanel().newMessage(user, nickname, params, content, TextFormat.privmsg);
+		
 
 
 	}
