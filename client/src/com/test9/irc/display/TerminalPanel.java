@@ -20,6 +20,7 @@ import javax.swing.text.DefaultCaret;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyledDocument;
 
+import com.test9.irc.engine.NewEngineTester;
 import com.test9.irc.engine.User;
 
 public class TerminalPanel extends JPanel {
@@ -43,6 +44,12 @@ public class TerminalPanel extends JPanel {
 		textPane.setForeground(Color.WHITE);
 		textPane.setFont(TextFormat.font);
 		textPane.setEditable(false);
+		try {
+			doc.insertString(0, "!!!!!!!!!!VERSION: "+ NewEngineTester.VERSION+" !!!!!!!!!!!!!!!!!", null);
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		initScrollBar();
 	}
 
@@ -50,18 +57,18 @@ public class TerminalPanel extends JPanel {
 	 * 
 	 */
 	private void initScrollBar() {
-		scrollBar.addAdjustmentListener(new AdjustmentListener() {
-
-			@Override
-			public void adjustmentValueChanged(AdjustmentEvent e) {
-				if (model.getValue() == model.getMaximum() - model.getExtent()) {
-					caret.setDot(textPane.getText().length());
-					caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-				} else {
-					caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-				}
-			}
-		});
+//		scrollBar.addAdjustmentListener(new AdjustmentListener() {
+//
+//			@Override
+//			public void adjustmentValueChanged(AdjustmentEvent e) {
+//				if (model.getValue() == model.getMaximum() - model.getExtent()) {
+//					caret.setDot(textPane.getText().length());
+//					caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+//				} else {
+//					caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+//				}
+//			}
+//		});
 		scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
 		scrollPane.setBackground(Color.BLACK);
 		scrollPane.setBorder(null);

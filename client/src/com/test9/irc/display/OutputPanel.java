@@ -15,12 +15,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.BoundedRangeModel;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
@@ -35,6 +35,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
+import javax.xml.parsers.DocumentBuilder;
 
 import com.test9.irc.engine.User;
 
@@ -78,9 +79,9 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 	private HTMLDocument doc;
 
 	private HTMLEditorKit editorKit;
-	private BoundedRangeModel model;
+//	private BoundedRangeModel model;
 	private DefaultCaret caret;
-	private JScrollBar scrollBar;
+//	private JScrollBar scrollBar;
 	private ChatWindow owner;
 
 
@@ -95,6 +96,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 	 */
 	OutputPanel(String server, String channel, int width, int height, ChatWindow owner)
 	{
+		System.out.println(font.getFamily());
 		this.owner = owner;
 		this.server = server;
 		this.channel = channel;
@@ -110,6 +112,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 		textPane.setEditorKit(new HTMLEditorKit());
 		textPane.setEditable(false);
 		textPane.addKeyListener(this);
+		
 
 		//		textPane.addMouseWheelListener(this);
 
@@ -118,13 +121,14 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 		editorKit.getStyleSheet().addRule("body {line-height: 4.0;}");
 
 		doc = (HTMLDocument) editorKit.createDefaultDocument();
+		
 		textPane.setDocument(doc);
 		scrollPane = new JScrollPane(textPane);
-		scrollBar = scrollPane.getVerticalScrollBar();
+//		scrollBar = scrollPane.getVerticalScrollBar();
 		scrollPane.addKeyListener(this);
 		
 
-		model = scrollBar.getModel();
+//		model = scrollBar.getModel();
 		caret = (DefaultCaret) textPane.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		/*
@@ -162,13 +166,10 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 		try {
 			editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(message+"\r\n", sas),0,0,null);
 		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//		textArea.append(message+"\r\n");
 
 		textPane.setCaretPosition(textPane.getDocument().getLength());
 
@@ -183,10 +184,13 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 	 */
 	void newMessage(User user, String nick, String message, boolean isLocal)//, SimpleAttributeSet sas)
 	{
+		String timeStamp = new SimpleDateFormat("\r\nHH:mm").format(Calendar.getInstance().getTime());
+
 		if(isLocal){
 			try {
 				if(user != null)
-					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag("["+nick+"] ", 
+					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(timeStamp+" ", TextFormat.reply)
+							+wrapInSpanTag("["+nick+"] ", 
 							user.getUserSimpleAttributeSet())+wrapInSpanTag(
 									message, TextFormat.privMsg),0,0,null);
 				else 
@@ -209,6 +213,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 			SwingMethodInvoker invoker;
 			try {
 				String line = "";
+				line += wrapInSpanTag(timeStamp+" ", TextFormat.reply);
 				if(user != null) {
 					line += wrapInSpanTag("["+nick+"] ",user.getUserSimpleAttributeSet()) + " ";
 				}

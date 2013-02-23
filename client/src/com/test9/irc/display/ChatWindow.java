@@ -42,6 +42,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.text.Highlighter;
+import javax.swing.text.JTextComponent;
 
 public class ChatWindow extends Observable implements ComponentListener,
 KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
@@ -74,7 +76,7 @@ ActionListener, WindowListener{//, MouseMotionListener {
 	/**
 	 * The default width of a scroll bar.
 	 */
-	private static final Dimension SCROLLBARDIM = new Dimension(5,0);
+	private static final Dimension SCROLLBARDIM = new Dimension(10,0);
 
 	/**
 	 * Default window size of the JFrame calculated from the KIT.
@@ -191,7 +193,7 @@ ActionListener, WindowListener{//, MouseMotionListener {
 	private TerminalPanel terminalPanel = new TerminalPanel();
 	private JSplitPane outputSplitPane;
 
-	private static HilightNotificationFrame hnf = new HilightNotificationFrame();
+	//	private static HilightNotificationFrame hnf = new HilightNotificationFrame();
 
 	private static String os;
 	public static boolean hasMetaKey = false;
@@ -371,6 +373,8 @@ ActionListener, WindowListener{//, MouseMotionListener {
 			frame.setPreferredSize(new Dimension(Integer.valueOf(properties.getProperty("width")),
 					Integer.valueOf(properties.getProperty("height"))));
 
+			outputSplitPane.setDividerLocation(Integer.valueOf(properties.getProperty("outputSplitPaneLocat")));
+
 		}
 	}
 
@@ -433,7 +437,7 @@ ActionListener, WindowListener{//, MouseMotionListener {
 
 		String returnNick = tabCompleteNick(nickPrefix);
 		inputText+=returnNick;
-		inputField.setText(inputText);
+		inputField.setText(inputText+" ");
 
 	}
 
@@ -467,7 +471,7 @@ ActionListener, WindowListener{//, MouseMotionListener {
 				tabComplete();
 			}
 			if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-				
+
 				String m = inputField.getText();
 				messageBuffer.add(m);
 				bufferSelection = messageBuffer.size();
@@ -590,7 +594,7 @@ ActionListener, WindowListener{//, MouseMotionListener {
 
 		listsAndOutputSplitPane.invalidate();
 		sidePanelSplitPane.invalidate();
-		
+
 		frame.invalidate();
 	}
 
@@ -692,34 +696,34 @@ ActionListener, WindowListener{//, MouseMotionListener {
 
 		listsAndOutputSplitPane.invalidate();
 		sidePanelSplitPane.invalidate();
-		
-//		if(joinedAServer)
-//		{
-//				OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
-//						outputFieldLayeredPane.getHeight());
-//				UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
-//						userListsLayeredPane.getHeight());
-//
-//				for(OutputPanel t : outputPanels)
-//				{
-//					t.setBounds(OutputPanel.getBoundsRec());
-//					t.getScrollPane().getVerticalScrollBar().setValue(
-//							t.getScrollPane().getVerticalScrollBar().getMaximum());
-//					t.invalidate();
-//
-//				}
-//
-//				for(UserListPanel t: userListPanels)
-//				{
-//					t.setBounds(UserListPanel.getBoundsRec());
-//					t.invalidate();
-//
-//				}
-//				treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
-//				outputFieldLayeredPane.invalidate();
-//			
-//			
-//		}
+
+		//		if(joinedAServer)
+		//		{
+		//				OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
+		//						outputFieldLayeredPane.getHeight());
+		//				UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
+		//						userListsLayeredPane.getHeight());
+		//
+		//				for(OutputPanel t : outputPanels)
+		//				{
+		//					t.setBounds(OutputPanel.getBoundsRec());
+		//					t.getScrollPane().getVerticalScrollBar().setValue(
+		//							t.getScrollPane().getVerticalScrollBar().getMaximum());
+		//					t.invalidate();
+		//
+		//				}
+		//
+		//				for(UserListPanel t: userListPanels)
+		//				{
+		//					t.setBounds(UserListPanel.getBoundsRec());
+		//					t.invalidate();
+		//
+		//				}
+		//				treeScrollPane.setBounds(0, 0, treePanel.getWidth(), treePanel.getHeight());
+		//				outputFieldLayeredPane.invalidate();
+		//			
+		//			
+		//		}
 		frame.invalidate();
 	}
 
@@ -784,11 +788,11 @@ ActionListener, WindowListener{//, MouseMotionListener {
 		{
 			outputPanels.get(util.findChannel(server, channel, 0)).newMessageHighlight(nickname, content);
 
-			IRCConnection temp = ircConnections.get(util.findIRCConnection());
+			//			IRCConnection temp = ircConnections.get(util.findIRCConnection());
 
-//			if(hnf !=null){
-//				hnf.newHighlightNotification(channel,temp.getUser(nickname) , content);
-//			}
+			//			if(hnf !=null){
+			//				hnf.newHighlightNotification(channel,temp.getUser(nickname) , content);
+			//			}
 		}
 		else
 			System.err.println("Cound not find channel to append message to.");
@@ -929,11 +933,11 @@ ActionListener, WindowListener{//, MouseMotionListener {
 	}
 
 	void giveInputFieldFocus(char c) {
-		inputField.setText(Character.toString(c));
-		inputField.setCaretPosition(inputField.getText().length());
+		
+		String inputText = inputField.getText();
+		inputText+=Character.toString(c);
+		inputField.setText(inputText);
 		inputField.requestFocusInWindow();
-		inputField.getHighlighter().removeAllHighlights();
-		inputField.setCaretPosition(inputField.getText().length());
 	}
 
 	@Override
@@ -976,6 +980,7 @@ ActionListener, WindowListener{//, MouseMotionListener {
 		properties.put("ylocation", Integer.toString((int)frame.getLocationOnScreen().getY()));
 		properties.put("width", Integer.toString(frame.getWidth()));
 		properties.put("height", Integer.toString(frame.getHeight()));	
+		properties.put("outputSplitPaneLocat", Integer.toString((int)outputSplitPane.getDividerLocation()));
 		try {
 			FileOutputStream out = new FileOutputStream(file);
 			properties.store(out, "Program settings");

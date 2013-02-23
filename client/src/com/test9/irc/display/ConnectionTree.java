@@ -1,27 +1,33 @@
 package com.test9.irc.display;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.EventObject;
 
 import javax.swing.JTree;
+import javax.swing.event.CellEditorListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.Position;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeCellEditor;
+import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-public class ConnectionTree extends JTree implements TreeSelectionListener, KeyListener {
+public class ConnectionTree extends JTree implements TreeSelectionListener, KeyListener, 
+TreeCellRenderer, TreeCellEditor {
 
 	private static final long serialVersionUID = 8988928665652702491L;
 
-	private final CustomDTCR treeRenderer = new CustomDTCR();
+	private final CustomTreeCellRenderer treeRenderer = new CustomTreeCellRenderer();
 	private DefaultTreeModel model;
 	private DefaultMutableTreeNode root;
 	private Font font = new Font("Lucida Grande", Font.BOLD, 12);
@@ -284,5 +290,62 @@ public class ConnectionTree extends JTree implements TreeSelectionListener, KeyL
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Component getTreeCellRendererComponent(JTree tree, Object value,
+			boolean selected, boolean expanded, boolean leaf, int row,
+			boolean hasFocus) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object getCellEditorValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isCellEditable(EventObject anEvent) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean shouldSelectCell(EventObject anEvent) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean stopCellEditing() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void cancelCellEditing() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addCellEditorListener(CellEditorListener l) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeCellEditorListener(CellEditorListener l) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Component getTreeCellEditorComponent(JTree tree, Object value,
+			boolean isSelected, boolean expanded, boolean leaf, int row) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
