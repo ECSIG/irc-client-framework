@@ -27,16 +27,18 @@ public class IRCConnection extends Thread {
 	private String nick;
 	private String realname;
 	private String username;
+	private String connectionName;
 	private Parser p;
 	private IRCEventListener listener;
 	private ArrayList<User> users = new ArrayList<User>();
 	private ArrayBlockingQueue<String> queue = new ArrayBlockingQueue<String>(10000);
 	private QueueProcessing qp = new QueueProcessing(this);
 
-	public IRCConnection(String host, int port, String pass, String nick, 
+	public IRCConnection(String name, String host, int port, String pass, String nick, 
 			String username, String realname, String encoding) {
 		new Thread(qp).start();
 		p = new Parser();
+		connectionName = name;
 		this.host = host;
 		this.port = port;
 		this.pass = (pass != null && pass.length() == 0) ? null : pass;
@@ -311,6 +313,13 @@ public class IRCConnection extends Thread {
 	
 	public String getUserName() {
 		return username;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getConnectionName() {
+		return connectionName;
 	}
 
 }

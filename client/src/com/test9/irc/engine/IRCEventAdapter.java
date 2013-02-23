@@ -21,9 +21,9 @@ public class IRCEventAdapter implements IRCEventListener {
 	 */
 	private com.test9.irc.display.Listener cw;
 
-	public IRCEventAdapter(ConnectionEngine connectionEngine, IRCConnection connection) {
+	public IRCEventAdapter(com.test9.irc.display.Listener cw, IRCConnection connection) {
 		this.connection = connection;
-		cw = connectionEngine.getCw().getListener();
+		this.cw = cw;
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.test9.irc.display;
+package com.test9.irc.display.prefWins;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -32,7 +32,7 @@ import javax.swing.SwingConstants;
 import com.test9.irc.engine.ReadServerConfig;
 
 @SuppressWarnings("unused")
-public class NewServerConfigWindow implements ActionListener{
+public class ServerConfigWindow implements ActionListener{
 
 	private static final long serialVersionUID = 285475674231316918L;
 	private static final Toolkit KIT = Toolkit.getDefaultToolkit();	
@@ -95,9 +95,9 @@ public class NewServerConfigWindow implements ActionListener{
 
 	public static void main(String args[])
 	{
-		NewServerConfigWindow w = new NewServerConfigWindow();
+		ServerConfigWindow w = new ServerConfigWindow();
 	}
-	public NewServerConfigWindow()
+	public ServerConfigWindow()
 	{
 
 		initGeneralPanel();
@@ -123,8 +123,9 @@ public class NewServerConfigWindow implements ActionListener{
 
 		//pack();
 		frame.setVisible(true);
-
+		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		loadPrefs();
 	}
 
 	private void initGeneralPanel() {
@@ -152,7 +153,7 @@ public class NewServerConfigWindow implements ActionListener{
 		generalPanel.add(nickservPassword);
 		generalPanel.add(new JLabel("Ald. Nicknames: ", SwingConstants.RIGHT));
 		generalPanel.add(altNicks);
-
+		
 	}
 
 	private void initDetailsPanel() {
@@ -197,6 +198,8 @@ public class NewServerConfigWindow implements ActionListener{
 	}
 
 	private void loadPrefs() {
+		prefs = root.node(this.getClass()+"_"+networkName.getText());
+
 		JFileChooser chooser = new JFileChooser();
 		chooser.setCurrentDirectory(new File("."));
 		chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {

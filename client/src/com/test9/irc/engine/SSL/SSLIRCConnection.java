@@ -139,9 +139,9 @@ public class SSLIRCConnection extends IRCConnection {
 	 *                                  <code>0</code>.
 	 * @see #connect()
 	 */
-	public SSLIRCConnection(String host, int ports, String pass, String nick, 
+	public SSLIRCConnection(String name, String host, int ports, String pass, String nick, 
 			String username, String realname, String encoding) {
-		super(host, ports, pass, nick, username, realname, encoding);
+		super(name, host, ports, pass, nick, username, realname, encoding);
 	}
 
 	// ------------------------------
