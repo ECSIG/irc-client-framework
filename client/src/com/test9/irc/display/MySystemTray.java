@@ -18,7 +18,7 @@ public class MySystemTray {
 
 	private static final PopupMenu popup = new PopupMenu();
 	private static final TrayIcon trayIcon =
-			new TrayIcon(createImage("elmo.png", "tray icon"));
+			new TrayIcon(createImage("elmotrans.png", "tray icon"));
 	private static final SystemTray tray = SystemTray.getSystemTray();
 
 	public static void init() {
@@ -42,6 +42,8 @@ public class MySystemTray {
 		trayIcon.setImageAutoSize(true);
 		trayIcon.setToolTip("JIRCC");
 		
+		
+		
 		about.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null,
@@ -64,5 +66,6 @@ public class MySystemTray {
 
 	public static void notification(String type, String message) {
 		trayIcon.displayMessage(type, message, TrayIcon.MessageType.INFO);
+		
 	}
 }
