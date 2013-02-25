@@ -1,17 +1,24 @@
 package com.test9.irc.display;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JSeparator;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
 import com.test9.irc.display.prefWins.NewServerConfigWindow;
 
-public class MenuBar extends JMenuBar implements MenuListener {
+public class MenuBar extends JMenuBar implements MenuListener, ActionListener {
 
 	/**
 	 * 
@@ -23,10 +30,10 @@ public class MenuBar extends JMenuBar implements MenuListener {
 //		new JMenu("Channel"), new JMenu("Window"), new JMenu("Help")
 //	};
 //
-//	private static final JComponent[] editMenu = new JComponent[]{
-//		new JMenuItem("Undo"), new JMenuItem("Redo"), new JSeparator(), new JMenuItem("Cut"), 
-//		new JMenuItem("Copy"),	new JMenuItem("Paste"), new JMenuItem("Delete"), new JMenuItem("Select All"),
-//	};
+	private static final JMenuItem[] editMenuItems = new JMenuItem[]{
+		new JMenuItem("Undo"), new JMenuItem("Redo"), new JMenuItem("Cut"), 
+		new JMenuItem("Copy"),	new JMenuItem("Paste"), new JMenuItem("Delete"), new JMenuItem("Select All"),
+	};
 //
 //	private static final JComponent[] serverMenu = new JComponent[]{
 //		new JMenuItem("Connect"), new JMenuItem("Disconnect"), new JSeparator(),
@@ -43,16 +50,23 @@ public class MenuBar extends JMenuBar implements MenuListener {
 	JMenuItem newServer = new JMenuItem("New Server");
 
 	MenuBar() {
-
+		System.out.println("making new server");
 		JMenu serverMenu = new JMenu("Server");
-		newServer.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new NewServerConfigWindow();
-			}
-		});
+		newServer.addActionListener(this);
 		serverMenu.add(newServer);
 		
+		JMenu editMenu = new JMenu("Edit");
+
+		for(JMenuItem c : editMenuItems) {
+			editMenu.add(c);
+			c.addActionListener(this);
+		}
+		
+
+		
+
 		add(serverMenu);
+		add(editMenu);
 
 	}
 
@@ -69,5 +83,15 @@ public class MenuBar extends JMenuBar implements MenuListener {
 	@Override
 	public void menuCanceled(MenuEvent e) {
 		System.out.println("menyCanceled");
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == newServer) {
+			new NewServerConfigWindow();
+		} else {
+			System.out.println("well shit");
+		}
+		
 	}
 }

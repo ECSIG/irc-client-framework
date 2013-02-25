@@ -1,5 +1,6 @@
 package com.test9.irc.display;
 
+import com.test9.irc.engine.ConnectionEngine;
 import com.test9.irc.engine.IRCConnection;
 import com.test9.irc.engine.User;
 
@@ -10,7 +11,12 @@ public class EventAdapter implements Listener {
 	public EventAdapter(ChatWindow cw, Util util) {
 		this.owner = cw;
 		this.util = util;
-
+	}
+	
+	public void createPrivateChannel(String server, String channel, String nick) {
+		onJoinChannel(server, channel);
+		onUserJoin(server, channel, nick, false);
+		onUserJoin(server, channel, ConnectionEngine.getConnection(server).getNick(), false);
 	}
 
 	/**
@@ -33,7 +39,6 @@ public class EventAdapter implements Listener {
 			owner.newUserListPanel(server, channel);
 			owner.getConnectionTree().newChannelNode(server, channel);
 		}
-
 	}
 
 	/**
@@ -154,12 +159,11 @@ public class EventAdapter implements Listener {
 			String nick, String message, boolean isLocal) {
 
 		if(util.findChannel(server, channel,0) != -1) {
+			
 			owner.getOutputPanels().get(
 					util.findChannel(server, channel, 0)).newMessage(user, nick, message, isLocal);
 		} else {
-			onJoinChannel(server, channel);
-			onUserJoin(server, channel, nick, false);
-			onUserJoin(server, channel, channel, false);
+			createPrivateChannel(server, channel, nick);
 			onNewPrivMessage(user, server, channel, nick, message, isLocal);
 		}
 
@@ -177,6 +181,9 @@ public class EventAdapter implements Listener {
 	 */
 	@Override
 	public void onNewTopic(String server, String channel, String topic) {
+		System.out.println(server);
+		System.out.println(channel);
+		System.out.println(topic);
 		owner.getTitles().get(util.findTitle(server, channel)).setTopic(topic);
 		owner.getFrame().setTitle(owner.getTitles().get(
 				util.findTitle(owner.getActiveServer(), 

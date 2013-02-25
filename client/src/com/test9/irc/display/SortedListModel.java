@@ -15,7 +15,6 @@ class SortedListModel<T> extends AbstractListModel {
 	SortedListModel() {
 		comparator = new MyComparator();
 		model = Collections.synchronizedSortedSet(new TreeSet<T>(comparator));
-		
 	}
 
 	@Override

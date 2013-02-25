@@ -83,7 +83,7 @@ public class Parser {
 			content = "";
 		}
 
-		//printStuff();
+		printStuff();
 
 		return(new Message(prefix, command, params, serverName, nickname, user, host, content));
 

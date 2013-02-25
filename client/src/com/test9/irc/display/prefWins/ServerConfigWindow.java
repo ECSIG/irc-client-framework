@@ -93,10 +93,6 @@ public class ServerConfigWindow implements ActionListener{
 
 	private Preferences prefs;
 
-	public static void main(String args[])
-	{
-		ServerConfigWindow w = new ServerConfigWindow();
-	}
 	public ServerConfigWindow()
 	{
 

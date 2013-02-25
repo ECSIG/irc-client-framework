@@ -1,5 +1,8 @@
 package com.test9.irc.display;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Util {
 	
 	private ChatWindow owner;
@@ -88,19 +91,17 @@ public class Util {
 	 */
 	int findTitle(String server, String channel)
 	{
-		//boolean found = false; After closer examination, found is never actually used, see comment below
+		for(Title t : owner.getTitles()) {
+			System.out.println("server:"+t.getServer()+", channel:"+t.getChannel());
+		}
+		
 		int index = 0;
-		while(
-				//!found && This cannot happen, in every case which found==true the method returns which breaks the loop 
-				index < owner.getTitles().size())
-		{
+		while(index < owner.getTitles().size())	{
 			if(owner.getTitles().get(index).getServer().equals(server))
 			{
 				if(owner.getTitles().get(index).getChannel().equals(channel))
 				{
-					//found = true;	
 					return index;
-
 				}
 				else
 					index++;

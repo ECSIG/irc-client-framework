@@ -9,8 +9,6 @@ import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-//import java.awt.event.MouseWheelEvent;
-//import java.awt.event.MouseWheelListener;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -20,6 +18,7 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -35,7 +34,6 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
-import javax.xml.parsers.DocumentBuilder;
 
 import com.test9.irc.engine.User;
 
@@ -79,9 +77,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 	private HTMLDocument doc;
 
 	private HTMLEditorKit editorKit;
-//	private BoundedRangeModel model;
 	private DefaultCaret caret;
-//	private JScrollBar scrollBar;
 	private ChatWindow owner;
 
 
@@ -113,9 +109,6 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 		textPane.setEditable(false);
 		textPane.addKeyListener(this);
 		
-
-		//		textPane.addMouseWheelListener(this);
-
 		editorKit = (HTMLEditorKit) textPane.getEditorKit();
 
 		editorKit.getStyleSheet().addRule("body {line-height: 4.0;}");
@@ -124,32 +117,13 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 		
 		textPane.setDocument(doc);
 		scrollPane = new JScrollPane(textPane);
-//		scrollBar = scrollPane.getVerticalScrollBar();
 		scrollPane.addKeyListener(this);
 		
-
-//		model = scrollBar.getModel();
 		caret = (DefaultCaret) textPane.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-		/*
-		scrollBar.addAdjustmentListener(new AdjustmentListener() {
-
-			@Override
-			public void adjustmentValueChanged(AdjustmentEvent e) {
-				if (model.getValue() == model.getMaximum() - model.getExtent()) {
-					caret.setDot(textPane.getText().length());
-					caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-				} 
-				else {
-					caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-				}
-			}
-		});*/
-	//	scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
 		scrollPane.setBackground(Color.BLACK);
 		scrollPane.setBorder(null);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		//		delayThread.start();
 		add(scrollPane, BorderLayout.CENTER);
 		addKeyListener(this);
 
@@ -198,13 +172,9 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 							message, TextFormat.privMsg),0,0,null);
 
 				textPane.setCaretPosition(textPane.getDocument().getLength());
-
-
 			} catch (BadLocationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}else{
@@ -436,12 +406,6 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 			}
 	}
 
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public void keyPressed(KeyEvent e) {
 		if(!ChatWindow.hasMetaKey)
 		{
@@ -466,52 +430,11 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 			}
 		}
 	}
-
+	
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-
 	}
-
-	//	@Override
-	//	public void mouseWheelMoved(MouseWheelEvent arg0) {
-	//		getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-	//		BoundedRangeModel model = getScrollPane().getVerticalScrollBar().getModel();
-	//		int scrollAmount = (arg0.getWheelRotation()*30);
-	//		model.setValue(model.getValue()+scrollAmount);
-	//		delayThread.count=0;
-	//	}
-	//	
-	//	public void resetDelayThreadCount() {
-	//		delayThread.count = 0;
-	//	}
-	//
-	//	public void stopDelayThread(){
-	//		delayThread.running=false;
-	//	}
-	//	
-	//	private DelayThread delayThread = new DelayThread();
-	//	
-	//	private class DelayThread extends Thread{
-	//		public boolean running = false;
-	//		private int delayTime = 3;
-	//		private int count = 1;
-	//		public void run(){
-	//			running = true;
-	//			while (running){
-	//				if(count<delayTime){
-	//					count++;
-	//				}else{
-	//					getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-	//					invalidate();
-	//				}
-	//				try {
-	//					Thread.sleep(250);
-	//				} catch (InterruptedException e) {
-	//					// TODO Auto-generated catch block
-	//					e.printStackTrace();
-	//				}
-	//			}
-	//		}
-	//	}
 }

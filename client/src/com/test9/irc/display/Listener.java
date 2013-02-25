@@ -5,6 +5,7 @@ import com.test9.irc.engine.User;
 
 public interface Listener {
 	
+	public void createPrivateChannel(String server, String channel, String nick);
 	public void onJoinChannel(String server, String channel);
 	public void onJoinServer(String server);
 	public void onLeaveServer(String server);

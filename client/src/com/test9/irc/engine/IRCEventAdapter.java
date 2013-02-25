@@ -58,7 +58,7 @@ public class IRCEventAdapter implements IRCEventListener {
 	@Override
 	public void onJoin(String host, Message m) {
 
-		if(m.getUser().equalsIgnoreCase(connection.getUserName())) {
+		if(m.getNickname().equalsIgnoreCase(connection.getNick())) {
 			if(!(m.getContent().equals("")))
 			{
 				System.out.println("i am joining a channel myself.");
@@ -142,6 +142,7 @@ public class IRCEventAdapter implements IRCEventListener {
 
 	@Override
 	public void onPrivmsg(String host, Message m) {
+
 		// If my name was mentioned in a message, notify the window listener of a highlight
 		if(m.getContent().toLowerCase().contains(connection.getNick().toLowerCase())) {
 
@@ -155,11 +156,19 @@ public class IRCEventAdapter implements IRCEventListener {
 				connection.getUsers().add(new User(m.getNickname(), false));
 			}
 
-			// There is a new private message from some nickanem for host at channel
+			// There is a new private message from some nickname for host at channel
 			// It is not a local ChatWindow event
-			cw.onNewPrivMessage(
-					connection.getUser(m.getNickname()), host, m.getParams()[0], 
-					m.getNickname(), m.getContent(), false);		
+			if(!m.getParams()[0].equalsIgnoreCase(connection.getNick())) {
+				cw.onNewPrivMessage(
+						connection.getUser(m.getNickname()), host, m.getParams()[0], 
+						m.getNickname(), m.getContent(), false);		
+		
+			} 
+			// Else, this is a secret message to me and should make a new channel of the senders nick 
+			else if(m.getParams()[0].equalsIgnoreCase(connection.getNick())) {
+				cw.onNewPrivMessage(connection.getUser(m.getNickname()), host, 
+						m.getNickname(), m.getNickname(), m.getContent(), false);
+			} // any others, well shit
 		}
 	}
 

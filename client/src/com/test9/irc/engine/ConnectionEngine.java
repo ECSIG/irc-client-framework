@@ -67,7 +67,7 @@ public class ConnectionEngine {
 		connections.add(sslc);
 		sslc.addIRCEventListener(new IRCEventAdapter(cw.getListener(), sslc));
 		sslc.addTrustManager(new SSLDefaultTrustManager());
-		cw.getListener().onJoinServer(sslc.getHost());
+		cw.getListener().onJoinServer(sslc.getConnectionName());
 
 		try {
 			sslc.connect();
@@ -81,7 +81,7 @@ public class ConnectionEngine {
 		IRCConnection irc = new IRCConnection(name, host, port, pass, nick, 
 				username, realname, encoding);
 		connections.add(irc);
-		cw.getListener().onJoinServer(irc.getHost());
+		cw.getListener().onJoinServer(irc.getConnectionName());
 		irc.addIRCEventListener(new IRCEventAdapter(cw.getListener(), irc));
 		try {
 			irc.connect();
@@ -181,7 +181,7 @@ public class ConnectionEngine {
 	/**
 	 * @return the connection
 	 */
-	public IRCConnection getConnection(String host) {
+	public static IRCConnection getConnection(String host) {
 		System.out.println("getconnectionshost:"+host);
 		for(IRCConnection temp : connections) {
 			if(temp.getHost().equals(host)) {

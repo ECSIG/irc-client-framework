@@ -18,8 +18,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowListener;
-//import java.awt.event.MouseEvent;
-//import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowStateListener;
@@ -42,12 +40,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
-import javax.swing.text.Highlighter;
-import javax.swing.text.JTextComponent;
 
 public class ChatWindow extends Observable implements ComponentListener,
 KeyListener, WindowStateListener, WindowFocusListener, PropertyChangeListener, 
-ActionListener, WindowListener{//, MouseMotionListener {
+ActionListener, WindowListener {
 
 	/**
 	 * The ultimate frame of the chat client that holds
@@ -230,9 +226,10 @@ ActionListener, WindowListener{//, MouseMotionListener {
 			hasMetaKey = true;
 			// Initializes a new menu bar, ultimately should be constructed regardless
 			// of the operating system.
-			menuBar = new MenuBar();
-			frame.setJMenuBar(menuBar);
 		}
+		menuBar = new MenuBar();
+		frame.setJMenuBar(menuBar);
+
 
 
 		/*
@@ -589,7 +586,6 @@ ActionListener, WindowListener{//, MouseMotionListener {
 	@Override
 	public void componentResized(ComponentEvent e) 
 	{
-		System.out.println(e.getSource());
 		sidePanelSplitPane.setDividerLocation((frame.getHeight()/2)-20);
 
 		listsAndOutputSplitPane.invalidate();
@@ -604,7 +600,6 @@ ActionListener, WindowListener{//, MouseMotionListener {
 		{
 			if((evt.getSource() == listsAndOutputSplitPane) || (evt.getSource() == outputSplitPane))
 			{
-				System.out.println("source was listsandoutputsplitpane and or outputsplitpane");
 				OutputPanel.setNewBounds(outputFieldLayeredPane.getWidth(), 
 						outputFieldLayeredPane.getHeight());
 				UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
@@ -630,7 +625,6 @@ ActionListener, WindowListener{//, MouseMotionListener {
 			}
 			else if(evt.getSource() == sidePanelSplitPane)
 			{
-				System.out.println("source was sidepanelsplitpane");
 				UserListPanel.setNewBounds(userListsLayeredPane.getWidth(), 
 						userListsLayeredPane.getHeight());
 
@@ -690,7 +684,6 @@ ActionListener, WindowListener{//, MouseMotionListener {
 
 	@Override
 	public void windowStateChanged(WindowEvent e) {
-		System.out.println("window state changed");
 
 		sidePanelSplitPane.setDividerLocation((frame.getHeight()/2)-20);
 
@@ -766,7 +759,6 @@ ActionListener, WindowListener{//, MouseMotionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("action preformed");
 	}
 
 	/**
@@ -901,7 +893,7 @@ ActionListener, WindowListener{//, MouseMotionListener {
 	 * @return the scrollbar
 	 */
 	//public static Dimension getScrollBarDim() {
-		//return SCROLLBARDIM;
+	//return SCROLLBARDIM;
 	//}
 
 	public static HilightNotificationFrame getHighlightNotificationFrame() {
@@ -933,7 +925,7 @@ ActionListener, WindowListener{//, MouseMotionListener {
 	}
 
 	void giveInputFieldFocus(char c) {
-		
+
 		String inputText = inputField.getText();
 		inputText+=Character.toString(c);
 		inputField.setText(inputText);
@@ -949,7 +941,6 @@ ActionListener, WindowListener{//, MouseMotionListener {
 	@Override
 	public void windowClosing(WindowEvent e) {
 		int ok = JOptionPane.showConfirmDialog(frame, "Quit JIRCC?", "", JOptionPane.OK_CANCEL_OPTION);
-		System.out.println(ok + " closing");
 		if(ok == 0) {
 			saveWindowState();
 			System.exit(0);

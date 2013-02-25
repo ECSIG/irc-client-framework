@@ -3,16 +3,24 @@ package com.test9.irc.display;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -56,7 +64,9 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	private JList jList = new JList();
 
 	private ChatWindow owner;
-
+	
+	private String selected;
+	
 	/**
 	 * Constructs a new UserListPanel for a channel.
 	 * @param server Name of the server the list is on.
@@ -67,7 +77,6 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	UserListPanel(String server, String channel, int width, int height, ChatWindow owner)
 	{
 		this.owner = owner;
-		//System.out.println(server + " " + channel);
 		jList.setBackground(Color.BLACK);
 		jList.setForeground(Color.WHITE);
 		this.server = server;
@@ -80,15 +89,56 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 		jList.setFont(font);
 		scrollPane = new JScrollPane(jList);
 		scrollPane.setBackground(Color.BLACK);
-//		scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
-//		scrollPane.getHorizontalScrollBar().setPreferredSize(ChatWindow.getScrollBarDim());
 		scrollPane.setBorder(null);
 		scrollPane.addKeyListener(this);
 		add(scrollPane, BorderLayout.CENTER);
 		jList.addFocusListener(this);
 		addKeyListener(this);
+		initPopupMenu();
+		
+		jList.addMouseListener( new MouseAdapter()
+		{
+			public void mousePressed(MouseEvent e)
+			{
+				if ( SwingUtilities.isRightMouseButton(e) )
+				{
+					jList.setSelectedIndex(getRow(e.getPoint()));
+					selected = jList.getSelectedValue().toString();
+					showPopupMenu(e);
+				} 
+			}
+		});
 
 
+	}
+	private int getRow(Point point)
+	{
+		return jList.locationToIndex(point);
+	}
+	
+	private void showPopupMenu(MouseEvent e) {
+		JPopupMenu popMenu = new JPopupMenu();
+		JMenuItem pm = new JMenuItem("PM");
+		pm.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Listener listener = owner.getListener();
+				String activeServer = owner.getActiveServer();
+				listener.createPrivateChannel(activeServer, selected, selected);
+				//listener.onJoinChannel(activeServer, selected);
+				
+			}
+			
+		});
+		JMenuItem about = new JMenuItem("About "+jList.getSelectedValue().toString());
+		popMenu.add(pm);
+		popMenu.add(about);
+		popMenu.show(e.getComponent(), e.getX(), e.getY());
+		
+	}
+	
+	private void initPopupMenu() {
+		
 	}
 
 	/**

@@ -7,14 +7,11 @@ import java.awt.Insets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import javax.swing.BoundedRangeModel;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultCaret;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyledDocument;
 
@@ -28,9 +25,7 @@ public class TerminalPanel extends JPanel {
 	private JTextPane textPane = new JTextPane();
 	private JScrollPane scrollPane = new JScrollPane(textPane);
 	private StyledDocument doc = textPane.getStyledDocument();
-	private JScrollBar scrollBar = scrollPane.getVerticalScrollBar();
-	private BoundedRangeModel model = scrollBar.getModel();
-	private DefaultCaret caret = (DefaultCaret) textPane.getCaret();
+
 
 	TerminalPanel() {
 		setMinimumSize(new Dimension(0,0));
@@ -45,7 +40,6 @@ public class TerminalPanel extends JPanel {
 		try {
 			doc.insertString(0, "!!!!!!!!!!VERSION: "+ NewEngineTester.VERSION+" !!!!!!!!!!!!!!!!!", null);
 		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		initScrollBar();

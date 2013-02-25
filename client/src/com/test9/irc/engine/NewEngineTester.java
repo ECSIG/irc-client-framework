@@ -6,7 +6,7 @@ import javax.swing.UIManager;
 
 public class NewEngineTester {
 
-	public static final String VERSION = "6";
+	public static final String VERSION = "9";
 	/**
 	 * @param args
 	 * @throws IOException 

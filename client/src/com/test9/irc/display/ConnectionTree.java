@@ -23,6 +23,7 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+
 public class ConnectionTree extends JTree implements TreeSelectionListener, KeyListener, 
 TreeCellRenderer, TreeCellEditor {
 
@@ -33,7 +34,6 @@ TreeCellRenderer, TreeCellEditor {
 	private DefaultMutableTreeNode root;
 	private Font font = new Font("Lucida Grande", Font.BOLD, 12);
 	private ChatWindow owner;
-
 
 	/**
 	 * 
