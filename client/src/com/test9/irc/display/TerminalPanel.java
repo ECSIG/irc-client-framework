@@ -80,8 +80,8 @@ public class TerminalPanel extends JPanel {
 		String timeStamp = new SimpleDateFormat("\r\nHH:mm").format(Calendar.getInstance().getTime());
 
 		try {
-			doc.insertString(doc.getLength(), timeStamp, TextFormat.timeAttrSet);
-			doc.insertString(doc.getLength(), " <"+origin+">", TextFormat.originAttrSet);
+			doc.insertString(doc.getLength(), timeStamp, TextFormat.TIMEATTRSET);
+			doc.insertString(doc.getLength(), " <"+origin+">", TextFormat.ORIGINATTRSET);
 			if(user != null)
 				doc.insertString(doc.getLength(),"["+nick+"] ", user.getUserSimpleAttributeSet());
 			doc.insertString(doc.getLength(), " "+message, sas);

@@ -1,8 +1,5 @@
 package com.test9.irc.display;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class Util {
 	
 	private ChatWindow owner;
@@ -20,34 +17,24 @@ public class Util {
 	 */
 	int findChannel(String server, String channel, int type)
 	{
-		//boolean found = false; After closer examination, found is never actually used, see comment below
 		int i = 0;
-		if(type==0)
-		{
-			while(
-					//!found && This cannot happen, in every case which found==true the method returns which breaks the loop 
-					i < owner.getOutputPanels().size())
-			{
+		if(type==0) {
+			while(i < owner.getOutputPanels().size()) {
 				if(owner.getOutputPanels().get(i).getServer().equals(server) && 
 						owner.getOutputPanels().get(i).getChannel().equals(channel))
 				{
-					//found = true;
+
+
 					return i;
 				}
 				else 
 					i++;
 			}
-		}
-		else if (type==1)
-		{
-			while(
-					//!found && This cannot happen, in every case which found==true the method returns which breaks the loop 
-					i < owner.getUserListPanels().size())
-			{
+		} else if (type==1) {
+			while(i < owner.getUserListPanels().size())	{
 				if(owner.getUserListPanels().get(i).getServer().equals(server) && 
 						owner.getUserListPanels().get(i).getChannel().equals(channel))
 				{
-					//found = true;
 					return i;
 				}	
 				else i++;
@@ -63,20 +50,14 @@ public class Util {
 	 */
 	int findIRCConnection()
 	{
-		//boolean found = false; After closer examination, found is never actually used, see comment below
 		int index = 0;
 
-		while(
-				//!found && This cannot happen, in every case which found==true the method returns which breaks the loop 
-				index < owner.getIrcConnections().size())
-		{
-			if(owner.getIrcConnections().get(index).getHost().equals(owner.getActiveServer()))
-			{
-				//found = true;	
+		while(index < owner.getIrcConnections().size()) {
+			if(owner.getIrcConnections().get(index).getConnectionName().equals(owner.getActiveServer())) {
 				return index;
-			}
-			else
+			} else {
 				index++;
+			}
 		}
 		System.err.println("Error finding channel while sending message");
 		return -1;

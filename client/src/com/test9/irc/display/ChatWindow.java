@@ -227,7 +227,7 @@ ActionListener, WindowListener {
 			// Initializes a new menu bar, ultimately should be constructed regardless
 			// of the operating system.
 		}
-		menuBar = new MenuBar();
+		menuBar = new MenuBar(this);
 		frame.setJMenuBar(menuBar);
 
 
@@ -475,6 +475,9 @@ ActionListener, WindowListener {
 				if(m.startsWith("/part")) {
 					ircConnections.get(util.findIRCConnection()).send(
 							OutputFactory.formatMessage(m+" "+activeChannel, activeChannel));
+					System.out.println("ChatWindow:"+activeServer+" "+activeChannel);
+					listener.onPartChannel(activeServer, activeChannel);
+					inputField.setText("");
 				}
 				else if(ircConnections.get(util.findIRCConnection()).send(OutputFactory.formatMessage(
 						m, activeChannel))&&!m.equals(""))
@@ -491,11 +494,11 @@ ActionListener, WindowListener {
 							listener.onJoinChannel(activeServer, m.substring(m.indexOf(" "), 
 									m.length()).trim());
 							inputField.setText("");
-						} else if(cmd.equalsIgnoreCase("/part"))
-						{
-							listener.onPartChannel(activeServer, activeChannel);
-							inputField.setText("");
-						}
+						}// else if(cmd.equalsIgnoreCase("/part"))
+//						{
+//							listener.onPartChannel(activeServer, activeChannel);
+//							inputField.setText("");
+//						}
 
 						listener.onNewMessage(activeServer, activeServer, m, "REPLY");
 					}else {
@@ -562,7 +565,6 @@ ActionListener, WindowListener {
 				(int) outputFieldLayeredPane.getSize().getWidth(),
 				(int) outputFieldLayeredPane.getSize().getHeight(), this);
 		newOutputPanel.addKeyListener(this);
-		//		newOutputPanel.getTextArea().addMouseMotionListener(this);
 
 		outputPanels.add(newOutputPanel);
 		outputFieldLayeredPane.add(newOutputPanel);
@@ -650,7 +652,7 @@ ActionListener, WindowListener {
 	 * @param activeChannel The name of the channel that the user has selected
 	 * in the connection tree.
 	 */
-	void newActiveChannels(String activeServer, String activeChannel) {
+	void newActiveChannels(String activeServer, String activeChannel, Boolean isListener) {
 		ChatWindow.activeServer = activeServer;
 		ChatWindow.activeChannel = activeChannel;
 

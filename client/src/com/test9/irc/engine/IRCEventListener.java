@@ -30,9 +30,9 @@ public interface IRCEventListener extends EventListener, IRCConstants {
 	public void onDisconnect();
 	public void onError(Message m);
 	public void onInvite();
-	public void onJoin(String host, Message m);
+	public void onJoin(String connectionName, String host, Message m);
 	public void onKick();
-	public void onPrivmsg(String host, Message m);
+	public void onPrivmsg(String connectionName, String host, Message m);
 	public void onMode(Message m);
 	public void onMode(int two);
 	public void onNick(Message m);
@@ -41,6 +41,6 @@ public interface IRCEventListener extends EventListener, IRCConstants {
 	public void onPing(String string);
 	public void onQuit(Message m);
 	public void onReply(Message m);
-	public void onTopic(String host, Message m);
-	public void onUnknown(String host, Message m);
+	public void onTopic(String connectionName, String host, Message m);
+	public void onUnknown(String connectionName, String host, Message m);
 }

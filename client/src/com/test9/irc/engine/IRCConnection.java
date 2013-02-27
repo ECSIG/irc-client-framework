@@ -169,7 +169,7 @@ public class IRCConnection extends Thread {
 		int reply; // 3-digit reply will be parsed in the later if-condition
 
 		if (command.equalsIgnoreCase("PRIVMSG")) { // MESSAGE
-			listener.onPrivmsg(host, m);
+			listener.onPrivmsg(connectionName, host, m);
 		} else if (command.equalsIgnoreCase("MODE")) { // MODE
 			listener.onMode(m);
 		} else if (command.equalsIgnoreCase("PING")) { // PING
@@ -178,7 +178,7 @@ public class IRCConnection extends Thread {
 			}
 			listener.onPing(line.substring(5));
 		} else if (command.equalsIgnoreCase("JOIN")) { // JOIN
-			listener.onJoin(host, m);
+			listener.onJoin(connectionName, host, m);
 		} else if (command.equalsIgnoreCase("NICK")) { // NICK
 			listener.onNick(m);
 		} else if (command.equalsIgnoreCase("QUIT")) { // QUIT
@@ -201,11 +201,11 @@ public class IRCConnection extends Thread {
 		} else if (command.equalsIgnoreCase("INVITE")) { // INVITE
 			listener.onInvite();
 		} else if (command.equalsIgnoreCase("TOPIC")) { // TOPIC
-			listener.onTopic(host, m);
+			listener.onTopic(connectionName, host, m);
 		} else if (command.equalsIgnoreCase("ERROR")) { // ERROR
 			listener.onError(m);
 		} else {
-			listener.onUnknown(host, m);
+			listener.onUnknown(connectionName, host, m);
 
 		}
 	}

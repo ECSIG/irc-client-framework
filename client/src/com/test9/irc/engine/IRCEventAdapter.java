@@ -45,7 +45,7 @@ public class IRCEventAdapter implements IRCEventListener {
 			connection.setNick(connection.getNick()+"_");
 			connection.send("NICK "+ connection.getNick());
 		} else {
-			cw.onNewMessage(connection.getHost(), connection.getHost(),
+			cw.onNewMessage(connection.getConnectionName(), connection.getConnectionName(),
 					"Error("+m.getCommand()+")"+m.getContent(), "ERROR");
 		}
 	}
@@ -56,28 +56,28 @@ public class IRCEventAdapter implements IRCEventListener {
 	}
 
 	@Override
-	public void onJoin(String host, Message m) {
+	public void onJoin(String connectionName, String host, Message m) {
 
 		if(m.getNickname().equalsIgnoreCase(connection.getNick())) {
 			if(!(m.getContent().equals("")))
 			{
 				System.out.println("i am joining a channel myself.");
-				cw.onJoinChannel(host, m.getContent());
+				cw.onJoinChannel(connectionName, m.getContent());
 			}
 
 		} else if(m.getUser().equalsIgnoreCase(connection.getNick())) {
 			if(!(m.getContent().equals("")))
 			{
 				System.out.println("i am joining a channel myself.");
-				cw.onJoinChannel(host, m.getContent());
+				cw.onJoinChannel(connectionName, m.getContent());
 			}
 		}else {
 			if(!(m.getParams()[0].equals(""))) {
 				System.out.println("no params[0]");
-				cw.onUserJoin(host, m.getParams()[0], m.getNickname(), false);
+				cw.onUserJoin(connectionName, m.getParams()[0], m.getNickname(), false);
 			} else if(m.getContent().equals("")){
 				System.out.println("no content");
-				cw.onUserJoin(host, m.getContent(), m.getNickname(), false);
+				cw.onUserJoin(connectionName, m.getContent(), m.getNickname(), false);
 			}
 			if(!(connection.getUsers().contains(m.getNickname())))
 			{
@@ -109,7 +109,7 @@ public class IRCEventAdapter implements IRCEventListener {
 		connection.getUser(m.getNickname()).setNick(m.getContent());
 
 		// Tell the chat window listener there was a nick change
-		cw.onNickChange(connection.getHost(), m.getNickname(), m.getContent());
+		cw.onNickChange(connection.getConnectionName(), m.getNickname(), m.getContent());
 
 		// If it is me
 		// Set my change my nick in the connection
@@ -121,16 +121,20 @@ public class IRCEventAdapter implements IRCEventListener {
 	@Override	
 	public void onNotice(Message m) {
 		// Notify the listener of a new NoticeMessage
-		cw.onNotice(connection.getHost(), m.getParams().toString(), m.getContent());
+		cw.onNotice(connection.getConnectionName(), m.getParams().toString(), m.getContent());
 	}
 
 	@Override
 	public void onPart(Message m) {
 		// If i parted a channel, tell the listener that i parted
-		if(m.getNickname().equals(connection.getNick())) {
-			cw.onPartChannel(connection.getHost(), m.getParams()[0]);
-		} else /* If someone else parted, notify of a user part*/ {
-			cw.onUserPart(connection.getHost(), m.getParams()[0], m.getNickname());
+		try {
+			if(m.getNickname().equals(connection.getNick())) {
+				cw.onPartChannel(connection.getConnectionName(), m.getParams()[0]);
+			} else /* If someone else parted, notify of a user part*/ {
+				cw.onUserPart(connection.getConnectionName(), m.getParams()[0], m.getNickname());
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 		}
 	}
 
@@ -141,12 +145,12 @@ public class IRCEventAdapter implements IRCEventListener {
 	}
 
 	@Override
-	public void onPrivmsg(String host, Message m) {
+	public void onPrivmsg(String connectionName, String host, Message m) {
 
 		// If my name was mentioned in a message, notify the window listener of a highlight
 		if(m.getContent().toLowerCase().contains(connection.getNick().toLowerCase())) {
 
-			cw.onNewHighlight(connection.getUser(m.getNickname()),host, m.getParams()[0], m.getNickname(), m.getContent());
+			cw.onNewHighlight(connection.getUser(m.getNickname()),connectionName, m.getParams()[0], m.getNickname(), m.getContent());
 
 		} else { // Otherwise...
 
@@ -160,13 +164,13 @@ public class IRCEventAdapter implements IRCEventListener {
 			// It is not a local ChatWindow event
 			if(!m.getParams()[0].equalsIgnoreCase(connection.getNick())) {
 				cw.onNewPrivMessage(
-						connection.getUser(m.getNickname()), host, m.getParams()[0], 
+						connection.getUser(m.getNickname()), connectionName, m.getParams()[0], 
 						m.getNickname(), m.getContent(), false);		
 		
 			} 
 			// Else, this is a secret message to me and should make a new channel of the senders nick 
 			else if(m.getParams()[0].equalsIgnoreCase(connection.getNick())) {
-				cw.onNewPrivMessage(connection.getUser(m.getNickname()), host, 
+				cw.onNewPrivMessage(connection.getUser(m.getNickname()), connectionName, 
 						m.getNickname(), m.getNickname(), m.getContent(), false);
 			} // any others, well shit
 		}
@@ -175,7 +179,7 @@ public class IRCEventAdapter implements IRCEventListener {
 	@Override
 	public void onQuit(Message m) {
 		// Someone quit, notify the ChatWindow listener
-		cw.onUserQuit(connection.getHost(), m.getNickname(), m.getContent());
+		cw.onUserQuit(connection.getConnectionName(), m.getNickname(), m.getContent());
 	}
 
 	@Override
@@ -198,7 +202,7 @@ public class IRCEventAdapter implements IRCEventListener {
 			{
 				// The nick has joined on a certain server at a certain channel
 				// It was a user reply
-				cw.onUserJoin(connection.getHost(), m.getParams()[2], n, true);
+				cw.onUserJoin(connection.getConnectionName(), m.getParams()[2], n, true);
 				// If the nick was not me
 				if(!n.equals(connection.getNick()))
 					//Add a new user to the Connections user list, false - not me
@@ -210,39 +214,39 @@ public class IRCEventAdapter implements IRCEventListener {
 			// If there is a topic message
 		} else if(numCode == IRCConstants.RPL_TOPIC) {
 			// Notify the chat window listener of a new topic
-			cw.onNewTopic(connection.getHost(), m.getParams()[1], m.getContent());
+			cw.onNewTopic(connection.getConnectionName(), m.getParams()[1], m.getContent());
 			// Notify the chat window listener that there is a new topic to show the user
-			cw.onNewMessage(connection.getHost(), m.getParams()[1],
+			cw.onNewMessage(connection.getConnectionName(), m.getParams()[1],
 					"<Topic> " + m.getContent(), "TOPIC");
 			// Someone went away
 		} else if(numCode == IRCConstants.RPL_NOWAWAY) {
 
 			// Services supported by the server
 		} else if(numCode == IRCConstants.RPL_ISUPPORT) {
-			cw.onNewMessage(connection.getHost(), connection.getHost(), 
+			cw.onNewMessage(connection.getConnectionName(), connection.getConnectionName(), 
 					Arrays.toString(m.getParams())+" "+m.getContent(), "REPLY");
 			//List of channels available
 		} else if(numCode == IRCConstants.RPL_LIST) {
-			cw.onNewMessage(connection.getHost(), 
-					connection.getHost(), Arrays.toString(m.getParams()), "REPLY");
+			cw.onNewMessage(connection.getConnectionName(), 
+					connection.getConnectionName(), Arrays.toString(m.getParams()), "REPLY");
 		} else if(numCode == IRCConstants.RPL_MOTD) {
-			cw.onNewMessage(connection.getHost(), connection.getHost(), m.getContent(), "REPLY");
+			cw.onNewMessage(connection.getConnectionName(), connection.getConnectionName(), m.getContent(), "REPLY");
 		}else {
-			cw.onNewMessage(connection.getHost(), connection.getHost(),
+			cw.onNewMessage(connection.getConnectionName(), connection.getConnectionName(),
 					"Reply("+m.getCommand()+")"+m.getContent(), "REPLY");
 		}
 	}
 
 	@Override
-	public void onTopic(String host, Message m) {
+	public void onTopic(String connectionName, String host, Message m) {
 		// There is a topic message from the server
-		cw.onNewTopic(host, m.getParams()[0], m.getContent());
+		cw.onNewTopic(connectionName, m.getParams()[0], m.getContent());
 	}
 
 	@Override
-	public void onUnknown(String host, Message m) {
+	public void onUnknown(String connectionName, String host, Message m) {
 		try{
-			cw.onNewMessage(host, host, m.getContent(), "REPLY");	
+			cw.onNewMessage(connectionName, connectionName, m.getContent(), "REPLY");	
 		}catch(Exception e){}
 	}
 }

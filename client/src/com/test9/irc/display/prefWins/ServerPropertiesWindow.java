@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Properties;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -23,16 +24,18 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import com.test9.irc.engine.ConnectionEngine;
 import com.test9.irc.engine.ReadServerConfig;
 
 @SuppressWarnings("unused")
-public class ServerConfigWindow implements ActionListener{
+public class ServerPropertiesWindow implements ActionListener{
 
 	private static final long serialVersionUID = 285475674231316918L;
 	private static final Toolkit KIT = Toolkit.getDefaultToolkit();	
@@ -45,13 +48,13 @@ public class ServerConfigWindow implements ActionListener{
 	private static JPanel generalPanel = new JPanel();
 
 	private static JTabbedPane tabbedPane = new JTabbedPane();
-	private static JTextField networkName = new JTextField();
-	private static JTextField server = new JTextField();
-	private static JTextField port = new JTextField();
-	private static JPasswordField serverPassword = new JPasswordField();
-	private static JTextField nickName = new JTextField();
-	private static JTextField loginName = new JTextField();
-	private static JTextField realName = new JTextField();
+	private static JTextField networkNameField = new JTextField();
+	private static JTextField hostField = new JTextField();
+	private static JTextField portField = new JTextField();
+	private static JPasswordField serverPasswordField = new JPasswordField();
+	private static JTextField nickNameField = new JTextField();
+	private static JTextField loginNameField = new JTextField();
+	private static JTextField realNameField = new JTextField();
 	private static JPasswordField nickservPassword = new JPasswordField();
 	private static JTextField altNicks = new JTextField();
 	private static JPanel buttonPanel = new JPanel();
@@ -89,12 +92,14 @@ public class ServerConfigWindow implements ActionListener{
 	private static JPanel ignorePanel = new JPanel();
 	private static JButton cancel = new JButton("Cancel");
 	private static JButton ok = new JButton("OK");
-	private Preferences root = Preferences.userRoot();
 
-	private Preferences prefs;
+	private Properties properties = new Properties();
+	private String server;
 
-	public ServerConfigWindow()
+	public ServerPropertiesWindow(String server)
 	{
+		this.server = server;
+		System.out.println("new window");
 
 		initGeneralPanel();
 		initDetailsPanel();
@@ -116,40 +121,39 @@ public class ServerConfigWindow implements ActionListener{
 		buttonPanel.add(ok);
 		frame.add(buttonPanel, BorderLayout.SOUTH);
 		frame.add(tabbedPane, BorderLayout.CENTER);
-
+		loadPrefs();
 		//pack();
 		frame.setVisible(true);
-		
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		loadPrefs();
+
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	}
 
 	private void initGeneralPanel() {
 		generalPanel.setLayout(new GridLayout(11,2));
 		generalPanel.setOpaque(true);
 		generalPanel.add(new JLabel("Network Name: ", SwingConstants.RIGHT));
-		generalPanel.add(networkName);
+		generalPanel.add(networkNameField);
 		generalPanel.add(new JLabel());
 		generalPanel.add(connectOnStartup);
 		generalPanel.add(new JLabel("Server: ", SwingConstants.RIGHT));
-		generalPanel.add(server);
+		generalPanel.add(hostField);
 		generalPanel.add(new JLabel("Port: ", SwingConstants.RIGHT));
-		generalPanel.add(port);
+		generalPanel.add(portField);
 		generalPanel.add(new JLabel());
 		generalPanel.add(sslCheck);
 		generalPanel.add(new JLabel("Server Password: ", SwingConstants.RIGHT));
-		generalPanel.add(serverPassword);
+		generalPanel.add(serverPasswordField);
 		generalPanel.add(new JLabel("Nickname: ", SwingConstants.RIGHT));
-		generalPanel.add(nickName);
+		generalPanel.add(nickNameField);
 		generalPanel.add(new JLabel("Login Name: ", SwingConstants.RIGHT));
-		generalPanel.add(loginName);
+		generalPanel.add(loginNameField);
 		generalPanel.add(new JLabel("Real Name: ", SwingConstants.RIGHT));
-		generalPanel.add(realName);
+		generalPanel.add(realNameField);
 		generalPanel.add(new JLabel("Nickserv Password: ", SwingConstants.RIGHT));
 		generalPanel.add(nickservPassword);
 		generalPanel.add(new JLabel("Ald. Nicknames: ", SwingConstants.RIGHT));
 		generalPanel.add(altNicks);
-		
+
 	}
 
 	private void initDetailsPanel() {
@@ -180,84 +184,89 @@ public class ServerConfigWindow implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//ReadServerConfig rsc = new ReadServerConfig(networkName.getText()+".txt");
 		if(e.getSource() == ok) {
 			savePrefs();
-			System.exit(0);
-			//frame.dispose();
+			frame.dispose();
 		} else if (e.getSource() == cancel) {
-			// TODO Change to dispose after done debugging
-			//frame.dispose();
-			// TODO remove system exit
-			System.exit(0);
+			frame.dispose();
 		}
 	}
 
 	private void loadPrefs() {
-		prefs = root.node(this.getClass()+"_"+networkName.getText());
+		System.out.println("loadingPrefs");
+		String fileSeparator = ConnectionEngine.fileSeparator;
+		File file = new File(ConnectionEngine.settingsDir+
+				fileSeparator+"connections"+fileSeparator+server+".txt");
 
-		JFileChooser chooser = new JFileChooser();
-		chooser.setCurrentDirectory(new File("."));
-		chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-			@Override
-			public boolean accept(File f) {
-				return f.getName().toLowerCase().endsWith(".xml") || f.isDirectory();
-			}
-			@Override
-			public String getDescription()
-			{
-				return "XML files";
-			}
-		});
-		if(chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
-			try {
-				InputStream in = new FileInputStream(chooser.getSelectedFile());
-				Preferences.importPreferences(in);
-				in.close();
-			} catch (Exception e){}
-		networkName.setText(prefs.get(networkNameL, ""));
-		connectOnStartup.setText(prefs.get(connectOnStartupL, ""));
-		server.setText(prefs.get(serverL, ""));
-		port.setText(prefs.get(portL, ""));
-		sslCheck.setSelected(prefs.getBoolean(sslCheckL, false));
-		serverPassword.setText(prefs.get(passwordL, ""));
-		nickName.setText(prefs.get(nickNameL, ""));
-		loginName.setText(prefs.get(loginNameL, ""));
-		realName.setText(prefs.get(realNameL, ""));
-		nickservPassword.setText(prefs.get(nickservPasswordL, ""));
+		FileInputStream in;
+		try {
+			in = new FileInputStream(file);
+			properties.load(in);
+			in.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		networkNameField.setText(properties.getProperty("name", ""));
+		hostField.setText(properties.getProperty("host", ""));
+		portField.setText(properties.getProperty("port", ""));
+		serverPasswordField.setText(properties.getProperty("pass", ""));
+		nickNameField.setText(properties.getProperty("nick", ""));
+		loginNameField.setText(properties.getProperty("username", ""));
+		realNameField.setText(properties.getProperty("realname", ""));
+		encoding.setSelectedItem(properties.getProperty("encoding"));
+		sslCheck.setSelected(Boolean.parseBoolean(properties.getProperty("ssl")));
+
+
 	}
 
 	private void savePrefs() {
-		System.out.println("saving prefs");
-		prefs = root.node(this.getClass()+"_"+networkName.getText());
-		prefs.put(networkNameL, networkName.getText());
-		prefs.putBoolean(connectOnStartupL, connectOnStartup.isSelected());
-		prefs.put(serverL, server.getText());
-		prefs.put(portL, server.getText());
-		prefs.putBoolean(sslCheckL, sslCheck.isSelected());
-		prefs.put(passwordL, serverPassword.getText());
-		prefs.put(nickNameL, nickName.getText());
-		prefs.put(loginNameL, loginName.getText());
-		prefs.put(realNameL, realName.getText());
-		prefs.put(nickservPasswordL, nickservPassword.getText());
-		JFileChooser chooser = new JFileChooser();
-		chooser.setCurrentDirectory(new File("."));
-		chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-			@Override
-			public boolean accept(File f) {
-				return f.getName().toLowerCase().endsWith(".xml") || f.isDirectory();
-			}
-			@Override
-			public String getDescription()
-			{
-				return "XML files";
-			}
-		});
-		if(chooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION)
-			try {
-				OutputStream out = new FileOutputStream(chooser.getSelectedFile());
-				prefs.exportSubtree(out);
-				out.close();
-			} catch (Exception e){}
+		File connectionsDir = new File(ConnectionEngine.settingsDir+
+				ConnectionEngine.fileSeparator+"connections");
+
+
+
+
+		String name = networkNameField.getText();
+		String host = hostField.getText();
+		int port = Integer.parseInt(portField.getText());
+		String pass = serverPasswordField.getText();
+		String nick = nickNameField.getText();
+		String userName = loginNameField.getText();
+		String realName = realNameField.getText();
+		String encodingChoice = encoding.getSelectedItem().toString();
+		boolean ssl = sslCheck.isSelected();
+
+		properties.put("name", name);
+		properties.put("host", host);
+		properties.put("port", Integer.toString(port));
+		properties.put("pass", pass);
+		properties.put("nick", nick);
+		properties.put("username", userName);
+		properties.put("realname",realName);
+		properties.put("nickservpass", pass);
+		properties.put("altnicks", "");
+		properties.put("ssl", Boolean.toString(ssl));
+		properties.put("encoding", encodingChoice);
+
+		File settingsFile = new File(connectionsDir.getPath() + 
+				ConnectionEngine.fileSeparator + name+".txt");
+		try {
+			settingsFile.createNewFile();			
+			FileOutputStream out = new FileOutputStream(settingsFile);
+			properties.store(out, "Program settings");
+			out.close();
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {}
+		if(ssl) {
+			ConnectionEngine.beginSSLIRCConnection(name, host, port, pass, 
+					nick, userName, realName, encodingChoice);
+		}
+		else {
+			ConnectionEngine.beginIRCConnection(name, host, port, pass, nick, 
+					userName, realName, encodingChoice);		}
 	}
 }

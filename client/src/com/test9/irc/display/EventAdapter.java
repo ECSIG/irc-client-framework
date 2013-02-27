@@ -107,7 +107,7 @@ public class EventAdapter implements Listener {
 	public void onNewHighlight(User user, String host, String params, String nickname,
 			String content) {
 		owner.newMessageHighlight(host, params, nickname, content);
-		owner.getTerminalPanel().newMessage(user, nickname, params, content, TextFormat.privmsg);
+		owner.getTerminalPanel().newMessage(user, nickname, params, content, TextFormat.PRIVMSG);
 		
 
 
@@ -116,7 +116,6 @@ public class EventAdapter implements Listener {
 	@Override
 	public void onNewIRCConnection(IRCConnection connection) {
 		owner.getIrcConnections().add(connection);
-
 	}
 
 	/**
@@ -136,16 +135,16 @@ public class EventAdapter implements Listener {
 			if(command.equals("TOPIC")) {
 				owner.getOutputPanels().get(
 						util.findChannel(server, channel, 0)).newMessage(
-								message, TextFormat.topic);
-				owner.getTerminalPanel().newMessage(null, null, channel, message, TextFormat.topic);
+								message, TextFormat.TOPIC);
+				owner.getTerminalPanel().newMessage(null, null, channel, message, TextFormat.TOPIC);
 			} else if(command.equals("REPLY") || command.equals("ERROR")) {
 				owner.getOutputPanels().get(
 						util.findChannel(server, channel, 0)).newMessage(
-								message, TextFormat.reply);
+								message, TextFormat.REPLY);
 				if(command.equals("REPLY")) {
-					owner.getTerminalPanel().newMessage(null, null, server, message, TextFormat.reply);
+					owner.getTerminalPanel().newMessage(null, null, server, message, TextFormat.REPLY);
 				} else if(command.equals("ERROR")) {
-					owner.getTerminalPanel().newMessage(null, null, server, message, TextFormat.error);
+					owner.getTerminalPanel().newMessage(null, null, server, message, TextFormat.ERROR);
 				}
 			}
 		}
@@ -168,7 +167,7 @@ public class EventAdapter implements Listener {
 		}
 
 		if(!(owner.getActiveServer().equals(server)) || (!(owner.getActiveChannel().equals(channel)))) {
-			owner.getTerminalPanel().newMessage(user, nick, channel, message, TextFormat.privmsg);
+			owner.getTerminalPanel().newMessage(user, nick, channel, message, TextFormat.PRIVMSG);
 		} 
 
 	}
@@ -188,7 +187,7 @@ public class EventAdapter implements Listener {
 		owner.getFrame().setTitle(owner.getTitles().get(
 				util.findTitle(owner.getActiveServer(), 
 						owner.getActiveChannel())).getFullTitle());
-		owner.getTerminalPanel().newMessage(null, null, channel, topic, TextFormat.topic);
+		owner.getTerminalPanel().newMessage(null, null, channel, topic, TextFormat.TOPIC);
 
 	}
 
@@ -200,8 +199,8 @@ public class EventAdapter implements Listener {
 
 	@Override
 	public void onNotice(String server, String params, String content) {
-		owner.getOutputPanels().get(util.findChannel(server, server, 0)).newMessage(content, TextFormat.notice);
-		owner.getTerminalPanel().newMessage(null, null, server, content, TextFormat.notice);
+		owner.getOutputPanels().get(util.findChannel(server, server, 0)).newMessage(content, TextFormat.NOTICE);
+		owner.getTerminalPanel().newMessage(null, null, server, content, TextFormat.NOTICE);
 	}
 
 	/**
@@ -221,7 +220,7 @@ public class EventAdapter implements Listener {
 			}
 		}
 		owner.getTerminalPanel().newMessage(null, null, host, 
-				oldNick + " is now known as "+newNick, TextFormat.nick);
+				oldNick + " is now known as "+newNick, TextFormat.NICK);
 
 	}
 
@@ -236,7 +235,7 @@ public class EventAdapter implements Listener {
 	public void onPartChannel(String server, String channel) {
 		int outputPanelId = util.findChannel(server, channel, 0);
 		int userListPanelId = util.findChannel(server, channel, 1);
-		//		owner.getOutputPanels().get(outputPanelId).stopDelayThread();
+		System.out.println(outputPanelId);
 		OutputPanel opr = owner.getOutputPanels().get(outputPanelId);
 		UserListPanel ulpr = owner.getUserListPanels().get(userListPanelId);
 		ChatWindow.getServersAndChannels().remove(new String(server +","+channel));
@@ -245,6 +244,11 @@ public class EventAdapter implements Listener {
 		owner.getOutputPanels().remove(opr);
 		owner.getUserListPanels().remove(ulpr);
 		owner.getConnectionTree().removeChannelNode(server, channel);
+		owner.getTitles().remove(util.findTitle(server, channel));
+		String newOutputPanelServer = owner.getOutputPanels().get(outputPanelId-1).getServer();
+		String newOutputPanelChannel = owner.getOutputPanels().get(outputPanelId-1).getChannel();
+		owner.newActiveChannels(newOutputPanelServer, newOutputPanelChannel, true);
+		
 		owner.getOutputFieldLayeredPane().invalidate();
 		owner.getUserListsLayeredPane().invalidate();
 	}
@@ -255,13 +259,13 @@ public class EventAdapter implements Listener {
 			owner.getUserListPanels().get(util.findChannel(server, channel,1)).newUser(nick);
 			if(!isUserRply)
 				owner.getOutputPanels().get(util.findChannel(server, channel, 0)).newMessage(
-						nick + " has joined.", TextFormat.join);
+						nick + " has joined.", TextFormat.JOIN);
 
 		} else {
 			System.err.println("[ChatWindowError] Cound not find channel to add new user.");
 		}
 		if(!isUserRply)
-			owner.getTerminalPanel().newMessage(null, null, channel, nick+" joined "+channel, TextFormat.join);
+			owner.getTerminalPanel().newMessage(null, null, channel, nick+" joined "+channel, TextFormat.JOIN);
 	}
 
 	@Override
@@ -270,11 +274,11 @@ public class EventAdapter implements Listener {
 			owner.getUserListPanels().get(util.findChannel(server, channel,1)).userPart(nick);
 			owner.getOutputPanels().get(
 					util.findChannel(server, channel, 0)).newMessage(
-							nick+" has parted.", TextFormat.part);
+							nick+" has parted.", TextFormat.PART);
 		} else {
 			System.err.println("Cound not find channel to add new user.");
 		}
-		owner.getTerminalPanel().newMessage(null, null, channel, nick + " left "+channel, TextFormat.part);
+		owner.getTerminalPanel().newMessage(null, null, channel, nick + " left "+channel, TextFormat.PART);
 
 	}
 
@@ -288,12 +292,12 @@ public class EventAdapter implements Listener {
 					u.userPart(nick);
 					owner.getOutputPanels().get(util.findChannel(
 							server, u.getChannel(), 0)).newMessage(
-									nick +" "+ reason, TextFormat.quit);
+									nick +" "+ reason, TextFormat.QUIT);
 				} // endif
 			} // endif
 		} // endfor
 
 		owner.getTerminalPanel().newMessage(null, null, server, 
-				nick+" quit. Reason("+reason+")", TextFormat.quit);
+				nick+" quit. Reason("+reason+")", TextFormat.QUIT);
 	}
 }

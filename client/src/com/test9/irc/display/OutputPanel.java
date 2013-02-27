@@ -18,7 +18,6 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -26,7 +25,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.SimpleAttributeSet;
@@ -81,7 +79,6 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 	private ChatWindow owner;
 
 
-
 	/**
 	 * Creates a new OutputPanel for a server or channel that
 	 * can be added to the JFrame.
@@ -92,7 +89,6 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 	 */
 	OutputPanel(String server, String channel, int width, int height, ChatWindow owner)
 	{
-		System.out.println(font.getFamily());
 		this.owner = owner;
 		this.server = server;
 		this.channel = channel;
@@ -109,16 +105,17 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 		textPane.setEditable(false);
 		textPane.addKeyListener(this);
 		
-		editorKit = (HTMLEditorKit) textPane.getEditorKit();
 
+		editorKit = (HTMLEditorKit) textPane.getEditorKit();
 		editorKit.getStyleSheet().addRule("body {line-height: 4.0;}");
 
 		doc = (HTMLDocument) editorKit.createDefaultDocument();
-		
+
 		textPane.setDocument(doc);
+		
 		scrollPane = new JScrollPane(textPane);
 		scrollPane.addKeyListener(this);
-		
+
 		caret = (DefaultCaret) textPane.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		scrollPane.setBackground(Color.BLACK);
@@ -163,10 +160,10 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 		if(isLocal){
 			try {
 				if(user != null)
-					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(timeStamp+" ", TextFormat.reply)
+					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(timeStamp+" ", TextFormat.REPLY)
 							+wrapInSpanTag("["+nick+"] ", 
-							user.getUserSimpleAttributeSet())+wrapInSpanTag(
-									message, TextFormat.privMsg),0,0,null);
+									user.getUserSimpleAttributeSet())+wrapInSpanTag(
+											message, TextFormat.privMsg),0,0,null);
 				else 
 					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(
 							message, TextFormat.privMsg),0,0,null);
@@ -183,7 +180,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 			SwingMethodInvoker invoker;
 			try {
 				String line = "";
-				line += wrapInSpanTag(timeStamp+" ", TextFormat.reply);
+				line += wrapInSpanTag(timeStamp+" ", TextFormat.REPLY);
 				if(user != null) {
 					line += wrapInSpanTag("["+nick+"] ",user.getUserSimpleAttributeSet()) + " ";
 				}
@@ -264,25 +261,34 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 	// 		Note: Also notice that the SwingMethodInvoker instance is reused.                      --Mumbles
 
 	void newMessageHighlight(String nick, String message) {
+		String timeStamp = new SimpleDateFormat("\r\nHH:mm").format(Calendar.getInstance().getTime());
 		@SuppressWarnings("rawtypes")
 		SwingMethodInvoker.Parameter[] parameters;
 		SwingMethodInvoker invoker;
-
 		try {
-			parameters = new SwingMethodInvoker.Parameter[3];
-			parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
-			parameters[1] = new SwingMethodInvoker.Parameter<String>("["+nick+"] "+message+"\r\n",String.class);
-			parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(TextFormat.highlight,AttributeSet.class);
-			invoker = new SwingMethodInvoker(doc, "insertString", parameters);
+			String line = "";
+			line += wrapInSpanTag(timeStamp+" ", TextFormat.REPLY);
+			line += wrapInSpanTag("["+nick+"] ",TextFormat.HIGHLIGHT) + " ";
+			line+=wrapInSpanTag(message+"\r\n",TextFormat.HIGHLIGHT);
+
+			parameters = new SwingMethodInvoker.Parameter[6];
+			parameters[0] = new SwingMethodInvoker.Parameter<HTMLDocument>(doc, HTMLEditorKit.class);
+			parameters[1] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
+			parameters[2] = new SwingMethodInvoker.Parameter<String>(line, String.class);
+			parameters[3] = new SwingMethodInvoker.Parameter<Integer>(0,int.class);
+			parameters[4] = new SwingMethodInvoker.Parameter<Integer>(0,int.class);
+			parameters[5] = new SwingMethodInvoker.Parameter<Tag>(null,Tag.class);
+
+			invoker = new SwingMethodInvoker(editorKit, "insertHTML", parameters);
 			SwingUtilities.invokeAndWait(invoker);
+
 			if(invoker.hasBeenExecuted()){
 				parameters = new SwingMethodInvoker.Parameter[]{new SwingMethodInvoker.Parameter<Integer>(textPane.getDocument().getLength(), int.class)};
+
 				invoker.reconfigure(textPane, "setCaretPosition", parameters);
+
 				SwingUtilities.invokeAndWait(invoker);
 			}
-		} catch (RuntimeException e) {
-			// TODO There are cleaner ways to handle the many things this exception could be, but unfortunately it could be anything.
-			e.printStackTrace();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -290,6 +296,34 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+
+		//		@SuppressWarnings("rawtypes")
+		//		SwingMethodInvoker.Parameter[] parameters;
+		//		SwingMethodInvoker invoker;
+		//
+		//		try {
+		//			parameters = new SwingMethodInvoker.Parameter[3];
+		//			parameters[0] = new SwingMethodInvoker.Parameter<Integer>(doc.getLength(),int.class);
+		//			parameters[1] = new SwingMethodInvoker.Parameter<String>("["+nick+"] "+message+"\r\n",String.class);
+		//			parameters[2] = new SwingMethodInvoker.Parameter<AttributeSet>(TextFormat.highlight,AttributeSet.class);
+		//			invoker = new SwingMethodInvoker(doc, "insertString", parameters);
+		//			SwingUtilities.invokeAndWait(invoker);
+		//			if(invoker.hasBeenExecuted()){
+		//				parameters = new SwingMethodInvoker.Parameter[]{new SwingMethodInvoker.Parameter<Integer>(textPane.getDocument().getLength(), int.class)};
+		//				invoker.reconfigure(textPane, "setCaretPosition", parameters);
+		//				SwingUtilities.invokeAndWait(invoker);
+		//			}
+		//		} catch (RuntimeException e) {
+		//			// TODO There are cleaner ways to handle the many things this exception could be, but unfortunately it could be anything.
+		//			e.printStackTrace();
+		//		} catch (InterruptedException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		} catch (InvocationTargetException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
 	}
 
 	/**
@@ -430,7 +464,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 			}
 		}
 	}
-	
+
 	@Override
 	public void keyTyped(KeyEvent e) {
 	}

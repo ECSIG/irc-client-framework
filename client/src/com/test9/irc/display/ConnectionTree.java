@@ -244,7 +244,7 @@ TreeCellRenderer, TreeCellEditor {
 
 		if(node==null){
 			String root = owner.getRootConnection();
-			owner.newActiveChannels(root, root);
+			owner.newActiveChannels(root, root, false);
 		}else{
 			String activeServer = node.getParent().toString();
 			String activeChannel = node.toString();
@@ -252,7 +252,7 @@ TreeCellRenderer, TreeCellEditor {
 			if(activeServer.equals("root"))
 				activeServer = activeChannel;
 
-			owner.newActiveChannels(activeServer, activeChannel);
+			owner.newActiveChannels(activeServer, activeChannel, false);
 		}
 	}
 
