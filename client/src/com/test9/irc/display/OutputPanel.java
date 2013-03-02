@@ -121,8 +121,12 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 		scrollPane.setBackground(Color.BLACK);
 		scrollPane.setBorder(null);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		if(ChatWindow.isOSX()) {
+			scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollbardim());
+		}
 		add(scrollPane, BorderLayout.CENTER);
 		addKeyListener(this);
+		scrollPane.getVerticalScrollBar().setBackground(Color.PINK);
 
 	}
 

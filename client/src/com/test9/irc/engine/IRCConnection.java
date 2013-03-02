@@ -188,9 +188,7 @@ public class IRCConnection extends Thread {
 		} else if (command.equalsIgnoreCase("NOTICE")) { // NOTICE
 			try{
 			listener.onNotice(m);
-			} catch (ArrayIndexOutOfBoundsException e) {
-				
-			}
+			} catch (ArrayIndexOutOfBoundsException e) {}
 		} else if ((reply = IRCUtil.parseInt(command)) >= 1 && reply < 400) { // RPL
 			listener.onReply(m);
 			//listener.onUnknown(host, m);

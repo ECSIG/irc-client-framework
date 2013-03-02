@@ -2,7 +2,6 @@ package com.test9.irc.display;
 
 import java.awt.AWTException;
 import java.awt.Image;
-import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
@@ -14,18 +13,33 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import com.test9.irc.engine.NewEngineTester;
+
 public class MySystemTray {
 
 	private static final PopupMenu popup = new PopupMenu();
-	private static final TrayIcon trayIcon =
-			new TrayIcon(createImage("elmotrans.png", "tray icon"));
+	private static TrayIcon trayIcon;
 	private static final SystemTray tray = SystemTray.getSystemTray();
+	@SuppressWarnings("unused")
+	private static ChatWindow owner;
+	private static ImageIcon img; 
 
-	public static void init() {
+
+	public static void init(final ChatWindow owner) {
+		MySystemTray.owner = owner;
+		if(ChatWindow.isOSX()) {
+			trayIcon = new TrayIcon(createImage("elmotransBandW.png", "tray icon"));
+		} else {
+			trayIcon = new TrayIcon(createImage("elmotrans.png", "tray icon"));
+		}
+
+		img = new ImageIcon(MySystemTray.class.getResource("elmotrans.png"));
+
 		if(!SystemTray.isSupported())
 			System.out.println("System tray is not  supported.");
 		else
 			System.out.println("System tray is supported.");
+
 
 		try {
 			tray.add(trayIcon);
@@ -33,23 +47,31 @@ public class MySystemTray {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		Menu menu = new Menu("Display");
+
 		MenuItem about = new MenuItem("About");
-		
+		MenuItem quit = new MenuItem("Quit");
+
 		popup.add(about);
+		popup.add(quit);
 		trayIcon.setPopupMenu(popup);
 		trayIcon.setImageAutoSize(true);
 		trayIcon.setToolTip("JIRCC");
-		
-		
-		
+
+
+
 		about.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null,
-                        "This is the about option for JIRCC System Tray =D");
-            }
-        });
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "You are using JIRCC Version: " 
+						+ NewEngineTester.VERSION, "JIRCC About", JOptionPane.INFORMATION_MESSAGE, img);
+
+			}
+		});
+
+		quit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				owner.windowClosing(null);
+			}
+		});
 
 	}
 
@@ -66,6 +88,5 @@ public class MySystemTray {
 
 	public static void notification(String type, String message) {
 		trayIcon.displayMessage(type, message, TrayIcon.MessageType.INFO);
-		
 	}
 }

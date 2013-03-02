@@ -72,7 +72,7 @@ ActionListener, WindowListener {
 	/**
 	 * The default width of a scroll bar.
 	 */
-	//private static final Dimension SCROLLBARDIM = new Dimension(10,0);
+	private static final Dimension SCROLLBARDIM = new Dimension(9,0);
 
 	/**
 	 * Default window size of the JFrame calculated from the KIT.
@@ -186,7 +186,7 @@ ActionListener, WindowListener {
 	private static ArrayList<String> messageBuffer = new ArrayList<String>();
 	private static int bufferSelection = 0;
 
-	private TerminalPanel terminalPanel = new TerminalPanel();
+	private TerminalPanel terminalPanel;
 	private JSplitPane outputSplitPane;
 
 	//	private static HilightNotificationFrame hnf = new HilightNotificationFrame();
@@ -201,6 +201,7 @@ ActionListener, WindowListener {
 	private static boolean bufferedNickPrefix = false;
 	private static ImageIcon img;
 	private static final String fileDirectory = "windowState";
+	private static boolean isOSX = false;
 
 	/**
 	 * Initializes a new ChatWindow.
@@ -208,10 +209,9 @@ ActionListener, WindowListener {
 	 */
 	public ChatWindow()
 	{
-		MySystemTray.init();
 		TextFormat.loadColors();
 
-		img = new ImageIcon(getClass().getResource("elmo.png"));
+		img = new ImageIcon(getClass().getResource("elmotrans.png"));
 		frame.setIconImage(img.getImage());
 
 		util = new Util(this);
@@ -221,16 +221,20 @@ ActionListener, WindowListener {
 		os = System.getProperty("os.name");
 		if(os.equals("Mac OS X"))
 		{
+			setOSX(true);
+			//SCROLLBARDIM = new Dimension(5,0);
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "AOSIDHOAISHDOAISHDOIASHD");
 			hasMetaKey = true;
 			// Initializes a new menu bar, ultimately should be constructed regardless
 			// of the operating system.
 		}
+		
+		MySystemTray.init(this);
+
+		terminalPanel = new TerminalPanel();
 		menuBar = new MenuBar(this);
 		frame.setJMenuBar(menuBar);
-
-
 
 		/*
 		 * Adds some general features to the frame.
@@ -280,8 +284,9 @@ ActionListener, WindowListener {
 		outputSplitPane.setContinuousLayout(true);
 		outputSplitPane.setResizeWeight(1);
 		outputSplitPane.setDividerSize(3);
-		outputSplitPane.setDividerLocation(frame.getPreferredSize().height);
 		outputSplitPane.addKeyListener(this);
+		outputSplitPane.setDividerLocation(frame.getPreferredSize().height/2);
+
 
 		/*
 		 * Sets up the side panel with a vertial split (one item on
@@ -495,10 +500,10 @@ ActionListener, WindowListener {
 									m.length()).trim());
 							inputField.setText("");
 						}// else if(cmd.equalsIgnoreCase("/part"))
-//						{
-//							listener.onPartChannel(activeServer, activeChannel);
-//							inputField.setText("");
-//						}
+						//						{
+						//							listener.onPartChannel(activeServer, activeChannel);
+						//							inputField.setText("");
+						//						}
 
 						listener.onNewMessage(activeServer, activeServer, m, "REPLY");
 					}else {
@@ -1013,6 +1018,27 @@ ActionListener, WindowListener {
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * @return the scrollbardim
+	 */
+	public static Dimension getScrollbardim() {
+		return SCROLLBARDIM;
+	}
+
+	/**
+	 * @return the isOSX
+	 */
+	public static boolean isOSX() {
+		return isOSX;
+	}
+
+	/**
+	 * @param isOSX the isOSX to set
+	 */
+	public static void setOSX(boolean isOSX) {
+		ChatWindow.isOSX = isOSX;
 	}
 
 	//	@Override

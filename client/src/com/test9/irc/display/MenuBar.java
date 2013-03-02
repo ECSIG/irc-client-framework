@@ -83,10 +83,8 @@ public class MenuBar extends JMenuBar implements MenuListener, ActionListener {
 
 	MenuBar(ChatWindow owner) {
 		MenuBar.owner = owner;
-		boolean isOSX = false;
 		if(System.getProperty("os.name").toLowerCase().contains("os x")) {
 			actionEvent = ActionEvent.META_MASK;
-			isOSX = true;
 		} else {
 			actionEvent = ActionEvent.CTRL_MASK;
 		}

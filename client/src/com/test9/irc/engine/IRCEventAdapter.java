@@ -94,12 +94,12 @@ public class IRCEventAdapter implements IRCEventListener {
 
 	@Override
 	public void onMode(Message m) {
-
+		System.out.println("mode");
 	}
 
 	@Override
 	public void onMode(int two) {
-		// TODO Auto-generated method stub
+		System.out.println("mode");
 
 	}
 
@@ -220,8 +220,7 @@ public class IRCEventAdapter implements IRCEventListener {
 					"<Topic> " + m.getContent(), "TOPIC");
 			// Someone went away
 		} else if(numCode == IRCConstants.RPL_NOWAWAY) {
-
-			// Services supported by the server
+			System.out.println("some user went away");
 		} else if(numCode == IRCConstants.RPL_ISUPPORT) {
 			cw.onNewMessage(connection.getConnectionName(), connection.getConnectionName(), 
 					Arrays.toString(m.getParams())+" "+m.getContent(), "REPLY");

@@ -102,13 +102,7 @@ public class OutputFactory {
 		}
 		
 		formattedMessage += RNTAIL;
-		//System.out.println("'"+formattedMessage+"'");
-		//	case "KILL": be included
-		//	The RFC has no syntactical information about this currently.
 
-		//	case "WALLOPS":
-		//	This does not need to be included and looks like it should not be 
-		//	as described in the RFC.
 
 		return formattedMessage;
 

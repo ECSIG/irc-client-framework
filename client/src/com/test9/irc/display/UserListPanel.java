@@ -95,6 +95,9 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 		jList.addFocusListener(this);
 		addKeyListener(this);
 		initPopupMenu();
+		if(ChatWindow.isOSX()) {
+			scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollbardim());
+		}
 		
 		jList.addMouseListener( new MouseAdapter()
 		{

@@ -37,6 +37,10 @@ public class TerminalPanel extends JPanel {
 		textPane.setForeground(Color.WHITE);
 		textPane.setFont(TextFormat.font);
 		textPane.setEditable(false);
+		System.out.println(ChatWindow.isOSX());
+		if(ChatWindow.isOSX()) {
+			scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollbardim());
+		}
 		try {
 			doc.insertString(0, "!!!!!!!!!!VERSION: "+ NewEngineTester.VERSION+" !!!!!!!!!!!!!!!!!", null);
 		} catch (BadLocationException e) {
