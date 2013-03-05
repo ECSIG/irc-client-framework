@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.event.MenuEvent;
@@ -223,6 +224,13 @@ public class MenuBar extends JMenuBar implements MenuListener, ActionListener {
 		
 		} else if (e.getSource() == quit) {
 			owner.windowClosing(null);
+		} else if (e.getSource() == leave) {
+			owner.getListener().onPartChannel(owner.getActiveServer(), owner.getActiveChannel());
+			
+		} else if (e.getSource() == join) {
+			String channel = JOptionPane.showInputDialog(owner.getFrame(), "Channel name...,", "Join Channel", JOptionPane.OK_CANCEL_OPTION);
+			
+			owner.getListener().onJoinChannel(owner.getActiveServer(), channel);
 		} else {
 			System.out.println("Well shit!");
 		}
