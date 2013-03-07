@@ -202,6 +202,8 @@ ActionListener, WindowListener {
 	private static ImageIcon img;
 	private static final String fileDirectory = "windowState";
 	private static boolean isOSX = false;
+	
+	private static CommandSender cs;
 
 	/**
 	 * Initializes a new ChatWindow.
@@ -215,6 +217,7 @@ ActionListener, WindowListener {
 		frame.setIconImage(img.getImage());
 
 		util = new Util(this);
+		cs = new Util(this);
 		/*
 		 * Checks to see if the global OS X menu bar should be used.
 		 */
@@ -1039,6 +1042,10 @@ ActionListener, WindowListener {
 	 */
 	public static void setOSX(boolean isOSX) {
 		ChatWindow.isOSX = isOSX;
+	}
+	
+	public static CommandSender getCs() {
+		return cs;
 	}
 
 	//	@Override
