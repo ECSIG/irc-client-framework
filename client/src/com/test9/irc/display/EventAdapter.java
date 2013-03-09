@@ -12,11 +12,25 @@ public class EventAdapter implements Listener {
 		this.owner = cw;
 		this.util = util;
 	}
-	
+
 	public void createPrivateChannel(String server, String channel, String nick) {
 		onJoinChannel(server, channel);
 		onUserJoin(server, channel, nick, false);
 		onUserJoin(server, channel, ConnectionEngine.getConnection(server).getNick(), false);
+	}
+
+	@Override
+	public void onAwayStatus(String server, String nick, boolean isAway) {
+		for(UserListPanel u : owner.getUserListPanels())
+		{
+			if(u.getServer().equals(server)) {
+
+				if(u.getListModel().contains(nick)) {
+					u.updateAwayStatus(nick, isAway);
+				} // endif
+			} // endif
+		} // endfor
+
 	}
 
 	/**
@@ -31,7 +45,7 @@ public class EventAdapter implements Listener {
 	@Override
 	public void onJoinChannel(String server, String channel) {
 		System.out.println("Joined a channel:"+server+","+channel);
-		if(!ChatWindow.getServersAndChannels().contains(server+","+channel)) {
+		if(!util.doesExist(server, channel)) {
 			ChatWindow.getServersAndChannels().add(server+","+channel);
 			owner.getTitles().add(new Title(server, channel));
 			owner.setActiveChannel(channel);
@@ -50,8 +64,7 @@ public class EventAdapter implements Listener {
 	 */
 	@Override
 	public void onJoinServer(String server) {
-		if(!(ChatWindow.getServersAndChannels().contains(server))) {
-			ChatWindow.getServersAndChannels().add(server);
+		if(!util.doesExist(server, server)) {
 			owner.joinServerChannel(server);
 			owner.getConnectionTree().newServerNode(server);
 			owner.setJoinedAServer(true);
@@ -108,7 +121,7 @@ public class EventAdapter implements Listener {
 			String content) {
 		owner.newMessageHighlight(host, params, nickname, content);
 		owner.getTerminalPanel().newMessage(user, nickname, params, content, TextFormat.PRIVMSG);
-		
+
 
 
 	}
@@ -130,17 +143,13 @@ public class EventAdapter implements Listener {
 	 */
 	@Override
 	public void onNewMessage(String server, String channel, String message, String command) {
-		if(util.findChannel(server, channel,0) != -1)
-		{
+		OutputPanel op = util.findOutputPanel(server, channel);
+		if(op != null) {
 			if(command.equals("TOPIC")) {
-				owner.getOutputPanels().get(
-						util.findChannel(server, channel, 0)).newMessage(
-								message, TextFormat.TOPIC);
+				op.newMessage(message, TextFormat.TOPIC);
 				owner.getTerminalPanel().newMessage(null, null, channel, message, TextFormat.TOPIC);
 			} else if(command.equals("REPLY") || command.equals("ERROR")) {
-				owner.getOutputPanels().get(
-						util.findChannel(server, channel, 0)).newMessage(
-								message, TextFormat.REPLY);
+				op.newMessage(message, TextFormat.REPLY);
 				if(command.equals("REPLY")) {
 					owner.getTerminalPanel().newMessage(null, null, server, message, TextFormat.REPLY);
 				} else if(command.equals("ERROR")) {
@@ -156,11 +165,10 @@ public class EventAdapter implements Listener {
 	@Override
 	public void onNewPrivMessage(User user, String server, String channel,
 			String nick, String message, boolean isLocal) {
-
-		if(util.findChannel(server, channel,0) != -1) {
-			
-			owner.getOutputPanels().get(
-					util.findChannel(server, channel, 0)).newMessage(user, nick, message, isLocal);
+		OutputPanel op = util.findOutputPanel(server, channel);
+		
+		if(op != null) {
+			op.newMessage(user, nick, message, isLocal);
 		} else {
 			createPrivateChannel(server, channel, nick);
 			onNewPrivMessage(user, server, channel, nick, message, isLocal);
@@ -183,10 +191,9 @@ public class EventAdapter implements Listener {
 		System.out.println(server);
 		System.out.println(channel);
 		System.out.println(topic);
-		owner.getTitles().get(util.findTitle(server, channel)).setTopic(topic);
-		owner.getFrame().setTitle(owner.getTitles().get(
-				util.findTitle(owner.getActiveServer(), 
-						owner.getActiveChannel())).getFullTitle());
+		Title t = util.findTitle(server, channel);
+		t.setTopic(topic);
+		owner.getFrame().setTitle(t.getFullTitle());
 		owner.getTerminalPanel().newMessage(null, null, channel, topic, TextFormat.TOPIC);
 
 	}
@@ -199,7 +206,7 @@ public class EventAdapter implements Listener {
 
 	@Override
 	public void onNotice(String server, String params, String content) {
-		owner.getOutputPanels().get(util.findChannel(server, server, 0)).newMessage(content, TextFormat.NOTICE);
+		util.findOutputPanel(server, server).newMessage(content, TextFormat.NOTICE);
 		owner.getTerminalPanel().newMessage(null, null, server, content, TextFormat.NOTICE);
 	}
 
@@ -233,48 +240,46 @@ public class EventAdapter implements Listener {
 	 */
 	@Override
 	public void onPartChannel(String server, String channel) {
-		int outputPanelId = util.findChannel(server, channel, 0);
-		int userListPanelId = util.findChannel(server, channel, 1);
-		System.out.println(outputPanelId);
-		OutputPanel opr = owner.getOutputPanels().get(outputPanelId);
-		UserListPanel ulpr = owner.getUserListPanels().get(userListPanelId);
-		ChatWindow.getServersAndChannels().remove(new String(server +","+channel));
-		owner.getOutputFieldLayeredPane().remove(opr);
-		owner.getUserListsLayeredPane().remove(ulpr);
-		owner.getOutputPanels().remove(opr);
-		owner.getUserListPanels().remove(ulpr);
+		OutputPanel op = util.findOutputPanel(server, channel);
+		UserListPanel ulp = util.findUserListPanel(server, channel);
+		if(util.doesExist(server, channel))
+			ChatWindow.getServersAndChannels().remove(new String(server +","+channel));
+		owner.getOutputFieldLayeredPane().remove(op);
+		owner.getUserListsLayeredPane().remove(ulp);
+		owner.getOutputPanels().remove(op);
+		owner.getUserListPanels().remove(ulp);
 		owner.getConnectionTree().removeChannelNode(server, channel);
 		owner.getTitles().remove(util.findTitle(server, channel));
-		String newOutputPanelServer = owner.getOutputPanels().get(outputPanelId-1).getServer();
-		String newOutputPanelChannel = owner.getOutputPanels().get(outputPanelId-1).getChannel();
-		owner.newActiveChannels(newOutputPanelServer, newOutputPanelChannel, true);
-		
+		owner.newActiveChannels(server, server, true);
+
 		owner.getOutputFieldLayeredPane().invalidate();
 		owner.getUserListsLayeredPane().invalidate();
 	}
 
 	@Override
 	public void onUserJoin(String server, String channel, String nick, boolean isUserRply) {
-		if(util.findChannel(server, channel,1) != -1) {
-			owner.getUserListPanels().get(util.findChannel(server, channel,1)).newUser(nick);
-			if(!isUserRply)
-				owner.getOutputPanels().get(util.findChannel(server, channel, 0)).newMessage(
-						nick + " has joined.", TextFormat.JOIN);
-
+		UserListPanel ulp = util.findUserListPanel(server, channel);
+		
+		if(ulp != null) {
+			ulp.newUser(nick);
+			if(!isUserRply) {
+				util.findOutputPanel(server, channel).newMessage(nick + " has joined.", TextFormat.JOIN);
+			}
 		} else {
 			System.err.println("[ChatWindowError] Cound not find channel to add new user.");
 		}
-		if(!isUserRply)
+		
+		if(!isUserRply) {
 			owner.getTerminalPanel().newMessage(null, null, channel, nick+" joined "+channel, TextFormat.JOIN);
+		}
 	}
 
 	@Override
 	public void onUserPart(String server, String channel, String nick) {
-		if(util.findChannel(server,channel,1) != -1) {
-			owner.getUserListPanels().get(util.findChannel(server, channel,1)).userPart(nick);
-			owner.getOutputPanels().get(
-					util.findChannel(server, channel, 0)).newMessage(
-							nick+" has parted.", TextFormat.PART);
+		UserListPanel ulp = util.findUserListPanel(server, channel);
+		if(ulp != null) {
+			ulp.userPart(nick);
+			util.findOutputPanel(server, channel).newMessage(nick+" has parted.", TextFormat.PART);
 		} else {
 			System.err.println("Cound not find channel to add new user.");
 		}
@@ -290,8 +295,7 @@ public class EventAdapter implements Listener {
 
 				if(u.getListModel().contains(nick)) {
 					u.userPart(nick);
-					owner.getOutputPanels().get(util.findChannel(
-							server, u.getChannel(), 0)).newMessage(
+					util.findOutputPanel(server, u.getChannel()).newMessage(
 									nick +" "+ reason, TextFormat.QUIT);
 				} // endif
 			} // endif

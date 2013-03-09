@@ -2,6 +2,7 @@ package com.test9.irc.display;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -15,12 +16,15 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -64,9 +68,13 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	private JList jList = new JList();
 
 	private ChatWindow owner;
-	
+
 	private String selected;
-	
+
+	private String match;
+
+	private boolean isAway;
+
 	/**
 	 * Constructs a new UserListPanel for a channel.
 	 * @param server Name of the server the list is on.
@@ -87,6 +95,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 		setBackground(Color.BLACK);
 		jList.setModel(listModel);
 		jList.setFont(font);
+		jList.setCellRenderer(new MyListCellRenderer());
 		scrollPane = new JScrollPane(jList);
 		scrollPane.setBackground(Color.BLACK);
 		scrollPane.setBorder(null);
@@ -98,7 +107,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 		if(ChatWindow.isOSX()) {
 			scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollbardim());
 		}
-		
+
 		jList.addMouseListener( new MouseAdapter()
 		{
 			public void mousePressed(MouseEvent e)
@@ -118,7 +127,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	{
 		return jList.locationToIndex(point);
 	}
-	
+
 	private void showPopupMenu(MouseEvent e) {
 		JPopupMenu popMenu = new JPopupMenu();
 		JMenuItem pm = new JMenuItem("PM");
@@ -129,19 +138,19 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 				String activeServer = owner.getActiveServer();
 				listener.createPrivateChannel(activeServer, selected, selected);
 				//listener.onJoinChannel(activeServer, selected);
-				
+
 			}
-			
+
 		});
 		JMenuItem about = new JMenuItem("About "+jList.getSelectedValue().toString());
 		popMenu.add(pm);
 		popMenu.add(about);
 		popMenu.show(e.getComponent(), e.getX(), e.getY());
-		
+
 	}
-	
+
 	private void initPopupMenu() {
-		
+
 	}
 
 	/**
@@ -354,4 +363,46 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 		// TODO Auto-generated method stub
 
 	}
+	public void updateAwayStatus(String nick, boolean isAway) {
+		if (listModel.contains(nick)) {
+			match = nick;
+			this.isAway = isAway;
+			jList.repaint();
+			return;
+		}
+	}
+
+	class MyListCellRenderer extends JLabel implements ListCellRenderer {
+		public MyListCellRenderer() {
+			setOpaque(true);
+		}
+		public Component getListCellRendererComponent(JList paramlist, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+			setText(value.toString());
+			if (value.toString().equals(match)) {
+				if(isAway)
+					setForeground(Color.GRAY);
+				else
+					setForeground(Color.WHITE);
+				SwingWorker worker = new SwingWorker() {
+					@Override
+					public Object doInBackground() {
+						try {
+							Thread.sleep(5000);
+						} catch (InterruptedException e) { /*Who cares*/ }
+						return null;
+					}
+					@Override
+					public void done() {
+						match = null;
+						isAway = false;
+						jList.repaint();
+					}
+				};
+				worker.execute();
+			} 
+			setBackground(Color.BLACK);
+			return this;
+		}
+	}
+
 }

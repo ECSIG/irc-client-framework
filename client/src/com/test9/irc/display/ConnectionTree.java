@@ -180,24 +180,7 @@ TreeCellRenderer, TreeCellEditor {
 
 	void hightlightNode(String server, String channel)
 	{
-		//		for (Object node : Collections.list(root.children()))
-		//		{
-		//			DefaultMutableTreeNode serverNode = (DefaultMutableTreeNode) node;
-		//
-		//			if(serverNode.getUserObject().toString().trim().equals(server.trim())) {
-		//				for (Object channelNode : Collections.list(serverNode.children()))
-		//				{
-		//					DefaultMutableTreeNode checkChannelNode = (DefaultMutableTreeNode) channelNode;
-		//
-		//					if(checkChannelNode.getUserObject().toString().trim().equals(channel.trim()))
-		//					{
-		//						checkChannelNode.removeFromParent();
-		//					}
-		//				}
-		//			}
-		//		}
-		//		model.reload();
-		//		expandTree();
+
 	}
 
 	/**

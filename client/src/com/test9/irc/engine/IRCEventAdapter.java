@@ -3,6 +3,7 @@ package com.test9.irc.engine;
 import java.util.Arrays;
 
 import com.test9.irc.parser.Message;
+import com.test9.irc.parser.Parser;
 
 /**
  * 
@@ -140,8 +141,8 @@ public class IRCEventAdapter implements IRCEventListener {
 
 	@Override
 	public void onPing(String line) {
-		// Respond to pings
 		connection.send("PONG " + line);
+		connection.send("WHO *");
 	}
 
 	@Override
@@ -166,7 +167,7 @@ public class IRCEventAdapter implements IRCEventListener {
 				cw.onNewPrivMessage(
 						connection.getUser(m.getNickname()), connectionName, m.getParams()[0], 
 						m.getNickname(), m.getContent(), false);		
-		
+
 			} 
 			// Else, this is a secret message to me and should make a new channel of the senders nick 
 			else if(m.getParams()[0].equalsIgnoreCase(connection.getNick())) {
@@ -230,7 +231,11 @@ public class IRCEventAdapter implements IRCEventListener {
 					connection.getConnectionName(), Arrays.toString(m.getParams()), "REPLY");
 		} else if(numCode == IRCConstants.RPL_MOTD) {
 			cw.onNewMessage(connection.getConnectionName(), connection.getConnectionName(), m.getContent(), "REPLY");
-		}else {
+		} else if(numCode == IRCConstants.RPL_WHOREPLY) {
+			char c = m.getParams()[6].charAt(0);
+			boolean isAway = Parser.isAway(c);
+			cw.onAwayStatus(connection.getConnectionName(),m.getParams()[6], isAway);
+		} else {
 			cw.onNewMessage(connection.getConnectionName(), connection.getConnectionName(),
 					"Reply("+m.getCommand()+")"+m.getContent(), "REPLY");
 		}

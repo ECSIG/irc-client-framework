@@ -73,7 +73,7 @@ public class Parser {
 		{
 			params = parseParams(message.substring(0, message.indexOf(" :")).trim());
 			message.delete(0, message.indexOf(" :") + 2);
-			
+
 			content = message.substring(0, message.length());
 		}
 		else
@@ -83,7 +83,7 @@ public class Parser {
 			content = "";
 		}
 
-//		printStuff();
+		printStuff();
 
 		return(new Message(prefix, command, params, serverName, nickname, user, host, content));
 
@@ -109,7 +109,7 @@ public class Parser {
 		else
 			serverName = splitPrefix[0];	
 	}
-	
+
 	/**
 	 * Parses the individual parameters form the 
 	 * params field.
@@ -119,11 +119,11 @@ public class Parser {
 	{
 		return(possibleParams.split(" "));
 	}
-	
+
 	@SuppressWarnings("unused")
 	private char[] modeParse(String mode)
 	{
-		
+
 		return null;
 	}
 
@@ -160,6 +160,16 @@ public class Parser {
 		System.out.println(DIVIDER);
 	}
 
+	public static boolean isAway(char c){
+		if(c == 'H')
+			return false;
+		else if (c == 'G')
+			return true;
+		else {
+			System.err.println("Error determining user away status");
+			return false;
+		}
+	}
 	/**
 	 * @return the init
 	 */

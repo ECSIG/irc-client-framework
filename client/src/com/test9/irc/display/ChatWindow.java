@@ -1,6 +1,6 @@
 package com.test9.irc.display;
 
-import com.test9.irc.display.notifications.HilightNotificationFrame;
+//import com.test9.irc.display.notifications.HilightNotificationFrame;
 import com.test9.irc.engine.ConnectionEngine;
 import com.test9.irc.engine.IRCConnection;
 import com.test9.irc.parser.OutputFactory;
@@ -148,7 +148,7 @@ ActionListener, WindowListener {
 	private static String activeServer;
 
 	/**
-	 * Holds the name of the currectly active server. This is set by selecting a 
+	 * Holds the name of the currently active server. This is set by selecting a 
 	 * channel node on the connectionTree.
 	 */
 	private static String activeChannel;
@@ -189,8 +189,6 @@ ActionListener, WindowListener {
 	private TerminalPanel terminalPanel;
 	private JSplitPane outputSplitPane;
 
-	//	private static HilightNotificationFrame hnf = new HilightNotificationFrame();
-
 	private static String os;
 	public static boolean hasMetaKey = false;
 
@@ -202,7 +200,7 @@ ActionListener, WindowListener {
 	private static ImageIcon img;
 	private static final String fileDirectory = "windowState";
 	private static boolean isOSX = false;
-	
+
 	private static CommandSender cs;
 
 	/**
@@ -217,7 +215,6 @@ ActionListener, WindowListener {
 		frame.setIconImage(img.getImage());
 
 		util = new Util(this);
-		cs = new Util(this);
 		/*
 		 * Checks to see if the global OS X menu bar should be used.
 		 */
@@ -227,12 +224,11 @@ ActionListener, WindowListener {
 			setOSX(true);
 			//SCROLLBARDIM = new Dimension(5,0);
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
-			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "AOSIDHOAISHDOAISHDOIASHD");
 			hasMetaKey = true;
 			// Initializes a new menu bar, ultimately should be constructed regardless
 			// of the operating system.
 		}
-		
+
 		MySystemTray.init(this);
 
 		terminalPanel = new TerminalPanel();
@@ -260,7 +256,6 @@ ActionListener, WindowListener {
 		connectionTree.addKeyListener(this);
 		treeScrollPane = new JScrollPane(connectionTree);
 		treeScrollPane.addKeyListener(this);
-		//treeScrollPane.getVerticalScrollBar().setPreferredSize (SCROLLBARDIM);
 
 		treePanel.add(treeScrollPane, BorderLayout.CENTER);
 		treePanel.setMinimumSize(new Dimension(0,0));
@@ -275,12 +270,10 @@ ActionListener, WindowListener {
 		 * Adds the outputLayeredPane and the input field to the 
 		 * center panel.
 		 */
-
 		centerPanel.add(outputFieldLayeredPane);
 		centerPanel.add(inputField, BorderLayout.SOUTH);
 		centerPanel.setBorder(null);
 		centerPanel.addKeyListener(this);
-
 
 		outputSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, centerPanel, terminalPanel);
 		outputSplitPane.setDividerSize(SPLITPANEWIDTH);
@@ -296,7 +289,6 @@ ActionListener, WindowListener {
 		 * top of the other) and adds the userListLayeredPane and the 
 		 * connection tree.
 		 */
-
 		sidePanelSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
 				userListsLayeredPane, treePanel);
 		sidePanelSplitPane.setDividerSize(SPLITPANEWIDTH);
@@ -351,7 +343,8 @@ ActionListener, WindowListener {
 		if(!programStateDir.exists()) {
 			programStateDir.mkdir();
 		}
-		File settingsFile = new File(programStateDir.getPath()+ConnectionEngine.fileSeparator+"windowState.txt");	
+		File settingsFile = new File(programStateDir.getPath()+
+				ConnectionEngine.fileSeparator+"windowState.txt");	
 
 		if(!settingsFile.exists()) {
 			try {settingsFile.createNewFile();} catch (IOException e) {}
@@ -448,7 +441,7 @@ ActionListener, WindowListener {
 
 	String tabCompleteNick(String prefix) {
 		System.out.println("prefix:'"+prefix+"'");
-		String string = userListPanels.get(util.findChannel(activeServer, activeChannel, 1)).getTabComplete(nickPrefix, tabs);
+		String string = util.findUserListPanel(activeServer, activeChannel).getTabComplete(nickPrefix, tabs);
 
 		if(string == null) {
 			tabs = 1;
@@ -481,13 +474,13 @@ ActionListener, WindowListener {
 				messageBuffer.add(m);
 				bufferSelection = messageBuffer.size();
 				if(m.startsWith("/part")) {
-					ircConnections.get(util.findIRCConnection()).send(
+					util.findActiveIRCConnection().send(
 							OutputFactory.formatMessage(m+" "+activeChannel, activeChannel));
 					System.out.println("ChatWindow:"+activeServer+" "+activeChannel);
 					listener.onPartChannel(activeServer, activeChannel);
 					inputField.setText("");
 				}
-				else if(ircConnections.get(util.findIRCConnection()).send(OutputFactory.formatMessage(
+				else if(util.findActiveIRCConnection().send(OutputFactory.formatMessage(
 						m, activeChannel))&&!m.equals(""))
 				{
 					if(m.startsWith("/")) {
@@ -502,19 +495,13 @@ ActionListener, WindowListener {
 							listener.onJoinChannel(activeServer, m.substring(m.indexOf(" "), 
 									m.length()).trim());
 							inputField.setText("");
-						}// else if(cmd.equalsIgnoreCase("/part"))
-						//						{
-						//							listener.onPartChannel(activeServer, activeChannel);
-						//							inputField.setText("");
-						//						}
-
+						}
 						listener.onNewMessage(activeServer, activeServer, m, "REPLY");
 					}else {
-						IRCConnection temp = ircConnections.get(util.findIRCConnection());
-						String nick = ircConnections.get(util.findIRCConnection()).getNick();
+						IRCConnection temp = util.findActiveIRCConnection();
+						String nick = util.findActiveIRCConnection().getNick();
 						// If a PRIVMSG was sent
-						listener.onNewPrivMessage(
-								temp.getUser(temp.getNick()),
+						listener.onNewPrivMessage(temp.getUser(temp.getNick()),
 								activeServer, activeChannel, nick, m, true);
 					}
 				}
@@ -679,10 +666,10 @@ ActionListener, WindowListener {
 			else if(t.getServer().equals(activeServer) && t.getChannel().equals(activeChannel))
 				t.setVisible(true);
 		}	
-		int titleID = util
-				.findTitle(activeServer, activeChannel);
-		if(titleID!=-1) frame.setTitle(titles.get(titleID).getFullTitle());
-		else {
+		Title t = util.findTitle(activeServer, activeChannel);
+		if(t != null) {
+			frame.setTitle(t.getFullTitle());
+		} else {
 			frame.setTitle(titles.get(0).getFullTitle());
 		}
 	}
@@ -786,19 +773,13 @@ ActionListener, WindowListener {
 	}
 
 	public void newMessageHighlight(String server, String channel, String nickname, String content) {
-		if(util.findChannel(server, channel,0) != -1)
-		{
-			outputPanels.get(util.findChannel(server, channel, 0)).newMessageHighlight(nickname, content);
+		OutputPanel op = util.findOutputPanel(server, channel);
+		if(op != null) {
+			op.newMessageHighlight(nickname, content);
 			MySystemTray.notification("Highlight", "["+nickname+"] " + content);
-			//			IRCConnection temp = ircConnections.get(util.findIRCConnection());
-
-			//			if(hnf !=null){
-			//				hnf.newHighlightNotification(channel,temp.getUser(nickname) , content);
-			//			}
+		} else {
+			System.err.println("Could not write newMessageHighlight");
 		}
-		else
-			System.err.println("Cound not find channel to append message to.");
-
 	}
 
 	/**
@@ -900,21 +881,6 @@ ActionListener, WindowListener {
 	}
 
 	/**
-	 * @return the scrollbar
-	 */
-	//public static Dimension getScrollBarDim() {
-	//return SCROLLBARDIM;
-	//}
-
-	public static HilightNotificationFrame getHighlightNotificationFrame() {
-		return null;
-	}
-
-	public String getRootConnection() {
-		return ircConnections.get(util.findIRCConnection()).getHost();
-	}
-
-	/**
 	 * @return the serversAndChannels
 	 */
 	public static ArrayList<String> getServersAndChannels() {
@@ -942,6 +908,10 @@ ActionListener, WindowListener {
 		inputField.requestFocusInWindow();
 	}
 
+	public String getRootConnection() {
+		return util.findActiveIRCConnection().getHost();
+	}
+	
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
@@ -1043,27 +1013,8 @@ ActionListener, WindowListener {
 	public static void setOSX(boolean isOSX) {
 		ChatWindow.isOSX = isOSX;
 	}
-	
+
 	public static CommandSender getCs() {
 		return cs;
 	}
-
-	//	@Override
-	//	public void mouseDragged(MouseEvent e) {
-	//		OutputPanel outputPanel = outputPanels.get(util.findChannel(activeServer, activeChannel, 0));
-	//		outputPanel.resetDelayThreadCount();
-	//	}
-	//
-	//	@Override
-	//	public void mouseMoved(MouseEvent e) {
-	//		OutputPanel outputPanel = outputPanels.get(util.findChannel(activeServer, activeChannel, 0));
-	//		int dividerLocation = listsAndOutputSplitPane.getDividerLocation();
-	//		if(e.getX()>dividerLocation-30&&e.getX()<dividerLocation-3){
-	//			outputPanel.getScrollPane().setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-	//		}else{
-	//			outputPanel.resetDelayThreadCount();
-	//		}
-	//		outputPanel.invalidate();
-	//	}
-
 }
