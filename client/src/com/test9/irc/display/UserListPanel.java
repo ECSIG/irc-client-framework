@@ -86,7 +86,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	{
 		this.owner = owner;
 		jList.setBackground(Color.BLACK);
-//		jList.setForeground(Color.WHITE);
+		//		jList.setForeground(Color.WHITE);
 		this.server = server;
 		this.channel = channel;
 		setLayout(new BorderLayout());
@@ -364,12 +364,9 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 
 	}
 	public void updateAwayStatus(String nick, boolean isAway) {
-		System.out.println("UPDATING STATUS");
 		if (listModel.contains(nick)) {
 			match = nick;
 			this.isAway = isAway;
-			System.out.println(nick);
-			System.out.println(this.isAway);
 			jList.repaint();
 			return;
 		}
@@ -404,8 +401,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 					}
 				};
 				worker.execute();
-			} //else 
-			//setBackground(Color.BLACK);
+			}
 			return this;
 		}
 	}

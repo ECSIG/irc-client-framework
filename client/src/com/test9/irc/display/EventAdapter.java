@@ -20,7 +20,7 @@ public class EventAdapter implements Listener {
 	}
 
 	@Override
-	public void onAwayStatus(String server, String nick, boolean isAway) {
+	public void onWhoReplyStatus(String server, String nick, boolean isAway) {
 		System.out.println("updating "+isAway);
 		for(UserListPanel u : owner.getUserListPanels()) {
 			if(u.getServer().equals(server)) {

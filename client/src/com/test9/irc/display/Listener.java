@@ -6,7 +6,6 @@ import com.test9.irc.engine.User;
 public interface Listener {
 	
 	public void createPrivateChannel(String server, String channel, String nick);
-	public void onAwayStatus(String connectionName, String nick, boolean isAway);
 	public void onJoinChannel(String server, String channel);
 	public void onJoinServer(String server);
 	public void onLeaveServer(String server);
@@ -22,6 +21,7 @@ public interface Listener {
 	public void onUserJoin(String server, String channel, String nick, boolean isUserRply);
 	public void onUserPart(String server, String channel, String nick);
 	public void onUserQuit(String server, String nick, String reason);
+	public void onWhoReplyStatus(String connectionName, String nick, boolean isAway);
 
 	
 
