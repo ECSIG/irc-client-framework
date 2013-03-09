@@ -141,6 +141,7 @@ public class IRCEventAdapter implements IRCEventListener {
 
 	@Override
 	public void onPing(String line) {
+		System.out.println("got a ping");
 		connection.send("PONG " + line);
 		connection.send("WHO *");
 	}
@@ -232,9 +233,18 @@ public class IRCEventAdapter implements IRCEventListener {
 		} else if(numCode == IRCConstants.RPL_MOTD) {
 			cw.onNewMessage(connection.getConnectionName(), connection.getConnectionName(), m.getContent(), "REPLY");
 		} else if(numCode == IRCConstants.RPL_WHOREPLY) {
+			System.out.println("got a who reply");
 			char c = m.getParams()[6].charAt(0);
 			boolean isAway = Parser.isAway(c);
-			cw.onAwayStatus(connection.getConnectionName(),m.getParams()[6], isAway);
+			System.out.println("IRCEADAPT "+isAway);
+			cw.onAwayStatus(connection.getConnectionName(),m.getParams()[5], isAway);
+			
+			if(isAway)
+				cw.onNewMessage(connection.getConnectionName(), 
+						connection.getConnectionName(), m.getParams()[5]+" is now away.", "REPLY");
+
+		} else if (numCode == IRCConstants.RPL_ENDOFNAMES) {
+			connection.send("WHO *");
 		} else {
 			cw.onNewMessage(connection.getConnectionName(), connection.getConnectionName(),
 					"Reply("+m.getCommand()+")"+m.getContent(), "REPLY");

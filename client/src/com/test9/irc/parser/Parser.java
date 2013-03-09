@@ -83,7 +83,7 @@ public class Parser {
 			content = "";
 		}
 
-		printStuff();
+		//printStuff();
 
 		return(new Message(prefix, command, params, serverName, nickname, user, host, content));
 
@@ -161,6 +161,7 @@ public class Parser {
 	}
 
 	public static boolean isAway(char c){
+
 		if(c == 'H')
 			return false;
 		else if (c == 'G')

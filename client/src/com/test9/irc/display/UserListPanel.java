@@ -86,7 +86,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	{
 		this.owner = owner;
 		jList.setBackground(Color.BLACK);
-		jList.setForeground(Color.WHITE);
+//		jList.setForeground(Color.WHITE);
 		this.server = server;
 		this.channel = channel;
 		setLayout(new BorderLayout());
@@ -364,15 +364,20 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 
 	}
 	public void updateAwayStatus(String nick, boolean isAway) {
+		System.out.println("UPDATING STATUS");
 		if (listModel.contains(nick)) {
 			match = nick;
 			this.isAway = isAway;
+			System.out.println(nick);
+			System.out.println(this.isAway);
 			jList.repaint();
 			return;
 		}
 	}
 
 	class MyListCellRenderer extends JLabel implements ListCellRenderer {
+
+		private static final long serialVersionUID = 4263179573007446985L;
 		public MyListCellRenderer() {
 			setOpaque(true);
 		}
@@ -380,9 +385,9 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 			setText(value.toString());
 			if (value.toString().equals(match)) {
 				if(isAway)
-					setForeground(Color.GRAY);
+					setForeground(Color.BLUE);
 				else
-					setForeground(Color.WHITE);
+					setForeground(Color.RED);
 				SwingWorker worker = new SwingWorker() {
 					@Override
 					public Object doInBackground() {
@@ -399,8 +404,8 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 					}
 				};
 				worker.execute();
-			} 
-			setBackground(Color.BLACK);
+			} //else 
+			//setBackground(Color.BLACK);
 			return this;
 		}
 	}
