@@ -105,6 +105,7 @@ public class SSLIRCConnection extends IRCConnection {
 	/**
 	 * The list of <code>SSLTrustManager</code>s. 
 	 */
+	@SuppressWarnings("rawtypes")
 	private Vector trustManagers = new Vector(1);
 
 	// ------------------------------
@@ -252,6 +253,7 @@ public class SSLIRCConnection extends IRCConnection {
 	 * @see #removeTrustManager(SSLTrustManager)
 	 * @see #getTrustManagers()
 	 */
+	@SuppressWarnings("unchecked")
 	public void addTrustManager(SSLTrustManager trustManager) {
 		trustManagers.add(trustManager);
 	}

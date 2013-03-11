@@ -24,9 +24,9 @@ public class MenuBar extends JMenuBar implements MenuListener, ActionListener {
 	 */
 	private static final long serialVersionUID = 7455171824970879713L;
 	private static ChatWindow owner;
-	
+
 	int actionEvent = 0;
-	
+
 	/*
 	 * JIRCC Menu
 	 */
@@ -34,7 +34,7 @@ public class MenuBar extends JMenuBar implements MenuListener, ActionListener {
 	private static final JMenuItem about = new JMenuItem("About");
 	private static final JMenuItem preferences = new JMenuItem("Preferences");
 	private static final JMenuItem quit = new JMenuItem("Quit");
-	
+
 	/*
 	 * File Menu
 	 */
@@ -66,8 +66,8 @@ public class MenuBar extends JMenuBar implements MenuListener, ActionListener {
 	private static final JMenuItem deleteServer = new JMenuItem("Delete Server");
 	private static final JMenuItem newServer = new JMenuItem("New Server");
 	private static final JMenuItem serverProperties = new JMenuItem("Server Properties");
-	
-	
+
+
 	/*
 	 * Channel Menu
 	 */
@@ -79,7 +79,7 @@ public class MenuBar extends JMenuBar implements MenuListener, ActionListener {
 	private static final JMenuItem addChannel = new JMenuItem("Add Channel");
 	private static final JMenuItem deleteChannel = new JMenuItem("Delete Channel");
 	private static final JMenuItem channelProperties = new JMenuItem("Channel Properties");
-	
+
 
 
 	MenuBar(ChatWindow owner) {
@@ -89,20 +89,20 @@ public class MenuBar extends JMenuBar implements MenuListener, ActionListener {
 		} else {
 			actionEvent = ActionEvent.CTRL_MASK;
 		}
-		
-	//	if(!isOSX) {
-			jirccMenu.add(about);
-			jirccMenu.add(preferences);
-			preferences.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, actionEvent));
-			jirccMenu.add(quit);
-			quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, actionEvent));
-			addActionListeners(jirccMenu);
-			add(jirccMenu);
+
+		//	if(!isOSX) {
+		jirccMenu.add(about);
+		jirccMenu.add(preferences);
+		preferences.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, actionEvent));
+		jirccMenu.add(quit);
+		quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, actionEvent));
+		addActionListeners(jirccMenu);
+		add(jirccMenu);
 		//}
 		/*
 		 * File Menu
 		 */
-		
+
 		/*
 		 * Edit Menu
 		 */
@@ -111,7 +111,7 @@ public class MenuBar extends JMenuBar implements MenuListener, ActionListener {
 		editMenu.add(redo);
 		redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, actionEvent));
 		editMenu.add(new JSeparator());
-		
+
 		editMenu.add(cut);
 		cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, actionEvent));
 		editMenu.add(copy);
@@ -122,7 +122,7 @@ public class MenuBar extends JMenuBar implements MenuListener, ActionListener {
 		editMenu.add(selectAll);
 		selectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, actionEvent));
 		addActionListeners(editMenu);
-		
+
 		/*
 		 * Server Menu
 		 */
@@ -131,23 +131,23 @@ public class MenuBar extends JMenuBar implements MenuListener, ActionListener {
 		disconnect.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, actionEvent));
 		serverMenu.add(cancelReconnecting);
 		serverMenu.add(new JSeparator());
-		
+
 		serverMenu.add(nickname);
 		nickname.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, actionEvent));
 		serverMenu.add(new JSeparator());
-		
+
 		serverMenu.add(channelList);
 		serverMenu.add(new JSeparator());
-		
+
 		serverMenu.add(addServer);
 		serverMenu.add(copyServer);
 		serverMenu.add(deleteServer);
 		serverMenu.add(new JSeparator());
-		
+
 		serverMenu.add(newServer);
 		serverMenu.add(serverProperties);
 		addActionListeners(serverMenu);
-		
+
 		/*
 		 * Channel Menu
 		 */
@@ -168,18 +168,18 @@ public class MenuBar extends JMenuBar implements MenuListener, ActionListener {
 		channelMenu.add(channelProperties);
 		channelProperties.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, actionEvent));
 		addActionListeners(channelMenu);
-		
-		
+
+
 		/*
 		 * Add the menus to the menu bar.
 		 */
 		add(fileMenu);
-		
+
 		add(editMenu);
 		add(serverMenu);
 		add(channelMenu);
 	}
-	
+
 	private void addActionListeners(JMenu menu) {
 		for(Component c : menu.getMenuComponents()) {
 			try {
@@ -221,16 +221,16 @@ public class MenuBar extends JMenuBar implements MenuListener, ActionListener {
 		} else if (e.getSource() == delete) {
 
 		} else if (e.getSource() == selectAll) {
-		
+
 		} else if (e.getSource() == quit) {
 			owner.windowClosing(null);
 		} else if (e.getSource() == leave) {
-			owner.getListener().onPartChannel(owner.getActiveServer(), owner.getActiveChannel());
-			
+			CommandSender.sendPart();
 		} else if (e.getSource() == join) {
-			String channel = JOptionPane.showInputDialog(owner.getFrame(), "Channel name...,", "Join Channel", JOptionPane.OK_CANCEL_OPTION);
-			
-			owner.getListener().onJoinChannel(owner.getActiveServer(), channel);
+			String channel = JOptionPane.showInputDialog(
+					owner.getFrame(), "Channel name...", "Join Channel", JOptionPane.OK_CANCEL_OPTION);
+			if(channel != null)
+				CommandSender.sendJoin(channel);
 		} else {
 			System.out.println("Well shit!");
 		}

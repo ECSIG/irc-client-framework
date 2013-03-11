@@ -2,7 +2,6 @@ package com.test9.irc.display;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -16,15 +15,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -71,10 +67,6 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 
 	private String selected;
 
-	private String match;
-
-	private boolean isAway;
-
 	/**
 	 * Constructs a new UserListPanel for a channel.
 	 * @param server Name of the server the list is on.
@@ -86,7 +78,7 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 	{
 		this.owner = owner;
 		jList.setBackground(Color.BLACK);
-		//		jList.setForeground(Color.WHITE);
+		jList.setForeground(Color.WHITE);
 		this.server = server;
 		this.channel = channel;
 		setLayout(new BorderLayout());
@@ -95,7 +87,6 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 		setBackground(Color.BLACK);
 		jList.setModel(listModel);
 		jList.setFont(font);
-		jList.setCellRenderer(new MyListCellRenderer());
 		scrollPane = new JScrollPane(jList);
 		scrollPane.setBackground(Color.BLACK);
 		scrollPane.setBorder(null);
@@ -364,46 +355,6 @@ public class UserListPanel extends JPanel implements ListSelectionListener, Focu
 
 	}
 	public void updateAwayStatus(String nick, boolean isAway) {
-		if (listModel.contains(nick)) {
-			match = nick;
-			this.isAway = isAway;
-			jList.repaint();
-			return;
-		}
+
 	}
-
-	class MyListCellRenderer extends JLabel implements ListCellRenderer {
-
-		private static final long serialVersionUID = 4263179573007446985L;
-		public MyListCellRenderer() {
-			setOpaque(true);
-		}
-		public Component getListCellRendererComponent(JList paramlist, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-			setText(value.toString());
-			if (value.toString().equals(match)) {
-				if(isAway)
-					setForeground(Color.BLUE);
-				else
-					setForeground(Color.RED);
-				SwingWorker worker = new SwingWorker() {
-					@Override
-					public Object doInBackground() {
-						try {
-							Thread.sleep(5000);
-						} catch (InterruptedException e) { /*Who cares*/ }
-						return null;
-					}
-					@Override
-					public void done() {
-						match = null;
-						isAway = false;
-						jList.repaint();
-					}
-				};
-				worker.execute();
-			}
-			return this;
-		}
-	}
-
 }

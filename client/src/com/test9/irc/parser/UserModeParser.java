@@ -23,6 +23,7 @@ package com.test9.irc.parser;
  * @author Jared Patton
  *
  */
+@SuppressWarnings("unused")
 public class UserModeParser {
 
 	private static boolean isAway = false;

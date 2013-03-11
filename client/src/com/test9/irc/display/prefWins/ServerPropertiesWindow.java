@@ -233,6 +233,7 @@ public class ServerPropertiesWindow implements ActionListener{
 		String name = networkNameField.getText();
 		String host = hostField.getText();
 		int port = Integer.parseInt(portField.getText());
+		@SuppressWarnings("deprecation")
 		String pass = serverPasswordField.getText();
 		String nick = nickNameField.getText();
 		String userName = loginNameField.getText();

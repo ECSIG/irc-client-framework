@@ -123,6 +123,7 @@ class SSLSocketFactoryFactory {
 	 * @throws IllegalAccessException If the classes could not be loaded and 
 	 * accessed properly
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static SSLSocketFactory createJava14SSLSocketFactory(SSLTrustManager[] tm) 
 	throws ClassNotFoundException, NoSuchMethodException, 
 	InvocationTargetException, IllegalAccessException {
@@ -173,6 +174,7 @@ class SSLSocketFactoryFactory {
 	 * @throws IllegalAccessException If the classes could not be loaded and 
 	 * accessed properly
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static SSLSocketFactory createJsseSSLSocketFactory(SSLTrustManager[] tm) 
 	throws ClassNotFoundException, NoSuchMethodException, InstantiationException,
 	InvocationTargetException, IllegalAccessException {

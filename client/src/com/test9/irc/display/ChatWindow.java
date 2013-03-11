@@ -209,6 +209,7 @@ ActionListener, WindowListener {
 	 */
 	public ChatWindow()
 	{
+		cs = new CommandSender(this);
 		TextFormat.loadColors();
 
 		img = new ImageIcon(getClass().getResource("elmotrans.png"));
