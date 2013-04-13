@@ -21,7 +21,6 @@ public class ConnectionEngine {
 	private static ChatWindow cw;
 
 	public static String settingsDir = ""; 
-	public static final String fileSeparator = System.getProperty("file.separator");
 	private String name = "", host = "", pass="", nick="", username="", realname="", encoding="";
 	private int port;
 	private boolean ssl;
@@ -95,7 +94,7 @@ public class ConnectionEngine {
 
 		Properties properties = new Properties();
 
-		File connectionsDir = new File(settingsDir+fileSeparator+"connections");
+		File connectionsDir = new File(settingsDir+ClientConstants.fileSeparator+"connections");
 		
 		if(!connectionsDir.exists()){
 			System.out.println("making new connecitons directory");

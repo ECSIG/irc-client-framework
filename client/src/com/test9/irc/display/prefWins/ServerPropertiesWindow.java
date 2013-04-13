@@ -31,6 +31,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import com.test9.irc.engine.ClientConstants;
 import com.test9.irc.engine.ConnectionEngine;
 import com.test9.irc.engine.ReadServerConfig;
 
@@ -194,7 +195,7 @@ public class ServerPropertiesWindow implements ActionListener{
 
 	private void loadPrefs() {
 		System.out.println("loadingPrefs");
-		String fileSeparator = ConnectionEngine.fileSeparator;
+		String fileSeparator = ClientConstants.fileSeparator;
 		File file = new File(ConnectionEngine.settingsDir+
 				fileSeparator+"connections"+fileSeparator+server+".txt");
 
@@ -225,7 +226,7 @@ public class ServerPropertiesWindow implements ActionListener{
 
 	private void savePrefs() {
 		File connectionsDir = new File(ConnectionEngine.settingsDir+
-				ConnectionEngine.fileSeparator+"connections");
+				ClientConstants.fileSeparator+"connections");
 
 
 
@@ -254,7 +255,7 @@ public class ServerPropertiesWindow implements ActionListener{
 		properties.put("encoding", encodingChoice);
 
 		File settingsFile = new File(connectionsDir.getPath() + 
-				ConnectionEngine.fileSeparator + name+".txt");
+				ClientConstants.fileSeparator + name+".txt");
 		try {
 			settingsFile.createNewFile();			
 			FileOutputStream out = new FileOutputStream(settingsFile);

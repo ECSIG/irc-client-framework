@@ -1,6 +1,6 @@
 package com.test9.irc.display;
 
-//import com.test9.irc.display.notifications.HilightNotificationFrame;
+import com.test9.irc.engine.ClientConstants;
 import com.test9.irc.engine.ConnectionEngine;
 import com.test9.irc.engine.IRCConnection;
 import com.test9.irc.parser.OutputFactory;
@@ -52,7 +52,7 @@ ActionListener, WindowListener {
 	private final JFrame frame = new JFrame();
 
 	/**
-	 * Tookit that is used to determind the default dimensions
+	 * Toolkit that is used to determined the default dimensions
 	 * of the frame.
 	 */
 	private static final Toolkit KIT = Toolkit.getDefaultToolkit();
@@ -339,13 +339,13 @@ ActionListener, WindowListener {
 
 	private void loadPreviousState() {
 		boolean loadSettings = true;
-		File programStateDir = new File(ConnectionEngine.settingsDir+ConnectionEngine.fileSeparator+
+		File programStateDir = new File(ConnectionEngine.settingsDir+ClientConstants.fileSeparator+
 				fileDirectory);
 		if(!programStateDir.exists()) {
 			programStateDir.mkdir();
 		}
 		File settingsFile = new File(programStateDir.getPath()+
-				ConnectionEngine.fileSeparator+"windowState.txt");	
+				ClientConstants.fileSeparator+"windowState.txt");	
 
 		if(!settingsFile.exists()) {
 			try {settingsFile.createNewFile();} catch (IOException e) {}
@@ -366,14 +366,15 @@ ActionListener, WindowListener {
 				System.err.println("Error reading windowState.txt.");
 			}
 			frame.setLocation(new Point(
-					Integer.valueOf(properties.getProperty("xlocation")), 
-					Integer.valueOf(properties.getProperty("ylocation"))
+					Integer.valueOf(properties.getProperty(DisplayKeyConsts.WINDOW_LOCATION_X)), 
+					Integer.valueOf(properties.getProperty(DisplayKeyConsts.WINDOW_LOCATION_Y))
 					));
-			frame.setPreferredSize(new Dimension(Integer.valueOf(properties.getProperty("width")),
-					Integer.valueOf(properties.getProperty("height"))));
+			frame.setPreferredSize(new Dimension(Integer.valueOf(properties.getProperty(DisplayKeyConsts.WINOW_WIDTH)),
+					Integer.valueOf(properties.getProperty(DisplayKeyConsts.WINDOW_HEIGHT))));
 
-			outputSplitPane.setDividerLocation(Integer.valueOf(properties.getProperty("outputSplitPaneLocat")));
-
+			outputSplitPane.setDividerLocation(Integer.valueOf(properties.getProperty(DisplayKeyConsts.OUTPUT_SPLIT_PANE_LOCATION)));
+			
+			listsAndOutputSplitPane.setDividerLocation(Integer.valueOf(properties.getProperty(DisplayKeyConsts.LISTS_AND_OUTPUT_SPLIT_PANE_LOCATION)));
 		}
 	}
 
@@ -931,11 +932,11 @@ ActionListener, WindowListener {
 
 	private void saveWindowState() {
 		Properties properties = new Properties();
-		File stateDir = new File(ConnectionEngine.settingsDir+ConnectionEngine.fileSeparator+
+		File stateDir = new File(ConnectionEngine.settingsDir+ClientConstants.fileSeparator+
 				fileDirectory);
 		if(!stateDir.exists())
 			stateDir.mkdir();
-		File file = new File(stateDir.getAbsolutePath()+ConnectionEngine.fileSeparator+"windowState.txt");
+		File file = new File(stateDir.getAbsolutePath()+ClientConstants.fileSeparator+"windowState.txt");
 		System.out.println("file path in save "+file.getPath());
 
 		if(!file.exists()) {
@@ -948,11 +949,12 @@ ActionListener, WindowListener {
 
 	private void writeWindowState(Properties properties, File file) {
 		System.out.println("writing window state");
-		properties.put("xlocation", Integer.toString((int)frame.getLocationOnScreen().getX()));
-		properties.put("ylocation", Integer.toString((int)frame.getLocationOnScreen().getY()));
-		properties.put("width", Integer.toString(frame.getWidth()));
-		properties.put("height", Integer.toString(frame.getHeight()));	
-		properties.put("outputSplitPaneLocat", Integer.toString((int)outputSplitPane.getDividerLocation()));
+		properties.put(DisplayKeyConsts.WINDOW_LOCATION_X, Integer.toString((int)frame.getLocationOnScreen().getX()));
+		properties.put(DisplayKeyConsts.WINDOW_LOCATION_Y, Integer.toString((int)frame.getLocationOnScreen().getY()));
+		properties.put(DisplayKeyConsts.WINOW_WIDTH, Integer.toString(frame.getWidth()));
+		properties.put(DisplayKeyConsts.WINDOW_HEIGHT, Integer.toString(frame.getHeight()));	
+		properties.put(DisplayKeyConsts.OUTPUT_SPLIT_PANE_LOCATION, Integer.toString((int)outputSplitPane.getDividerLocation()));
+		properties.put(DisplayKeyConsts.LISTS_AND_OUTPUT_SPLIT_PANE_LOCATION, Integer.toString((int)listsAndOutputSplitPane.getDividerLocation()));
 		try {
 			FileOutputStream out = new FileOutputStream(file);
 			properties.store(out, "Program settings");

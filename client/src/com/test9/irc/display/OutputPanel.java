@@ -137,7 +137,9 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 	 * @throws BadLocationException 
 	 */
 	void newMessage(String message, SimpleAttributeSet sas)
-	{
+	{		
+		System.out.println("new server message");
+
 		try {
 			editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(message+"\r\n", sas),0,0,null);
 		} catch (BadLocationException e) {
@@ -145,7 +147,6 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		textPane.setCaretPosition(textPane.getDocument().getLength());
 
 	}
@@ -157,11 +158,13 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 	 * @param nick The nick of the sender.
 	 * @param message The message string.
 	 */
-	void newMessage(User user, String nick, String message, boolean isLocal)//, SimpleAttributeSet sas)
+	void newMessage(User user, String nick, String message, boolean isLocal)
 	{
+		System.out.println("newPRIVMSG");
 		String timeStamp = new SimpleDateFormat("\r\nHH:mm").format(Calendar.getInstance().getTime());
 
 		if(isLocal){
+			System.out.println("local");
 			try {
 				if(user != null)
 					editorKit.insertHTML(doc, doc.getLength(),wrapInSpanTag(timeStamp+" ", TextFormat.REPLY)
@@ -179,6 +182,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 				e.printStackTrace();
 			}
 		}else{
+			System.out.println("not local");
 			@SuppressWarnings("rawtypes")
 			SwingMethodInvoker.Parameter[] parameters;
 			SwingMethodInvoker invoker;
@@ -202,6 +206,7 @@ public class OutputPanel extends JPanel implements HyperlinkListener, KeyListene
 				SwingUtilities.invokeAndWait(invoker);
 
 				if(invoker.hasBeenExecuted()){
+					System.out.println("Scroll down");
 					parameters = new SwingMethodInvoker.Parameter[]{new SwingMethodInvoker.Parameter<Integer>(textPane.getDocument().getLength(), int.class)};
 
 					invoker.reconfigure(textPane, "setCaretPosition", parameters);
