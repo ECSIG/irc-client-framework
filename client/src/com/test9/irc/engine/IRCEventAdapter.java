@@ -58,7 +58,7 @@ public class IRCEventAdapter implements IRCEventListener {
 
 	@Override
 	public void onJoin(String connectionName, String host, Message m) {
-
+		
 		if(m.getNickname().equalsIgnoreCase(connection.getNick())) {
 			if(!(m.getContent().equals("")))
 			{
@@ -83,6 +83,7 @@ public class IRCEventAdapter implements IRCEventListener {
 			if(!(connection.getUsers().contains(m.getNickname())))
 			{
 				connection.getUsers().add(new User(m.getNickname(), false));
+				cw.onUserJoin(connectionName,  m.getContent(), m.getNickname(), false);
 			}
 		}
 	}
