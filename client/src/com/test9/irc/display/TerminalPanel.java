@@ -15,7 +15,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyledDocument;
 
-import com.test9.irc.engine.NewEngineTester;
+import com.test9.irc.engine.StartupEngine;
 import com.test9.irc.engine.User;
 
 public class TerminalPanel extends JPanel {
@@ -42,7 +42,7 @@ public class TerminalPanel extends JPanel {
 			scrollPane.getVerticalScrollBar().setPreferredSize(ChatWindow.getScrollbardim());
 		}
 		try {
-			doc.insertString(0, "!!!!!!!!!!VERSION: "+ NewEngineTester.VERSION+" !!!!!!!!!!!!!!!!!", null);
+			doc.insertString(0, "!!!!!!!!!!VERSION: "+ StartupEngine.VERSION+" !!!!!!!!!!!!!!!!!", null);
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}

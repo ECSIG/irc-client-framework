@@ -89,62 +89,7 @@ public class ConnectionEngine {
 		}
 	}
 
-	private void loadConnection() {
 
-
-		Properties properties = new Properties();
-
-		File connectionsDir = new File(settingsDir+ClientConstants.fileSeparator+"connections");
-		
-		if(!connectionsDir.exists()){
-			System.out.println("making new connecitons directory");
-			connectionsDir.mkdir();
-		}
-
-		File[] files = new File(connectionsDir.getPath()).listFiles();
-		for(File n : files) {
-			if(Character.isLetterOrDigit(n.getName().charAt(0))) {
-				loadedConnection = true;
-				System.out.println(n.getAbsolutePath());
-				FileInputStream in;
-				try {
-					in = new FileInputStream(n);
-					properties.load(in);
-					in.close();
-				} catch (FileNotFoundException e) {
-					System.err.println("You seem to not have a settings file. Please create one.");
-				} catch (IOException e) {
-					System.err.println("Error loading file into properties.");
-				}
-
-				name = properties.getProperty("name", "");
-				host = properties.getProperty("host", "");
-				pass = properties.getProperty("pass", "");
-				nick = properties.getProperty("nick", "");
-				username = properties.getProperty("username", "");
-				realname = properties.getProperty("realname", "");
-				encoding = properties.getProperty("encoding", "");
-				port = Integer.parseInt(properties.getProperty("port"));
-				ssl = Boolean.parseBoolean(properties.getProperty("ssl"));
-
-				if(ssl) {
-					beginSSLIRCConnection(name, host, port, pass, nick, 
-							username, realname, encoding);
-				} else {
-					beginIRCConnection(name, host, port, pass, nick, 
-							username, realname, encoding);
-				}
-				try {
-					IRCConnection.sleep(4000);
-				} catch (InterruptedException e) {
-
-				}
-			}
-		}
-		if(!loadedConnection) {
-			new NewServerConfigWindow();
-		}
-	}
 	
 //	private void createNewConnectionSettings(Properties properties, File connectionsDir) {
 //		host = JOptionPane.showInputDialog("What is the host?");

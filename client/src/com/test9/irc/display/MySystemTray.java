@@ -13,7 +13,7 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import com.test9.irc.engine.NewEngineTester;
+import com.test9.irc.engine.StartupEngine;
 
 public class MySystemTray {
 
@@ -62,7 +62,7 @@ public class MySystemTray {
 		about.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "You are using JIRCC Version: " 
-						+ NewEngineTester.VERSION, "JIRCC About", JOptionPane.INFORMATION_MESSAGE, img);
+						+ StartupEngine.VERSION, "JIRCC About", JOptionPane.INFORMATION_MESSAGE, img);
 
 			}
 		});

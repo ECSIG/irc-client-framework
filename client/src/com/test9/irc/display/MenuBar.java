@@ -233,6 +233,6 @@ public class MenuBar extends JMenuBar implements MenuListener, ActionListener {
 				CommandSender.sendJoin(channel);
 		} else {
 			System.out.println("Well shit!");
-		}
+		} 
 	}
 }
