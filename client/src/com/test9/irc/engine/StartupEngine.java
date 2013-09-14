@@ -2,8 +2,8 @@ package com.test9.irc.engine;
 
 import java.io.File;
 import java.io.IOException;
-
 import javax.swing.UIManager;
+import static java.lang.System.out;
 
 public class StartupEngine {
 
@@ -14,9 +14,10 @@ public class StartupEngine {
 	 */
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws IOException {
-		System.out.println(System.getProperty("user.home"));
+		out.println(System.getProperty("user.home"));
 		String os = System.getProperty("os.name").toLowerCase();
 		String userHome = System.getProperty("user.home");
+		String settingsDir = "";
 
 		if(os.contains("mac os x")) {
 			settingsDir = userHome+"/Library/Application Support/JIRCC";
@@ -26,22 +27,27 @@ public class StartupEngine {
 			settingsDir = userHome + "/JIRCC/connections";
 		} else if (os.contains("bsd")) {
 			settingsDir = userHome +"/JIRCC/connections";
+		} else {
+			System.err.println("Your operating system is not recognized");
+			System.exit(0);
 		}
 
 		File dir = new File(settingsDir);
 		System.out.println(dir.getAbsolutePath());
 
 		if(!dir.exists()) {
-			System.out.println("making new directory");
-			dir.mkdir();
+			System.out.println("Starting First Launch");
+			FirstLaunch FL = new FirstLaunch(settingsDir);
 		}
+
 		try
 		{
-		        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch(Exception e){
-		        System.out.println("Shit gone down");
+			System.out.println("Shit gone down");
 		}
-		ConnectionEngine CE = new ConnectionEngine();
 
+		new LoadSettings(settingsDir);
+		new ConnectionEngine();
 	}
 }

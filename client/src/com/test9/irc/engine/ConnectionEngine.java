@@ -32,24 +32,6 @@ public class ConnectionEngine {
 		String os = System.getProperty("os.name").toLowerCase();
 		String userHome = System.getProperty("user.home");
 
-		if(os.contains("mac os x")) {
-			settingsDir = userHome+"/Library/Application Support/JIRCC";
-		} else if (os.contains("windows")) {
-			settingsDir = userHome+"\\Documents\\JIRCC";
-		} else if (os.contains("linux")) {
-			settingsDir = userHome + "/JIRCC/connections";
-		} else if (os.contains("bsd")) {
-			settingsDir = userHome +"/JIRCC/connections";
-		}
-
-		File dir = new File(settingsDir);
-		System.out.println(dir.getAbsolutePath());
-
-		if(!dir.exists()) {
-			System.out.println("making new directory");
-			dir.mkdir();
-		}		
-
 		cw = new ChatWindow();
 		cw.addChatWindowListener(new EventAdapter(cw, cw.getUtil()));
 
@@ -91,36 +73,7 @@ public class ConnectionEngine {
 
 
 	
-//	private void createNewConnectionSettings(Properties properties, File connectionsDir) {
-//		host = JOptionPane.showInputDialog("What is the host?");
-//		JPasswordField pwd = new JPasswordField(30);  
-//		JOptionPane.showConfirmDialog(null, pwd,"Enter Password",JOptionPane.OK_CANCEL_OPTION); 
-//		pass = new String(pwd.getPassword());
-//		nick = JOptionPane.showInputDialog("What is the nick?");
-//		username = JOptionPane.showInputDialog("What is the username?");
-//		realname = JOptionPane.showInputDialog("What is the realname?");
-//		encoding = JOptionPane.showInputDialog("What is the encoding?(type in 'UTF-8' for now)");
-//		port = Integer.parseInt(JOptionPane.showInputDialog("What port?"));
-//		ssl = Boolean.parseBoolean(JOptionPane.showInputDialog("SSL?('true'/'false')"));
-//
-//		properties.put("host", host);
-//		properties.put("pass", pass);
-//		properties.put("nick", nick);
-//		properties.put("username", username);
-//		properties.put("realname", realname);
-//		properties.put("encoding", encoding);
-//		properties.put("port", Integer.toString(port));
-//		properties.put("ssl", Boolean.toString(ssl));
-//
-//		File settingsFile = new File(connectionsDir.getPath() + fileSeparator + host+".txt");
-//		try {
-//			settingsFile.createNewFile();			
-//			FileOutputStream out = new FileOutputStream(settingsFile);
-//			properties.store(out, "Program settings");
-//			out.close();
-//		} catch (FileNotFoundException e) {
-//		} catch (IOException e) {}
-//	}
+
 
 	/**
 	 * @return the connection
